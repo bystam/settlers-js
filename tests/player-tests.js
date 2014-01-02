@@ -1,4 +1,5 @@
-var players = require('../model/players.js')
+var players = require('../model/players.js'),
+	playerQueue = require('../logic/player-queue.js')
 
 exports.testBasicPlayerCreation = function(test) {
 	test.expect(2);
