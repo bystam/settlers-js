@@ -37,3 +37,30 @@ exports.addingPlayerToPlayerQueueShouldWork = function(test) {
 	})
 	test.done()
 }
+
+exports.testSettingInitialPlayerForQueue = function(test) {
+	test.expect(1)
+
+	var queue = new playerQueue.Queue()
+	var p1 = new players.Player("Player 1")
+	var p2 = new players.Player("Player 2")
+	queue.addPlayer(p1)
+	queue.addPlayer(p2)
+	queue.setCurrentPlayer(p2)
+
+	test.equal(queue.getNextPlayer(), p2)
+	test.done()
+}
+
+exports.queueWithTwoPlayersShouldAlternateInTurns = function(test) {
+	test.expect(3)
+	var queue = new playerQueue.Queue()
+	var p1 = new players.Player("Player 1")
+	var p2 = new players.Player("Player 2")
+	queue.addPlayer(p1)
+	queue.addPlayer(p2)
+	test.equal(queue.getNextPlayer(), p1)
+	test.equal(queue.getNextPlayer(), p2)
+	test.equal(queue.getNextPlayer(), p1)
+	test.done()
+}
