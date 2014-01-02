@@ -1,4 +1,4 @@
 test:
-	nodeunit tests/
+	npm test
 
 all: test
