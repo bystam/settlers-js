@@ -1,0 +1,27 @@
+{
+  "name": "settlers-js",
+  "version": "0.0.0",
+  "description": "settlers-js ===========",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "nodeunit": "~0.8.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "nodeunit tests/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bystam/settlers-js.git"
+  },
+  "author": "",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "f141de6cf8a870821c150d01e28226135fd2de44",
+  "bugs": {
+    "url": "https://github.com/bystam/settlers-js/issues"
+  }
+}
