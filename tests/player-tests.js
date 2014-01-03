@@ -47,7 +47,7 @@ exports.initialPlayerIsFirstPlayer = function(test) {
 	queue.addPlayer(p1)
 	queue.addPlayer(p2)
 
-	test.equal(queue.getNextPlayer(), p1)
+	test.equal(queue.getCurrentPlayer(), p1)
 	test.done()
 }
 
@@ -61,7 +61,7 @@ exports.testSettingInitialPlayerForQueue = function(test) {
 	queue.addPlayer(p2)
 	queue.setCurrentPlayer(p2)
 
-	test.equal(queue.getNextPlayer(), p2)
+	test.equal(queue.getCurrentPlayer(), p2)
 	test.done()
 }
 
@@ -72,8 +72,10 @@ exports.queueWithTwoPlayersShouldAlternateInTurns = function(test) {
 	var p2 = new players.Player("Player 2")
 	queue.addPlayer(p1)
 	queue.addPlayer(p2)
-	test.equal(queue.getNextPlayer(), p1)
-	test.equal(queue.getNextPlayer(), p2)
-	test.equal(queue.getNextPlayer(), p1)
+	test.equal(queue.getCurrentPlayer(), p1)
+	queue.changeTurn()
+	test.equal(queue.getCurrentPlayer(), p2)
+	queue.changeTurn()
+	test.equal(queue.getCurrentPlayer(), p1)
 	test.done()
 }
