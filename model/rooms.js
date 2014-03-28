@@ -12,17 +12,20 @@ exports.init = function(server) {
 function newConnection (socket) {
 	socket.on('room', function (client) {
 		var room = client.room;
-		var playerId = client.playerId;
 		if (games[room] === null)
 			socket.emit('room-404', {room: room});
-		else
+		else {
+			var playerId = games[room].playerCount;
+			games[room].playerCount++;
 			registerPlayer(socket, room, playerId);
+		}
 	});
 }
 
 exports.createNewRoom = function (room) {
 	var room = sessions.newHash();
 	games[room] = {};
+	games[room].playerCount = 0;
 	return room;
 }
 
