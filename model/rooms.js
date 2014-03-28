@@ -14,20 +14,23 @@ function newConnection (socket) {
 		var room = client.room;
 		/*
 			Egentligen gäller följande:
-			om spelet är fullt (4 spelare är connectade redan)
-				returnera balle och döda anslutningen
 			om spelet inte finns
 				returnera room 404 och döda anslutningen
-			annars
-				sätt upp lyssnare på eventsen (registerPlayer)
+			om spelet är fullt (4 spelare är connectade redan)
+				returnera balle och döda anslutningen
+			sätt upp lyssnare på eventsen (registerPlayer)
 		*/
-		if (games[room]) {
-			var playerId = games[room].playerCount;
-			games[room].playerCount++;
-			registerPlayer(socket, room, playerId);
-		} else {
+	
+		if(!games[room]) {
 			socket.emit('room-404', {room: room});
 		}
+		if(games[room].playerCount == 4){
+			socket.emit('room-404', {room: room});
+		}
+
+		var playerId = games[room].playerCount;
+		games[room].playerCount++;
+		registerPlayer(socket, room, playerId);
 	});
 }
 
