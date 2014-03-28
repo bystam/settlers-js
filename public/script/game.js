@@ -6,7 +6,7 @@ $ (document).ready(function(){
 		$("body").append("Successfully joined room: "+data.room);
 	});
 	socket.on("new-player-joined", function(data){
-		$("body").append("Player joined: "+data.playerId);
+		$("body").append("<p>Player joined: "+data.playerId+"</p>");
 	});
 
 });
