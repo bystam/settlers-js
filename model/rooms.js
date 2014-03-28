@@ -21,11 +21,9 @@ function newConnection (socket) {
 			sätt upp lyssnare på eventsen (registerPlayer)
 		*/
 	
-		if(!games[room]) {
+		if(!games[room] || games[room].playerCount == 4) {
 			socket.emit('room-404', {room: room});
-		}
-		if(games[room].playerCount == 4){
-			socket.emit('room-404', {room: room});
+			return;
 		}
 
 		var playerId = games[room].playerCount;
