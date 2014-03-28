@@ -3,18 +3,20 @@ var io = require('socket.io');
 var games = {};
 
 exports.init = function(server) {
-	io.listen(server);
+	io = io.listen(server);
 
 	io.sockets.on('connection', newConnection);
 }
 
 // Heroku specific configuration
+/*
 io.configure(function () { 
   io.set("transports", ["xhr-polling"]); 
   io.set("polling duration", 10); 
 });
+*/
 
-function newConnection = function (socket) {
+function newConnection (socket) {
 	socket.on('room', function (client) {
 		var room = client.room;
 		var playerId = client.playerId;
