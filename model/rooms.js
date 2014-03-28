@@ -16,13 +16,17 @@ io.configure(function () {
 });
 */
 
+/*
+TODO om rummet inte finns så ska 
+*/
+
 function newConnection (socket) {
 	socket.on('room', function (client) {
 		var room = client.room;
 		var playerId = client.playerId;
 		if (games[room] === null)
 			registerRoom(room);
-		registerPlayer(room, playerId, socket);
+		registerPlayer(socket, room, playerId);
 	});
 }
 
