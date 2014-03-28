@@ -15,7 +15,7 @@ rooms.init(server);
 app.get('/', function(req, res) {
 	res.render("createGame.jade", {});
 });
-;
+
 app.get('/:room', function(req, res) {
 	res.render('game.jade', {});
 });
