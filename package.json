@@ -10,7 +10,8 @@
     "nodeunit": "~0.8.2",
     "socket.io": "*",
     "crypto": "*",
-    "express": "*"
+    "express": "*",
+    "jade": "*"
   },
   "devDependencies": {},
   "scripts": {

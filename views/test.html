@@ -1,0 +1,12 @@
+<html>
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="script/createGame.js"></script>
+<script>
+function createGame(){
+	var socket = io.connect('http://localhost:4711');
+	socket.emit("createGame", {jens:"balle"});
+	alert("Balle");
+}
+</script>
+<button onClick="createGame();">TJO</button>
+</html>
