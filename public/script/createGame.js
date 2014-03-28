@@ -1,6 +1,10 @@
 
 function createGame(){
-	var socket = io.connect('http://localhost:5000');
-	socket.emit("KNULLA", {jens:"balle"});
+    var form = document.createElement('form');
+    form.setAttribute('method', 'post');
+    form.setAttribute('action', '/createGame');
+    form.style.display = 'hidden';
+    document.body.appendChild(form)
+    form.submit();
 }
 
