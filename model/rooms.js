@@ -1,37 +1,29 @@
-var io = require('socket.io');
+var io = require('socket.io'),
+	sessions = require('./sessions');
 
 var games = {};
 
 exports.init = function(server) {
-	io = io.listen(server);
+	io = io.listen(server, {log: false});
 
 	io.sockets.on('connection', newConnection);
 }
-
-// Heroku specific configuration
-/*
-io.configure(function () { 
-  io.set("transports", ["xhr-polling"]); 
-  io.set("polling duration", 10); 
-});
-*/
-
-/*
-TODO om rummet inte finns så ska 
-*/
 
 function newConnection (socket) {
 	socket.on('room', function (client) {
 		var room = client.room;
 		var playerId = client.playerId;
 		if (games[room] === null)
-			registerRoom(room);
-		registerPlayer(socket, room, playerId);
+			socket.emit('room-404', {room: room});
+		else
+			registerPlayer(socket, room, playerId);
 	});
 }
 
-function registerRoom(room) {
+exports.createNewRoom = function (room) {
+	var room = sessions.newHash();
 	games[room] = {};
+	return room;
 }
 
 function registerPlayer (socket, room, playerId) {
