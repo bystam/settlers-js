@@ -9,18 +9,3 @@ var newHash = function () {
 };
 
 exports.newHash = newHash;
-
-var registerGame = function() {
-	var hash = newHash();
-
-	var gameState = {};
-	var gameSockets = io.of('/' + hash).on('connection', function(socket) {
-			socket.on('turnChanged', function(data) {
-
-			});
-		});
-
-	return hash;
-}
-
-
