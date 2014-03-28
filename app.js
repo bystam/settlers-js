@@ -16,8 +16,8 @@ app.get('/', function(req, res) {
 	res.render('createGame.jade', {});
 });
 
-app.post('createGame', function(req, res) {
-	var room = rooms.registerRoom();
+app.post('/createGame', function(req, res) {
+	var room = rooms.createNewRoom();
 	res.render('showLink.jade', { room: room })
 });
 
