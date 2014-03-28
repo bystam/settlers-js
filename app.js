@@ -11,7 +11,7 @@ app.use(express.static(__dirname + '/public'))
 
 // setup root route
 app.get('/', function(req, res) {
-	res.end('Hello world');
+	res.render("createGame.jade", {});
 });
 
 // Heroku specific configuration
