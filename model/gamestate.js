@@ -30,7 +30,7 @@ var generateRandomMap = function () {
 	var tokens = getTokens();
 	shuffle(tokens);
 	for (var i = 0; i < 19; i++) {
-		if (hexes[i].name === 'desert')
+		if (hexes[i].type === 'desert')
 			hexes[i].token = null;
 		else
 			hexes[i].token = tokens[i];
