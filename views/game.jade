@@ -1,9 +1,11 @@
 head
-	link(rel='stylesheet' href='views/css/game.css')
+	link(rel='stylesheet' href='css/game.css')
+	link(rel='stylesheet' href='css/hexagons.css')
 	script(src="/socket.io/socket.io.js")
 	script(src="http://code.jquery.com/jquery-1.11.0.min.js")
 	script(src="http://code.jquery.com/jquery-migrate-1.2.1.min.js")
 	script(src='script/game.js')
 
 html(lang='en')
-	body Here is the list
+	body 
+	div(class="board")
