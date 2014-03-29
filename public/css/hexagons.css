@@ -1,15 +1,23 @@
 .hex {
-    width:150px;
-    height:86px;
+    width:40px;
+    height:70px;
     background-color: #ccc;
     background-repeat: no-repeat;
     background-position: 50% 50%;            
     background-size: auto 173px;                            
-    position: relative;
-    float:left;
-    margin:25px 5px;
+    position: absolute;
+    margin:2px 2px;
     text-align:center;
     zoom:1;
+
+}
+
+.hex p {
+    padding-top: 22px;
+    font-size: 25px;
+    color: white;
+    width:80%;
+    margin:0 auto;
 }
         
 .hex.hex-gap {
@@ -36,7 +44,7 @@
     background: inherit;                                
     z-index:-2;                        
     overflow:hidden;        
-    backface-visibility: hidden;            
+    backface-visibility: hidden;   
 }
 
 .hex .corner-1 {
@@ -63,20 +71,7 @@
  background: inherit;
  background-repeat:no-repeat;
     backface-visibility: hidden;                
-}            
-
-.hex .corner-1:before {
-    transform: rotate(-60deg) translate(-87px, 0px);    
-    -webkit-transform: rotate(-60deg) translate(-87px, 0px);  
-    transform-origin: 0 0;
-    -webkit-transform-origin: 0 0;
-}            
-
-.hex .corner-2:before {
-    transform: rotate(60deg) translate(-48px, -11px);  
-    -webkit-transform: rotate(60deg) translate(-48px, -11px);    
-    bottom:0;
-}        
+}
 
 /* Custom styles*/
 .hex .inner {        
@@ -95,12 +90,6 @@
     margin:15px auto;
 }
 
-.hex p {
-    font-size:16px;
-    font-family: 'Kotta One', serif;
-    width:80%;
-    margin:0 auto;
-}
 .hex.hex-1 {
     background: #74cddb;
 }
