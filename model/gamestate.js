@@ -1,3 +1,6 @@
+// http://boardgamegeek.com/thread/324667/the-counts-components-settlers-of-catan-4th-editio
+
+
 /*
 List of pieces:
 
