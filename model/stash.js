@@ -8,8 +8,6 @@ This represents the personal stash of items for a player, such as unused roads, 
 The idea is that the stash is meant to be private for every user, and separate from the game state
 */
 
-
-
 exports.Stash = function(playerId) {
 	this.playerId = playerId;
 	this.cities = 4;

@@ -12,9 +12,6 @@ List of pieces:
 6) Twenty-five (25) Development Cards (14 Knight/Soldier Cards, 6 Progress Cards, 5 Victory Point Cards).
 7) Four (4) Building Costs Cards.
 8) Two (2) Special Cards: Longest Road & Largest Army.
-9) Sixteen (16) Cities (4 of Each Color Shaped like Churches).
-10) Twenty (20) Settlements (5 of Each Color Shaped like Houses).
-11) Sixty (60) Roads (15 of Each Color Shaped like Bars).
 12) Two (2) Dice (1 Yellow, 1 Red).
 13) One (1) Robber
 14) One (1) Games Rules & Almanac Booklet.
@@ -60,7 +57,7 @@ function getHexes () {
 	var hexes = [];
 	addHexesOfType(hexes, 4, 'field', 'grain');
 	addHexesOfType(hexes, 4, 'forest', 'lumber');
-	addHexesOfType(hexes, 4, 'pastue', 'wool');
+	addHexesOfType(hexes, 4, 'pasture', 'wool');
 	addHexesOfType(hexes, 3, 'mountain', 'ore');
 	addHexesOfType(hexes, 3, 'hill', 'brick');
 	addHexesOfType(hexes, 1, 'desert', null);
