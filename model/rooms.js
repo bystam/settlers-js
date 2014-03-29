@@ -1,7 +1,10 @@
 var io = require('socket.io'),
-	sessions = require('./sessions');
+	sessions = require('./sessions'),
+	gamestate = require('./gamestate'),
+	players = require('./players'),
+	games = {};
 
-var games = {};
+players.init(games, io);
 
 exports.init = function(server) {
 	io = io.listen(server, {log: false});
@@ -18,32 +21,30 @@ function newConnection (socket) {
 				returnera room 404 och döda anslutningen
 			om spelet är fullt (4 spelare är connectade redan)
 				returnera balle och döda anslutningen
-			sätt upp lyssnare på eventsen (registerPlayer)
+			sätt upp lyssnare på eventsen (registerConnection)
 		*/
 	
-		if(!games[room] || games[room].playerCount == 4) {
+		if(!games[room] || games[room].players.length === 4) {
 			socket.emit('room-404', {room: room});
 			return;
 		}
 
-		var playerId = games[room].playerCount;
-		games[room].playerCount++;
-		registerPlayer(socket, room, playerId);
+		var playerId = games[room].players.length;
+		registerConnection(socket, room, playerId);
 	});
 }
 
-exports.createNewRoom = function (room) {
+exports.createNewRoom = function () {
 	var room = sessions.newHash();
-	games[room] = {};
-	games[room].playerCount = 0;
+	games[room] = new gamestate.Game(room);
 	return room;
 }
 
-function registerPlayer (socket, room, playerId) {
+function registerConnection (socket, room, playerId) {
 	/*
 		sätt upp lyssnare för alla event
 	*/
 	socket.join(room);
-	socket.emit('room-joined', {room: room});
-	io.sockets.in(room).emit('new-player-joined', { playerId: playerId });
+
+	players.registerNewPlayer(socket, room, playerId);
 }
