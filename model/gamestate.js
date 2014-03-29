@@ -33,7 +33,7 @@ var generateRandomMap = function () {
 		if (hexes[i].type === 'desert')
 			hexes[i].token = null;
 		else
-			hexes[i].token = tokens[i];
+			hexes[i].token = tokens.pop();
 	}
 	this.hexes = hexes;
 }
