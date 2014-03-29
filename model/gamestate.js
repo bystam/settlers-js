@@ -83,7 +83,7 @@ function addHexesOfType(hexes, amount, type, resource) {
 */
 function getTokens() {
 	var tokens = [];
-	for (var i = 2; i < 12; i++) {
+	for (var i = 2; i <= 12; i++) {
 		if (i === 7)
 			continue;
 		if (i > 2 && i < 12)
