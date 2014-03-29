@@ -1,5 +1,7 @@
 
 var game = null;
+var hexagons = [];
+var colors = {'field':'#FFE658', 'forest':'#126B32', 'pasture':'#6DD572', 'mountain':'#5E707A', 'hill':'#E03634', 'desert':'#D5CC6A'};
 function populateGameWithLogic(game) {
 	game.addPlayer = function(playerId) {
 		game.players.push(playerId);
@@ -27,30 +29,26 @@ $ (document).ready(function(){
 	});
 });
 
-var hexagons = [];
-var colors = {'field':'#D5CC6A', 'forest':'#126B32', 'pasture':'#6DD572', 'mountain':'#5E707A', 'hill':'#E03634', 'desert':'#FFE658'};
-var hexWidth = 70;
 function createEmptyBoard(){
 	var board = $(".board");
-	var height = "55px";
-	var width = "100px";
-	var hexHeight = 70;
-	var yJump = hexHeight/2 + 3;
-	var row1 = createRow(board,1,400,0);
-	var row2 = createRow(board,2,400-hexWidth,yJump);
-	var row3 = createRow(board,3,400-(hexWidth*2),yJump*2);
-	var row4 = createRow(board,2,400-hexWidth,yJump*3);
-	var row5 = createRow(board,3,400-(hexWidth*2),yJump*4);
-	var row6 = createRow(board,2,400-hexWidth,yJump*5);
-	var row7 = createRow(board,3,400-(hexWidth*2),yJump*6);
-	var row8 = createRow(board,2,400-hexWidth,yJump*7);
-	var row9 = createRow(board,1,400,yJump*8);
+	var hexDiameter = 105; //must find a way to find this dynamically if we want responsive
+	var yMargin = 6;
+	var yJump = hexDiameter/2 + yMargin;
+	createRow(board,1,400,0);
+	createRow(board,2,400-hexDiameter,yJump);
+	createRow(board,3,400-(hexDiameter*2),yJump*2);
+	createRow(board,2,400-hexDiameter,yJump*3);
+	createRow(board,3,400-(hexDiameter*2),yJump*4);
+	createRow(board,2,400-hexDiameter,yJump*5);
+	createRow(board,3,400-(hexDiameter*2),yJump*6);
+	createRow(board,2,400-hexDiameter,yJump*7);
+	createRow(board,1,400,yJump*8);
 }
 
 function createRow(board, size, startX, yCoordinate){
 	for(var i=0;i<size;i++){
 		var hex = game.hexes[hexagons.length];
-		var hexagon = createHexagon(yCoordinate, startX+(i*(hexWidth*2)), colors[hex.type]);
+		var hexagon = createHexagon(yCoordinate, startX+(i*(hexDiameter*2)), colors[hex.type]);
 		if(hex.token !== null)
 			hexagon.append($('<p>'+hex.token.value+'</p>'));
 		board.append(hexagon);
@@ -58,13 +56,16 @@ function createRow(board, size, startX, yCoordinate){
 	}
 }
 
-function createHexagon (top, left, color){
+function createHexagon (y, x, background){
 	var hexagon = $("<div></div>");
 	hexagon.addClass ("hex");
-	hexagon.css("background-color", color);
+	hexagon.css("background-color", background);
 	hexagon.append($("<div class='corner-1'></div>"));
 	hexagon.append($("<div class='corner-2'></div>"));
-	hexagon.css("left", left);
-	hexagon.css("top", top);
+	hexagon.css("left", x);
+	hexagon.css("top", y);
 	return hexagon;
 }
+
+
+
