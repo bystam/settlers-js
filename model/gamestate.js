@@ -1,17 +1,35 @@
-// http://boardgamegeek.com/thread/324667/the-counts-components-settlers-of-catan-4th-editio
-
-var boards = require('./boards.js');
+var boards = require('./boards.js'),
+	stashes = require('./stash.js');
 
 exports.Game = function(room) { // constructor
 	this.room = room;
 	this.board = new boards.Board();
 	this.board.generateRandomMap();
 	initPlayers(this);
+	this.privateCopyForPlayer = privateCopyForPlayer;
 }
 
 function initPlayers(game) {
 	game.players = [];
+	game.stashes = {};
 	game.addPlayer = function(playerId) {
 		game.players.push(playerId);
+		game.stashes[playerId] = new stashes.Stash(playerId);
 	}
+}
+
+// stämmer inte
+function privateCopyForPlayer(playerId) {
+	/*
+	1. public board
+	2. amount of enemy cards
+	3. hidden resources
+	4. hidden cards
+	5. public cards
+	6. achievements
+	7. amount of building left
+	*/
+	var copy = JSON.parse(JSON.stringify(this));
+	delete copy.stashes;
+	return copy;
 }

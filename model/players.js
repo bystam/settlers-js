@@ -9,6 +9,6 @@ exports.init = function(gamesState, socketIo) {
 exports.registerNewPlayer = function(socket, room, playerId) {
 	var game = games[room];
 	game.addPlayer(playerId);
-	socket.emit('game-joined', game);
+	socket.emit('game-joined', game.privateCopyForPlayer(playerId));
 	socket.broadcast.to(room).emit('new-player-joined', playerId);
 }
