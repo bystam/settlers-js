@@ -37,7 +37,6 @@ function newConnection (socket) {
 exports.createNewRoom = function () {
 	var room = sessions.newHash();
 	var game = new gamestate.Game(room);
-	game.generateRandomMap();
 	games[room] = game;
 	return room;
 }
