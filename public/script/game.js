@@ -51,7 +51,7 @@ function createEmptyBoard(){
 function createRow(board, size, startX, yCoordinate){
 	for(var i=0;i<size;i++){
 		var index = hexagons.length;
-		var hex = game.hexes[index];
+		var hex = game.board.hexes[index];
 		var hexagon = createHexagonDiv(index, yCoordinate, startX+(i*(hexDiameter*2)), colors[hex.type]);
 		if(hex.token !== null)
 			hexagon.append($('<p>'+index+'</p>')); //index should be hex.token.value
