@@ -2,12 +2,13 @@ body {
 	background-image: url("../img/startupplank.jpg");
 }
 
-.board {
+#board {
 	margin-right: auto;
 	margin-left: auto;
 	width: 800px;
 	height: 800px;
-	margin-top: 170px;
+	margin-top: 150px;
+	display:block;
 	position: relative;
 }
 
@@ -16,6 +17,12 @@ body {
 	width:10px;
 	height:45px;
 	background:blue;
+	visibility: hidden;
+}
+
+.road .onHover {
+	border:3px solid black;
+	visibility: visible;
 }
 
 .horizontal {
