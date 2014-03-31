@@ -12,7 +12,7 @@
     "crypto": "*",
     "express": "*",
     "jade": "*",
-    "snapsvg", "*"
+    "snapsvg": "*"
   },
   "devDependencies": {},
   "scripts": {
