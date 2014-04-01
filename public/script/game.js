@@ -31,59 +31,61 @@ $ (document).ready(function(){
 
 function createEmptyBoard(){
 	var board = Snap("#board");
-	var radius = 50.0;
-	var yMargin = 6.0;
-	var yJump = radius + yMargin;
-	var hexDiameter = radius*2;
+	var hexRadius = 50.0; //50.0
+	//we want to control road width & height with these
+	var yMargin = 8.0;
+	var xMargin = yMargin / Math.cos(30);
+	var yJump = hexRadius - yMargin;
+	var xJump = hexRadius*4 - xMargin;
 	var middle = 350.0;
 	var yPadding = 100;
-	createRow(board,1,middle,yPadding,radius);
-	createRow(board,2,middle-hexDiameter,yPadding+yJump, radius);
-	createRow(board,3,middle-(hexDiameter*2),yPadding+yJump*2, radius);
-	createRow(board,2,middle-hexDiameter,yPadding+yJump*3, radius);
-	createRow(board,3,middle-(hexDiameter*2),yPadding+yJump*4, radius);
-	createRow(board,2,middle-hexDiameter,yPadding+yJump*5, radius);
-	createRow(board,3,middle-(hexDiameter*2),yPadding+yJump*6, radius);
-	createRow(board,2,middle-hexDiameter,yPadding+yJump*7, radius);
-	createRow(board,1,middle,yPadding+yJump*8, radius);
+	
+	createRow(board,1,middle,yPadding,hexRadius, xJump);
+	createRow(board,2,middle-(xJump/2),yPadding+yJump, hexRadius, xJump);
+	createRow(board,3,middle-xJump,yPadding+yJump*2, hexRadius, xJump);
+	createRow(board,2,middle-(xJump/2),yPadding+yJump*3, hexRadius, xJump);
+	createRow(board,3,middle-xJump,yPadding+yJump*4, hexRadius, xJump);
+	createRow(board,2,middle-(xJump/2),yPadding+yJump*5, hexRadius, xJump);
+	createRow(board,3,middle-xJump,yPadding+yJump*6, hexRadius, xJump);
+	createRow(board,2,middle-(xJump/2),yPadding+yJump*7, hexRadius, xJump);
+	createRow(board,1,middle,yPadding+yJump*8, hexRadius, xJump);
 
-	createRoads (board, (yMargin*4)+1);
-	// createCityDivs ();*/
+	var roadWidth = (yMargin*4)+1;
+	hexagons.forEach(function(hexagon){
+		createRoadsForHex(board, hexagon, roadWidth, hexagons);
+	});
+	// createCityDivs ();
 }
 
-function createRow(board, size, startX, ycoord, hexRadius){
+function createRow(board, size, startX, ycoord, hexRadius, xJump){
 	for(var i=0;i<size;i++){
 		var index = hexagons.length;
-		var xcoord = startX+(i*(hexRadius*4));
+		var xcoord = startX+(i*xJump);
 		var hexagon = createHex(board, index, xcoord, ycoord, colors[game.board.hexes[index].type], hexRadius);
-		var fontSize = 30;
-		if(game.board.hexes[index].token !== null){
-			var textXOffset = game.board.hexes[index].token.value > 9 ? 14 : 7;
-			var text = board.text(xcoord+hexRadius-textXOffset, ycoord + hexRadius, ""+index);//game.board.hexes[index].token.value
-			text.attr({
-				fill: "white", 
-				"font-size": fontSize,
-				"font-family":"Comic Sans"
-			});
-		}
+		if(game.board.hexes[index].token !== null)
+			drawNumberOnHex (board, xcoord+hexRadius, ycoord + hexRadius, index);//game.board.hexes[index].token.value
+		//hexagon.neighbours = game.board.hexes[index].neighbours USE THIS LATER
 		setNeighboursOfHex (hexagon);
-		hexagon.click(function(){
-			clickHex(this);
-		})
 
+		// debug corner indices
 		var cornerNo = 0;
 		getHexCorners(hexagon).forEach (function(entry){
 			board.text(entry.x, entry.y, cornerNo);
 			cornerNo++;
 		});
-
+		// /////////////////
 		hexagons.push(hexagon);
 	}
 }
 
-function clickHex (hex){
-	console.log(hex.node.animatedPoints);
-	hex.paper.text(3,4, "BALLE");
+function drawNumberOnHex(board, xcoord, ycoord, value){
+	var textXOffset = value > 9 ? 14 : 7;
+	var text = board.text(xcoord-textXOffset, ycoord, ""+value);//game.board.hexes[index].token.value
+	text.attr({
+		fill: "white", 
+		"font-size": 30,
+		"font-family":"Comic Sans"
+	});
 }
 
 function createHex (board, index, x, y, color, radius){
@@ -146,12 +148,5 @@ function getExamplePattern(board, player){
 		return pattern;
 	}
 }
-
-function createRoads (board, roadWidth){
-	hexagons.forEach(function(hexagon){
-		createRoadsForHex(board, hexagon, roadWidth, hexagons);
-	});
-}
-
 
 
