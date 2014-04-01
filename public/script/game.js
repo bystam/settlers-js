@@ -81,14 +81,6 @@ function createRow(board, size, startX, ycoord, hexRadius){
 	}
 }
 
-function getHexCorners (hex){
-	points = [];
-	for(var i=0;i<hex.node.animatedPoints.numberOfItems;i++){
-		points.push(hex.node.animatedPoints.getItem(i));
-	}
-	return points;
-}
-
 function clickHex (hex){
 	console.log(hex.node.animatedPoints);
 	hex.paper.text(3,4, "BALLE");
@@ -98,66 +90,68 @@ function createHex (board, index, x, y, color, radius){
 	var r = radius;
 	var hex = board.hex(r, a = 0, roundness = 0, originCenter = false, x, y);
 	hex.attr({
-		fill:color
+		fill:color,
+		strokeWidth: 2,
+		stroke: "#000"
 	});
 	hex.boardIndex = index;
 	return hex;
 }
 
-function createRoads (board, roadWidth){
-	hexagons.forEach(function(hexagon){
-		createRoadsForHex(board, hexagon, roadWidth);
-	});
-}
-/* indices:
-top: 1 2 -> 4 5
-upward slope: 1 6 -> 3 4
-downward slope: 2 3-> 5 6
-*/
-function createRoadsForHex(board, hex, roadWidth){
-	var points = getHexCorners(hex);
-	var top = hex.neighbours.top;
-	if(top === undefined){
-		var thirdPoint = {x:points[2].x, y:points[2].y-roadWidth};
-		var fourthPoint = {x:points[1].x, y:thirdPoint.y};
-		createSingleRoad(board, hex, createRectangleString(points[1], points[2], thirdPoint, fourthPoint));
+function createRoadShape (board, hex, neighbour, rectangleString){
+	var first = hex.boardIndex, second = hex.boardIndex;
+	if(neighbour !== null){
+		var first = hex.boardIndex < neighbour.boardIndex ? hex.boardIndex : neighbour.boardIndex;
+		var second = hex.boardIndex > neighbour.boardIndex ? hex.boardIndex : neighbour.boardIndex;
 	}
-	else{
-		var neighbourPoints = getHexCorners(hexagons[top]);
-		createSingleRoad (board, hex, createRectangleString(points[1], points[2], neighbourPoints[4], neighbourPoints[5]));
-	}
-	var bottom = hex.neighbours.bottom;
-	if(bottom === undefined){
-		var thirdPoint = {x:points[4].x, y:points[4].y+roadWidth};
-		var fourthPoint = {x:points[5].x, y:thirdPoint.y};
-		createSingleRoad(board, hex, createRectangleString(points[5], points[4], thirdPoint, fourthPoint));
-	}
-	var topLeft = hex.neighbours.topLeft;
-	if(topLeft === undefined){
-		var thirdPoint = {x:points[3].x-roadWidth, y:points[3].y-(roadWidth/2)};
-		var fourthPoint = {x:points[2].x-roadWidth, y:points[2].y-(roadWidth/2)};
-		createSingleRoad(board, hex, createRectangleString(points[2], points[3], thirdPoint, fourthPoint));
-	}
-	else{
-		var neighbourPoints = getHexCorners(hexagons[topLeft]);
-		createSingleRoad (board, hex, createRectangleString(points[2], points[3], neighbourPoints[5], neighbourPoints[6]));
-	}
-}
+	var roadKey = ""+first+","+second;
 
-function createSingleRoad (board, hex, rectangleString){
 	var road = board.path(rectangleString);
 	road.attr({
-		fill:"blue"
+		fill:"transparent"
 	});
-
+	road.click(function(){
+		console.log("Road clicked between hex "+roadKey);
+	});
+	road.hover(function(){
+		// hover in
+		road.attr({
+			stroke:"green",
+			strokeWidth:3
+		});
+	}, function(){
+		// hover out
+		road.attr({
+			stroke:"transparent"
+		});
+	})
 }
 
-function createRoadBetweenHexes (board,hex,neighbour){
-
+function getExamplePattern(board, player){
+	if(player === null){
+		var patternPath = board.path("M28,66L0,50L0,16L28,0L56,16L56,50L28,66L28,100");
+		patternPath.attr({
+			stroke:"#fff629",
+			strokeWidth:2,
+			fill:"none"
+		});
+		var patternPath2 = board.path("M28,0L28,34L0,50L0,84L28,100L56,84L56,50L28,34");
+		patternPath2.attr({
+			stroke:"#ffe503",
+			strokeWidth:2,
+			fill:"none"
+		});
+		var patternGroup = board.g(patternPath, patternPath2);
+		var pattern = patternGroup.pattern(0,0,56, 100);
+		return pattern;
+	}
 }
 
-function createRectangleString(a, b, c, d){
-	return "M"+a.x+","+a.y+"L"+b.x+","+b.y+"L"+c.x+","+c.y+"L"+d.x+","+d.y+"L"+a.x+","+a.y;
+function createRoads (board, roadWidth){
+	hexagons.forEach(function(hexagon){
+		createRoadsForHex(board, hexagon, roadWidth, hexagons);
+	});
 }
+
 
 
