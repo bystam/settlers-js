@@ -1,4 +1,4 @@
-function createRoadsForHex(board, hex, roadWidth, hexagons){
+function createCitiesForHex(board, hex, roadWidth, hexagons){
 	var points = getHexCorners(hex);
 
 	if(hex.neighbours.n === undefined){
@@ -45,79 +45,4 @@ function createRoadsForHex(board, hex, roadWidth, hexagons){
 		var fourthPoint = {x:points[5].x+roadWidth, y:points[5].y+(roadWidth/2)};
 		createRoadShape(board, hex, null, createRectangleString(points[5], points[6], thirdPoint, fourthPoint));
 	}
-}
-
-function createRoadShape (board, hex, neighbour, rectangleString){
-	var first = hex.boardIndex, second = hex.boardIndex;
-	if(neighbour !== null){
-		var first = hex.boardIndex < neighbour.boardIndex ? hex.boardIndex : neighbour.boardIndex;
-		var second = hex.boardIndex > neighbour.boardIndex ? hex.boardIndex : neighbour.boardIndex;
-	}
-	var roadKey = ""+first+","+second;
-
-	var road = board.path(rectangleString);
-	road.attr({
-		fill:"transparent"
-	});
-	socket.on(serverCommands.canBuildRoad, function(data){
-			if(data.type === "click"){
-				if(data.allowed)
-					placeRoad(road);
-			} if(data.type === "hover"){
-				if(data.allowed)
-					drawBorder(road, "green", 4);
-				else
-					drawBorder(road, "red", 4);
-			}
-		});
-
-	road.click(function(){
-		console.log("Road clicked between hex "+roadKey);
-		socket.emit(serverCommands.canBuildRoad, {key:roadKey, type:"click"});
-		//remove when backend is done
-		if(canPlaceRoad (roadKey)){
-			placeRoad (road);
-		} else{
-			alert("can't build road there");
-		}
-		//////////////
-	});
-
-	road.hover(function(){
-		socket.emit(serverCommands.canBuildRoad, {key:roadKey, type:"hover"})
-		//remove when backend is done
-		var color = canPlaceRoad(roadKey) ? "green" : "red";
-		road.attr({
-			stroke:color,
-			strokeWidth:4
-		});
-		/////////////////
-	}, function(){
-		// hover out
-		road.attr({
-			stroke:"transparent"
-		});
-	})
-}
-
-function createRectangleString(a, b, c, d){
-	return "M"+a.x+","+a.y+"L"+b.x+","+b.y+"L"+c.x+","+c.y+"L"+d.x+","+d.y+"L"+a.x+","+a.y;
-}
-
-function canPlaceRoad(key){
-	if(Math.random() > 0.5)
-		return true;
-	return false;}
-
-function placeRoad (road){
-	road.hover(function(){
-		console.log("hovering in on built road...");
-	}, function(){
-		console.log("hovering out on built road...");
-	})
-	road.attr({
-		stroke:"lightblue",
-		strokeWidth:3,
-		fill:"blue"
-	});
 }

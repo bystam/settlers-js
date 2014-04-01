@@ -56,7 +56,11 @@ function createEmptyBoard(){
 	hexagons.forEach(function(hexagon){
 		createRoadsForHex(board, hexagon, roadWidth, hexagons);
 	});
-
-	
-	// createCityDivs ();
+	var cityRadius = 50;
+	// hexagons.forEach(function(hexagon){
+	// 	createCitiesForHex(board, hexagon, cityRadius, hexagons);
+	// });
+	// createCardsForExistingPlayers()
+	// createDice()
+	// createExtras()
 }

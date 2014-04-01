@@ -1,55 +1,55 @@
-function setNeighboursOfHex (hex){
+function setneighboursOfHex (hex){
 	hex.neighbours= {};
 	var index = hex.boardIndex;
-	var top = -5;
-	var bottom = 5;
-	var topLeft = -3;
-	var bottomLeft = 2;
-	var topRight = -2;
-	var bottomRight = 3;
+	var n = -5;
+	var s = 5;
+	var nw = -3;
+	var sw = 2;
+	var ne = -2;
+	var se = 3;
 
 	if(index === 0){
-		bottom--;
-		bottomLeft--;
-		bottomRight--;
+		s--;
+		sw--;
+		se--;
 	}
 	if(index === 1)
-		topRight++;
+		ne++;
 	if(index === 2)
-		topLeft++;
+		nw++;
 	if(index === 4)
-		top++;
+		n++;
 	if(index === 18){
-		topLeft++;
-		top++;
-		topRight++;
+		nw++;
+		n++;
+		ne++;
 	}
 	if(index === 16)
-		bottomRight--;
+		se--;
 	if(index === 14)
-		bottom--;
+		s--;
 	if(index === 17)
-		bottomLeft--;
+		sw--;
 
-	var topLess = [0,1,2,3,5];
-	var topLeftLess = [0,1,3,8,13];
-	var topRightLess = [0,2,5,10,15];
-	var bottomLess = [13,15,16,17,18];
-	var bottomLeftLess = [3,8,13,16,18];
-	var bottomRightLess = [5,10,15,17,18];
+	var nLess = [0,1,2,3,5];
+	var nwLess = [0,1,3,8,13];
+	var neLess = [0,2,5,10,15];
+	var sLess = [13,15,16,17,18];
+	var swLess = [3,8,13,16,18];
+	var seLess = [5,10,15,17,18];
 
-	if(topLess.indexOf(index) === -1)
-		hex.neighbours.top = index + top;
-	if(topLeftLess.indexOf(index) === -1)
-		hex.neighbours.topLeft = index + topLeft;
-	if(topRightLess.indexOf(index) === -1)
-		hex.neighbours.topRight = index + topRight;
-	if(bottomLess.indexOf(index) === -1)
-		hex.neighbours.bottom = index + bottom;
-	if(bottomLeftLess.indexOf(index) === -1)
-		hex.neighbours.bottomLeft = index + bottomLeft;
-	if(bottomRightLess.indexOf(index) === -1)
-		hex.neighbours.bottomRight = index + bottomRight;
+	if(nLess.indexOf(index) === -1)
+		hex.neighbours.n = index + n;
+	if(nwLess.indexOf(index) === -1)
+		hex.neighbours.nw = index + nw;
+	if(neLess.indexOf(index) === -1)
+		hex.neighbours.ne = index + ne;
+	if(sLess.indexOf(index) === -1)
+		hex.neighbours.s = index + s;
+	if(swLess.indexOf(index) === -1)
+		hex.neighbours.sw = index + sw;
+	if(seLess.indexOf(index) === -1)
+		hex.neighbours.se = index + se;
 }
 
 function createHexRow(board, size, startX, ycoord, hexRadius, xJump){
@@ -59,8 +59,8 @@ function createHexRow(board, size, startX, ycoord, hexRadius, xJump){
 		var hexagon = createHex(board, index, xcoord, ycoord, colors[game.board.hexes[index].type], hexRadius);
 		if(game.board.hexes[index].token !== null)
 			drawNumberOnHex (board, xcoord+hexRadius, ycoord + hexRadius, game.board.hexes[index].token.value);
-		// hexagon.neighbours = game.board.hexes[index].neighbours //USE THIS LATER
-		setNeighboursOfHex (hexagon);
+		// hexagon.neighbours = game.board.hexes[index].neighbours //Use THIS LATER
+		setneighboursOfHex (hexagon);
 
 		// debug corner indices
 		var cornerNo = 0;
