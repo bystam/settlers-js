@@ -108,7 +108,6 @@ Snap.plugin(function(Snap, Element, Paper, glob) {
       originCenter = false;
     }
     points = [];
-    console.log("x:"+x+", y:"+y);
     radius = r - (roundness / 2);
     for (i = 0; i <= 6; i++) {
       angle = i * 2 * -Math.PI / 6 + Math.degToRad(a);
