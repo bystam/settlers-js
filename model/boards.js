@@ -91,11 +91,31 @@ function shuffle(array) {
         index = Math.floor(Math.random() * counter);
         counter--;
 
-
         temp = array[counter];
         array[counter] = array[index];
         array[index] = temp;
     }
-
     return array;
 }
+
+var neighborStructure = [
+	{n: null, ne: null; se: 2, s: 4, sw: 1, nw:null},			// 0
+	{n: null, ne: 0; se: 4, s: 6, sw: 3, nw:null},	// 1
+	{n: 0, ne: 2; se: 7, s: null, sw: null, nw:null},	// 2
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 3
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 4
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 5
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 6
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 7
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 8
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 9
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 10
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 11
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 12
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 13
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 14
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 15
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 16
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null},	// 17
+	{n: null, ne: null; se: null, s: null, sw: null, nw:null}	// 18
+]
