@@ -18,11 +18,11 @@ app.get('/', function(req, res) {
 
 app.post('/create', function(req, res) {
 	var room = rooms.createNewRoom();
-	res.render('showLink.jade', { room: room })
+	res.render('link', { room: room })
 });
 
 app.get('/:room', function(req, res) {
-	res.render('game.jade', {});
+	res.render('game', {});
 });
 
 // start server listening

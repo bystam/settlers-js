@@ -1,6 +1,4 @@
-body {
-	background-image: url("../img/startupplank.jpg");
-}
+@import url("template.css");
 
 #board {
 	margin-right: auto;
