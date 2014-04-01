@@ -27,12 +27,7 @@ var generateRandomMap = function () {
 	shuffle(hexes);
 	var tokens = getTokens();
 	shuffle(tokens);
-	for (var i = 0; i < 19; i++) {
-		if (hexes[i].type === 'desert')
-			hexes[i].token = null;
-		else
-			hexes[i].token = tokens.pop();
-	}
+	placeTokensOnHexes(tokens, hexes)
 	this.hexes = hexes;
 }
 
@@ -82,6 +77,15 @@ function getTokens() {
 		tokens.push({value: i})
 	}
 	return tokens;
+}
+
+function placeTokensOnHexes(tokens, hexes) {
+	for (var i = 0; i < 19; i++) {
+		if (hexes[i].type === 'desert')
+			hexes[i].token = null;
+		else
+			hexes[i].token = tokens.pop();
+	}
 }
 
 function shuffle(array) {
