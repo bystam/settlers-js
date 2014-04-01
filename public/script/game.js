@@ -31,9 +31,9 @@ $ (document).ready(function(){
 
 function createEmptyBoard(){
 	var board = Snap("#board");
-	var hexRadius = 50.0; //50.0
+	var hexRadius = 50.0;
 	//we want to control road width & height with these
-	var yMargin = 8.0;
+	var yMargin = 6.0;
 	var xMargin = yMargin / Math.cos(30);
 	var yJump = hexRadius - yMargin;
 	var xJump = hexRadius*4 - xMargin;
@@ -50,7 +50,7 @@ function createEmptyBoard(){
 	createRow(board,2,middle-(xJump/2),yPadding+yJump*7, hexRadius, xJump);
 	createRow(board,1,middle,yPadding+yJump*8, hexRadius, xJump);
 
-	var roadWidth = (yMargin*4)+1;
+	var roadWidth = yMargin;
 	hexagons.forEach(function(hexagon){
 		createRoadsForHex(board, hexagon, roadWidth, hexagons);
 	});
@@ -64,7 +64,7 @@ function createRow(board, size, startX, ycoord, hexRadius, xJump){
 		var hexagon = createHex(board, index, xcoord, ycoord, colors[game.board.hexes[index].type], hexRadius);
 		if(game.board.hexes[index].token !== null)
 			drawNumberOnHex (board, xcoord+hexRadius, ycoord + hexRadius, index);//game.board.hexes[index].token.value
-		//hexagon.neighbours = game.board.hexes[index].neighbours USE THIS LATER
+		// hexagon.neighbours = game.board.hexes[index].neighbours //USE THIS LATER
 		setNeighboursOfHex (hexagon);
 
 		// debug corner indices
