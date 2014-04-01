@@ -63,11 +63,11 @@ function createHexRow(board, size, startX, ycoord, hexRadius, xJump){
 		setneighboursOfHex (hexagon);
 
 		// debug corner indices
-		var cornerNo = 0;
-		getHexCorners(hexagon).forEach (function(entry){
-			board.text(entry.x, entry.y, cornerNo);
-			cornerNo++;
-		});
+		// var cornerNo = 0;
+		// getHexCorners(hexagon).forEach (function(entry){
+		// 	board.text(entry.x, entry.y, cornerNo);
+		// 	cornerNo++;
+		// });
 		// /////////////////
 		hexagons.push(hexagon);
 	}

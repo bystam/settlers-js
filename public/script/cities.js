@@ -1,48 +1,101 @@
-function createCitiesForHex(board, hex, roadWidth, hexagons){
+function createCitiesForHex(board, hex, cityRadius, hexagons){
 	var points = getHexCorners(hex);
+	//create ne city at all hexes...
+	var coords = {x:(parseInt(points[1].x)+2), y:(parseInt(points[1].y)-2)}
+	createCityShape(board, coords, hex, [hex.neighbours.n, hex.neighbours.ne], cityRadius);
 
-	if(hex.neighbours.n === undefined){
-		var thirdPoint = {x:points[2].x, y:points[2].y-roadWidth};
-		var fourthPoint = {x:points[1].x, y:thirdPoint.y};
-		createRoadShape(board, hex, null, createRectangleString(points[1], points[2], thirdPoint, fourthPoint));
-	}
-	else{
-		var neighbourPoints = getHexCorners(hexagons[hex.neighbours.n]);
-		createRoadShape (board, hex, hexagons[hex.neighbours.n], createRectangleString(points[1], points[2], neighbourPoints[4], neighbourPoints[5]));
-	}
+	//create sw city at all hexes
+	var coords = {x:(parseInt(points[4].x)-2), y:(parseInt(points[4].y)+2)}
+	createCityShape(board, coords, hex, [hex.neighbours.sw, hex.neighbours.s], cityRadius);
+
 	if(hex.neighbours.s === undefined){
-		var thirdPoint = {x:points[4].x, y:points[4].y+roadWidth};
-		var fourthPoint = {x:points[5].x, y:thirdPoint.y};
-		createRoadShape(board, hex, null, createRectangleString(points[5], points[4], thirdPoint, fourthPoint));
+		//create SE city
+		var coords = {x:(parseInt(points[5].x)+2), y:(parseInt(points[5].y)-2)}
+		createCityShape(board, coords, hex, [hex.neighbours.se, undefined], cityRadius);
 	}
-	if(hex.neighbours.nw === undefined){
-		var thirdPoint = {x:points[3].x-roadWidth, y:points[3].y-(roadWidth/2)};
-		var fourthPoint = {x:points[2].x-roadWidth, y:points[2].y-(roadWidth/2)};
-		createRoadShape(board, hex, null, createRectangleString(points[2], points[3], thirdPoint, fourthPoint));
+	if(hex.neighbours.n === undefined){
+		//create nw city
+		var coords = {x:(parseInt(points[2].x)-2), y:(parseInt(points[2].y)-2)}
+		createCityShape(board, coords, hex, [hex.neighbours.nw, undefined], cityRadius);
 	}
-	else{
-		var neighbourPoints = getHexCorners(hexagons[hex.neighbours.nw]);
-		createRoadShape (board, hex, hexagons[hex.neighbours.nw], createRectangleString(points[2], points[3], neighbourPoints[5], neighbourPoints[6]));
+	if(hex.neighbours.sw === undefined && hex.neighbours.nw === undefined){
+		//create w city
+		var coords = {x:(parseInt(points[3].x)-2), y:(parseInt(points[3].y))}
+		createCityShape(board, coords, hex, [undefined, undefined], cityRadius);
 	}
-	if(hex.neighbours.ne === undefined){
-		var thirdPoint = {x:points[6].x+roadWidth, y:points[6].y-(roadWidth/2)};
-		var fourthPoint = {x:points[1].x+roadWidth, y:points[1].y-(roadWidth/2)};
-		createRoadShape(board, hex, null, createRectangleString(points[1], points[6], thirdPoint, fourthPoint));
-	}
-	else{
-		var neighbourPoints = getHexCorners(hexagons[hex.neighbours.ne]);
-		createRoadShape (board, hex, hexagons[hex.neighbours.ne], createRectangleString(points[1], points[6], neighbourPoints[4], neighbourPoints[3]));
-	}
-
-	if(hex.neighbours.sw === undefined){
-		var thirdPoint = {x:points[4].x-roadWidth, y:points[4].y+(roadWidth/2)};
-		var fourthPoint = {x:points[3].x-roadWidth, y:points[3].y+(roadWidth/2)};
-		createRoadShape(board, hex, null, createRectangleString(points[3], points[4], thirdPoint, fourthPoint));
-	}
-
-	if(hex.neighbours.se === undefined){
-		var thirdPoint = {x:points[6].x+roadWidth, y:points[6].y+(roadWidth/2)};
-		var fourthPoint = {x:points[5].x+roadWidth, y:points[5].y+(roadWidth/2)};
-		createRoadShape(board, hex, null, createRectangleString(points[5], points[6], thirdPoint, fourthPoint));
+	if(hex.neighbours.se === undefined && hex.neighbours.ne === undefined){
+		//create e city
+		var coords = {x:(parseInt(points[6].x)+2), y:(parseInt(points[6].y))}
+		createCityShape(board, coords, hex, [undefined, undefined], cityRadius);
 	}
 }
+
+function createCityShape (board, coords, hex, neighbours, radius){
+	var first = hex.boardIndex, second = hex.boardIndex, third = hex.boardIndex;
+	if(neighbours !== null){
+		first = neighbours[0]; second = neighbours[1]; 
+	}
+	var cityKey = ""+first+","+second+","+third; //maybe replace with a proper coord system...
+	var city = board.circle(coords.x, coords.y, radius);
+	city.attr({
+		fill:"transparent"
+	});
+	socket.on(serverCommands.canBuildCity, function(data){
+			if(data.type === "click"){
+				if(data.allowed)
+					placeCity(city);
+			} if(data.type === "hover"){
+				if(data.allowed)
+					drawBorder(city, "green", 4);
+				else
+					drawBorder(city, "red", 4);
+			}
+		});
+
+	city.click(function(){
+		console.log("City clicked between hex "+cityKey);
+		socket.emit(serverCommands.canBuildCity, {key:cityKey, type:"click"});
+		//remove when backend is done
+		if(canPlaceCity (cityKey)){
+			placeCity (city);
+		} else{
+			console.log("can't build city there");
+		}
+		//////////////
+	});
+
+	city.hover(function(){
+		socket.emit(serverCommands.canBuildCity, {key:cityKey, type:"hover"})
+		//remove when backend is done
+		var color = canPlaceCity(cityKey) ? "green" : "red";
+		city.attr({
+			stroke:color,
+			strokeWidth:4
+		});
+		/////////////////
+	}, function(){
+		// hover out
+		city.attr({
+			stroke:"transparent"
+		});
+	})
+}
+
+function canPlaceCity(key){
+	if(Math.random() > 0.5)
+		return true;
+	return false;}
+
+function placeCity (road){
+	road.hover(function(){
+		console.log("hovering in on built city...");
+	}, function(){
+		console.log("hovering out on built city...");
+	})
+	road.attr({
+		stroke:"lightblue",
+		strokeWidth:3,
+		fill:"blue"
+	});
+}
+
