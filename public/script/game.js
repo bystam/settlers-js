@@ -33,8 +33,8 @@ function createEmptyBoard(){
 	var board = Snap("#board");
 	var hexRadius = 50.0;
 	//we want to control road width & height with these
-	var yMargin = 6.0;
-	var xMargin = yMargin / Math.cos(30);
+	var yMargin = 3.0;
+	var xMargin = yMargin / Math.cos(29.918);
 	var yJump = hexRadius - yMargin;
 	var xJump = hexRadius*4 - xMargin;
 	var middle = 350.0;
@@ -50,7 +50,7 @@ function createEmptyBoard(){
 	createRow(board,2,middle-(xJump/2),yPadding+yJump*7, hexRadius, xJump);
 	createRow(board,1,middle,yPadding+yJump*8, hexRadius, xJump);
 
-	var roadWidth = yMargin;
+	var roadWidth = 10-yMargin;
 	hexagons.forEach(function(hexagon){
 		createRoadsForHex(board, hexagon, roadWidth, hexagons);
 	});
