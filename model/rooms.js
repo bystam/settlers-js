@@ -24,10 +24,10 @@ function newConnection (socket) {
 			sätt upp lyssnare på eventsen (registerConnection)
 		*/
 	
-		// if(!games[room] || games[room].players.length === 4) {
-		// 	socket.emit('room-404', {room: room});
-		// 	return;
-		// }
+		if(!games[room] || games[room].players.length === 4) {
+			socket.emit('room-404', {room: room});
+			return;
+		}
 
 		var playerId = games[room].players.length;
 		registerConnection(socket, room, playerId);
