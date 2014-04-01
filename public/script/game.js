@@ -1,7 +1,9 @@
 
 var game = null;
 var hexagons = [];
+var socket;
 var colors = {'field':'#FFE658', 'forest':'#126B32', 'pasture':'#6DD572', 'mountain':'#5E707A', 'hill':'#E03634', 'desert':'#D5CC6A'};
+var serverCommands = {canBuildRoad:"canBuildRoad"};
 function populateGameWithLogic(game) {
 	game.addPlayer = function(playerId) {
 		game.players.push(playerId);
@@ -10,7 +12,7 @@ function populateGameWithLogic(game) {
 
 $ (document).ready(function(){
 	var roomUrl = window.location.href.split("/").pop();
-	var socket = io.connect('http://localhost:5000');
+	socket = io.connect('http://localhost:5000');
 	socket.emit("room", {playerId:Math.random(), room:roomUrl})
 	socket.on("game-joined", function(gameState){
 		populateGameWithLogic(gameState);
@@ -100,35 +102,6 @@ function createHex (board, index, x, y, color, radius){
 	return hex;
 }
 
-function createRoadShape (board, hex, neighbour, rectangleString){
-	var first = hex.boardIndex, second = hex.boardIndex;
-	if(neighbour !== null){
-		var first = hex.boardIndex < neighbour.boardIndex ? hex.boardIndex : neighbour.boardIndex;
-		var second = hex.boardIndex > neighbour.boardIndex ? hex.boardIndex : neighbour.boardIndex;
-	}
-	var roadKey = ""+first+","+second;
-
-	var road = board.path(rectangleString);
-	road.attr({
-		fill:"transparent"
-	});
-	road.click(function(){
-		console.log("Road clicked between hex "+roadKey);
-	});
-	road.hover(function(){
-		// hover in
-		road.attr({
-			stroke:"green",
-			strokeWidth:3
-		});
-	}, function(){
-		// hover out
-		road.attr({
-			stroke:"transparent"
-		});
-	})
-}
-
 function getExamplePattern(board, player){
 	if(player === null){
 		var patternPath = board.path("M28,66L0,50L0,16L28,0L56,16L56,50L28,66L28,100");
@@ -148,5 +121,3 @@ function getExamplePattern(board, player){
 		return pattern;
 	}
 }
-
-
