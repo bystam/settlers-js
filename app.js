@@ -13,10 +13,10 @@ rooms.init(server);
 
 // setup root route
 app.get('/', function(req, res) {
-	res.render('createGame.jade', {});
+	res.render('create', {});
 });
 
-app.post('/createGame', function(req, res) {
+app.post('/create', function(req, res) {
 	var room = rooms.createNewRoom();
 	res.render('showLink.jade', { room: room })
 });
