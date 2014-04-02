@@ -88,7 +88,7 @@ function createHex (board, index, x, y, color, radius){
 	var hex = board.hex(r, a = 0, roundness = 0, originCenter = false, x, y);
 	hex.attr({
 		fill:color,
-		strokeWidth: 2,
+		strokeWidth: 1,
 		stroke: "#000"
 	});
 	hex.boardIndex = index;

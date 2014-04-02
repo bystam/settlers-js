@@ -9,21 +9,3 @@
 	display:block;
 	position: relative;
 }
-
-.road {
-	position:absolute;
-	width:10px;
-	height:45px;
-	background:blue;
-	visibility: hidden;
-}
-
-.road .onHover {
-	border:3px solid black;
-	visibility: visible;
-}
-
-.horizontal {
-	width:55px;
-	height:8px;
-}

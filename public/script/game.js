@@ -59,7 +59,7 @@ function createEmptyBoard(){
 	});
 	var cityRadius = 10;
 	hexagons.forEach(function(hexagon){
-		createCitiesForHex(board, hexagon, cityRadius, hexagons);
+		createCitiesForHex(board, hexagon, cityRadius);
 	});
 	// createCardsForExistingPlayers()
 	// createDice()

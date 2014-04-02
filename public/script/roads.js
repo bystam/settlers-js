@@ -1,53 +1,54 @@
 function createRoadsForHex(board, hex, roadWidth, hexagons){
-	var points = getHexCorners(hex);
-
+	var corners = getHexCorners(hex);
 	if(hex.neighbours.n === undefined){
-		var thirdPoint = {x:points[2].x, y:points[2].y-roadWidth};
-		var fourthPoint = {x:points[1].x, y:thirdPoint.y};
-		createRoadShape(board, hex, null, createRectangleString(points[1], points[2], thirdPoint, fourthPoint));
+		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, "north"));
 	}
 	else{
-		var neighbourPoints = getHexCorners(hexagons[hex.neighbours.n]);
-		createRoadShape (board, hex, hexagons[hex.neighbours.n], createRectangleString(points[1], points[2], neighbourPoints[4], neighbourPoints[5]));
-	}
-	if(hex.neighbours.s === undefined){
-		var thirdPoint = {x:points[4].x, y:points[4].y+roadWidth};
-		var fourthPoint = {x:points[5].x, y:thirdPoint.y};
-		createRoadShape(board, hex, null, createRectangleString(points[5], points[4], thirdPoint, fourthPoint));
+		var neighbourcorners = getHexCorners(hexagons[hex.neighbours.n]);
+		createRoadShape (board, hex, hexagons[hex.neighbours.n], [corners[1], corners[2], neighbourcorners[4], neighbourcorners[5]]);
 	}
 	if(hex.neighbours.nw === undefined){
-		var thirdPoint = {x:points[3].x-roadWidth, y:points[3].y-(roadWidth/2)};
-		var fourthPoint = {x:points[2].x-roadWidth, y:points[2].y-(roadWidth/2)};
-		createRoadShape(board, hex, null, createRectangleString(points[2], points[3], thirdPoint, fourthPoint));
+		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, "northwest"));
 	}
 	else{
-		var neighbourPoints = getHexCorners(hexagons[hex.neighbours.nw]);
-		createRoadShape (board, hex, hexagons[hex.neighbours.nw], createRectangleString(points[2], points[3], neighbourPoints[5], neighbourPoints[6]));
+		var neighbourcorners = getHexCorners(hexagons[hex.neighbours.nw]);
+		createRoadShape (board, hex, hexagons[hex.neighbours.nw], [corners[2], corners[3], neighbourcorners[5], neighbourcorners[6]]);
 	}
 	if(hex.neighbours.ne === undefined){
-		var thirdPoint = {x:points[6].x+roadWidth, y:points[6].y-(roadWidth/2)};
-		var fourthPoint = {x:points[1].x+roadWidth, y:points[1].y-(roadWidth/2)};
-		createRoadShape(board, hex, null, createRectangleString(points[1], points[6], thirdPoint, fourthPoint));
+		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, "northeast"));
 	}
 	else{
-		var neighbourPoints = getHexCorners(hexagons[hex.neighbours.ne]);
-		createRoadShape (board, hex, hexagons[hex.neighbours.ne], createRectangleString(points[1], points[6], neighbourPoints[4], neighbourPoints[3]));
+		var neighbourcorners = getHexCorners(hexagons[hex.neighbours.ne]);
+		createRoadShape (board, hex, hexagons[hex.neighbours.ne], [corners[1], corners[6], neighbourcorners[4], neighbourcorners[3]]);
 	}
-
-	if(hex.neighbours.sw === undefined){
-		var thirdPoint = {x:points[4].x-roadWidth, y:points[4].y+(roadWidth/2)};
-		var fourthPoint = {x:points[3].x-roadWidth, y:points[3].y+(roadWidth/2)};
-		createRoadShape(board, hex, null, createRectangleString(points[3], points[4], thirdPoint, fourthPoint));
-	}
-
-	if(hex.neighbours.se === undefined){
-		var thirdPoint = {x:points[6].x+roadWidth, y:points[6].y+(roadWidth/2)};
-		var fourthPoint = {x:points[5].x+roadWidth, y:points[5].y+(roadWidth/2)};
-		createRoadShape(board, hex, null, createRectangleString(points[5], points[6], thirdPoint, fourthPoint));
-	}
+	if(hex.neighbours.s === undefined)
+		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, "south"));
+	if(hex.neighbours.sw === undefined)
+		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, "southwest"));
+	if(hex.neighbours.se === undefined)
+		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, "southeast"));
 }
 
-function createRoadShape (board, hex, neighbour, rectangleString){
+//calculate points for a road without a neighbour
+function getCoordsForRoad (corners, roadWidth, direction){
+	if(direction === "north")
+		return [corners[1], corners[2], {x:corners[2].x, y:corners[2].y-roadWidth}, {x:corners[1].x, y:corners[2].y-roadWidth}];
+	if(direction === "south")
+		return [corners[5], corners[4], {x:corners[4].x, y:corners[4].y+roadWidth}, {x:corners[5].x, y:corners[4].y+roadWidth}];
+	if(direction === "northwest")
+		return [corners[2], corners[3], {x:corners[3].x-roadWidth, y:corners[3].y-(roadWidth/2)}, {x:corners[2].x-roadWidth, y:corners[2].y-(roadWidth/2)}];
+	if(direction === "northeast")
+		return [corners[1], corners[6], {x:corners[6].x+roadWidth, y:corners[6].y-(roadWidth/2)}, {x:corners[1].x+roadWidth, y:corners[1].y-(roadWidth/2)}];
+	if(direction === "southwest")
+		return [corners[3], corners[4], {x:corners[4].x-roadWidth, y:corners[4].y+(roadWidth/2)}, {x:corners[3].x-roadWidth, y:corners[3].y+(roadWidth/2)}];
+	if(direction === "southeast")
+		return [corners[5], corners[6], {x:corners[6].x+roadWidth, y:corners[6].y+(roadWidth/2)}, {x:corners[5].x+roadWidth, y:corners[5].y+(roadWidth/2)}];
+}
+
+
+
+function createRoadShape (board, hex, neighbour, coords){
+	var shapePath = createRectangleStringFromArray(coords);
 	var first = hex.boardIndex, second = hex.boardIndex;
 	if(neighbour !== null){
 		var first = hex.boardIndex < neighbour.boardIndex ? hex.boardIndex : neighbour.boardIndex;
@@ -55,7 +56,7 @@ function createRoadShape (board, hex, neighbour, rectangleString){
 	}
 	var roadKey = ""+first+","+second;
 
-	var road = board.path(rectangleString);
+	var road = board.path(shapePath);
 	road.attr({
 		fill:"transparent"
 	});
@@ -100,8 +101,8 @@ function createRoadShape (board, hex, neighbour, rectangleString){
 	})
 }
 
-function createRectangleString(a, b, c, d){
-	return "M"+a.x+","+a.y+"L"+b.x+","+b.y+"L"+c.x+","+c.y+"L"+d.x+","+d.y+"L"+a.x+","+a.y;
+function createRectangleStringFromArray(coords){
+	return "M"+coords[0].x+","+coords[0].y+"L"+coords[1].x+","+coords[1].y+"L"+coords[2].x+","+coords[2].y+"L"+coords[3].x+","+coords[3].y+"L"+coords[0].x+","+coords[0].y;
 }
 
 function canPlaceRoad(key){
