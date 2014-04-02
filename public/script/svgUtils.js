@@ -1,3 +1,5 @@
+
+direction = {n:"north", s:"south", nw:"northwest", ne:"northeast", sw:"southwest", se:"southeast"}; //"enum"
 function drawFill (element, fillWith){
 	element.attr({
 		fill: fillWith

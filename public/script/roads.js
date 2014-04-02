@@ -1,47 +1,47 @@
 function createRoadsForHex(board, hex, roadWidth, hexagons){
 	var corners = getHexCorners(hex);
 	if(hex.neighbours.n === undefined){
-		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, "north"));
+		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, direction.n));
 	}
 	else{
 		var neighbourcorners = getHexCorners(hexagons[hex.neighbours.n]);
 		createRoadShape (board, hex, hexagons[hex.neighbours.n], [corners[1], corners[2], neighbourcorners[4], neighbourcorners[5]]);
 	}
 	if(hex.neighbours.nw === undefined){
-		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, "northwest"));
+		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, direction.nw));
 	}
 	else{
 		var neighbourcorners = getHexCorners(hexagons[hex.neighbours.nw]);
 		createRoadShape (board, hex, hexagons[hex.neighbours.nw], [corners[2], corners[3], neighbourcorners[5], neighbourcorners[6]]);
 	}
 	if(hex.neighbours.ne === undefined){
-		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, "northeast"));
+		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, direction.ne));
 	}
 	else{
 		var neighbourcorners = getHexCorners(hexagons[hex.neighbours.ne]);
 		createRoadShape (board, hex, hexagons[hex.neighbours.ne], [corners[1], corners[6], neighbourcorners[4], neighbourcorners[3]]);
 	}
 	if(hex.neighbours.s === undefined)
-		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, "south"));
+		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, direction.s));
 	if(hex.neighbours.sw === undefined)
-		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, "southwest"));
+		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, direction.sw));
 	if(hex.neighbours.se === undefined)
-		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, "southeast"));
+		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, direction.se));
 }
 
 //calculate points for a road without a neighbour
-function getCoordsForRoad (corners, roadWidth, direction){
-	if(direction === "north")
+function getCoordsForRoad (corners, roadWidth, facing){
+	if(facing === direction.n)
 		return [corners[1], corners[2], {x:corners[2].x, y:corners[2].y-roadWidth}, {x:corners[1].x, y:corners[2].y-roadWidth}];
-	if(direction === "south")
+	if(facing === direction.s)
 		return [corners[5], corners[4], {x:corners[4].x, y:corners[4].y+roadWidth}, {x:corners[5].x, y:corners[4].y+roadWidth}];
-	if(direction === "northwest")
+	if(facing === direction.nw)
 		return [corners[2], corners[3], {x:corners[3].x-roadWidth, y:corners[3].y-(roadWidth/2)}, {x:corners[2].x-roadWidth, y:corners[2].y-(roadWidth/2)}];
-	if(direction === "northeast")
+	if(facing === direction.ne)
 		return [corners[1], corners[6], {x:corners[6].x+roadWidth, y:corners[6].y-(roadWidth/2)}, {x:corners[1].x+roadWidth, y:corners[1].y-(roadWidth/2)}];
-	if(direction === "southwest")
+	if(facing === direction.sw)
 		return [corners[3], corners[4], {x:corners[4].x-roadWidth, y:corners[4].y+(roadWidth/2)}, {x:corners[3].x-roadWidth, y:corners[3].y+(roadWidth/2)}];
-	if(direction === "southeast")
+	if(facing === direction.se)
 		return [corners[5], corners[6], {x:corners[6].x+roadWidth, y:corners[6].y+(roadWidth/2)}, {x:corners[5].x+roadWidth, y:corners[5].y+(roadWidth/2)}];
 }
 

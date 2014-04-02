@@ -30,6 +30,8 @@ function createCitiesForHex(board, hex, cityRadius){
 	}
 }
 
+
+
 function createCityShape (board, coords, hex, neighbours, radius){
 	var first = hex.boardIndex, second = hex.boardIndex, third = hex.boardIndex;
 	if(neighbours !== null){
