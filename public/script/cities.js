@@ -1,4 +1,22 @@
-var stashCoordinates = [{x:400,y:100}, {x:50,y:400}];
+var stashCoordinates = [{x:350,y:100}, {x:50,y:400}, {x:350, y:600}, {x:700, y:400}];
+var cityLocations = {};
+var stashLocations = {};
+//probably move the stash specific code out of here, stash.js ?
+function addStashLocation (board, playerId){
+	var numStashes = Object.keys(stashLocations).length;
+	var stashCoords = stashCoordinates[numStashes];
+	var cityShape = board.circle(stashCoords.x, stashCoords.y, 10);
+	cityShape.attr({
+		fill:"transparent"
+	})
+	stashLocations[playerId] = cityShape
+}
+
+function initializePlayerStashes (game, board){
+	game.players.forEach(function(playerId){
+		addStashLocation(board, playerId);
+	});
+}
 
 function createCitiesForHex(board, hex, cityRadius){
 	var corners = getHexCorners(hex);
@@ -43,39 +61,19 @@ function createCityShape (board, coords, hex, neighbours, radius){
 	city.attr({
 		fill:"transparent"
 	});
-	socket.on(serverCommands.canBuildCity, function(data){
-			if(data.type === "click"){
-				if(data.allowed)
-					placeCity(city);
-			} if(data.type === "hover"){
-				if(data.allowed)
-					drawBorder(city, "green", 4);
-				else
-					drawBorder(city, "red", 4);
-			}
-		});
 
+	cityLocations[cityKey] = city;
 	city.click(function(){
 		console.log("City clicked between hex "+cityKey);
-		socket.emit(serverCommands.canBuildCity, {key:cityKey, type:"click"});
-		//remove when backend is done
-		if(canPlaceCity (cityKey)){
-			placeCity (city, board);
-		} else{
-			console.log("can't build city there");
-		}
-		//////////////
+		socket.emit(serverCommands.canBuildCity, cityKey);
 	});
-
 	city.hover(function(){
-		socket.emit(serverCommands.canBuildCity, {key:cityKey, type:"hover"})
-		//remove when backend is done
+		//only do local check on hover
 		var color = canPlaceCity(cityKey) ? "green" : "red";
 		city.attr({
 			stroke:color,
 			strokeWidth:4
 		});
-		/////////////////
 	}, function(){
 		// hover out
 		city.attr({
@@ -84,23 +82,22 @@ function createCityShape (board, coords, hex, neighbours, radius){
 	})
 }
 
-
 function canPlaceCity(key){
 	return true;
 }
 
-function placeCity (city, board){
+function placeCity (coords, playerId){
+	console.log("coords: "+coords+", playerID: "+playerId);
+	var city = cityLocations[coords];
+	console.log(city);
 	var animX = parseFloat(city.attr("cx"));
 	console.log("animX: "+animX);
 	animX = animX-100;
-	city.hover(function(){
-		console.log("hovering in on built city...");
 
-	}, function(){
-		console.log("hovering out on built city...");
-	})
 	city.unclick(null);
-	var stashCity = board.circle(stashCoordinates[1].x, stashCoordinates[1].y, 10);
+	var stashCity = stashLocations[playerId];
+	console.log("stashCity:");
+	console.log(stashCity);
 	stashCity.attr({
 		stroke:"lightblue",
 			strokeWidth:3,

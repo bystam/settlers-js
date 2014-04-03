@@ -2,8 +2,7 @@ var game = null;
 var hexagons = [];
 var socket;
 var colors = {'field':'#FFE658', 'forest':'#126B32', 'pasture':'#6DD572', 'mountain':'#5E707A', 'hill':'#E03634', 'desert':'#D5CC6A'};
-
-var serverCommands = {canBuildRoad:"buildRoad", canBuildCity:"canBuildCity"};
+var serverCommands = {canBuildRoad:"buildRoad", canBuildCity:"buildSettlement"};
 function populateGameWithLogic(game) {
 	game.addPlayer = function(playerId) {
 		game.players.push(playerId);
@@ -64,8 +63,23 @@ function createEmptyBoard(){
 	hexagons.forEach(function(hexagon){
 		createCitiesForHex(board, hexagon, cityRadius);
 	});
+	initializePlayerStashes(game, board);
 	setServerResponseHandlers (socket);
 	// createCardsForExistingPlayers()
 	// createDice()
 	// createExtras()
+}
+
+function setServerResponseHandlers (socket){
+	socket.on(serverCommands.canBuildRoad, function(data){
+		if(data.allowed)
+			placeRoad(data.coords, data.playerId);
+	});
+	socket.on(serverCommands.canBuildCity, function(data){
+		console.log("building city from server");
+		console.log(data);
+		if(data.allowed)
+			placeCity(data.coords, data.playerId);
+	});
+
 }

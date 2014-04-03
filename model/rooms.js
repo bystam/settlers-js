@@ -49,5 +49,5 @@ function registerConnection (socket, room, playerId) {
 	socket.join(room);
 
 	players.registerNewPlayer(socket, room, playerId);
-	ruleset.init(socket, games[room], playerId);
+	ruleset.init(socket, room, games[room], playerId);
 }

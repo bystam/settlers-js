@@ -13,8 +13,8 @@ Place road:
 								-> Place road, give longest road if connection is longest(increment victory points)
 
 Place town:
-	Has towns left
-		No town present
+	No town present	
+		Has towns left
 			No town 2 roads away
 				First round
 					No conditions
@@ -23,7 +23,8 @@ Place town:
 				Connecting road
 					Has resources
 								-> Place town, increment victory points
-		Own town present
+	Own town present
+		Has cities left
 			Has resources
 								-> Place city, increment victory points
 								

@@ -1,3 +1,4 @@
+var roadLocations = {};
 function createRoadsForHex(board, hex, roadWidth, hexagons){
 	var corners = getHexCorners(hex);
 	if(hex.neighbours.n === undefined){
@@ -28,7 +29,6 @@ function createRoadsForHex(board, hex, roadWidth, hexagons){
 	if(hex.neighbours.se === undefined)
 		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, direction.se));
 }
-var roads = {};
 
 //calculate points for a road without a neighbour
 function getCoordsForRoad (corners, roadWidth, facing){
@@ -46,13 +46,6 @@ function getCoordsForRoad (corners, roadWidth, facing){
 		return [corners[5], corners[6], {x:corners[6].x+roadWidth, y:corners[6].y+(roadWidth/2)}, {x:corners[5].x+roadWidth, y:corners[5].y+(roadWidth/2)}];
 }
 
-function setServerResponseHandlers (socket){
-	socket.on(serverCommands.canBuildRoad, function(data){
-		if(data.allowed)
-			placeRoad(roads[data.coords], data.playerId);
-	});
-}
-
 function createRoadShape (board, hex, neighbour, coords){
 	var shapePath = createRectangleStringFromArray(coords);
 	var first = hex.boardIndex, second = hex.boardIndex;
@@ -66,7 +59,7 @@ function createRoadShape (board, hex, neighbour, coords){
 	road.attr({
 		fill:"transparent"
 	});
-	roads[roadKey] = road;
+	roadLocations[roadKey] = road;
 
 	road.click(function(){
 		console.log("Road clicked between hex "+roadKey);
@@ -94,7 +87,8 @@ function canPlaceRoad(key){
 		return true;
 	return false;}
 
-function placeRoad (road, playerId){
+function placeRoad (coords, playerId){
+	var road = roadLocations[coords];
 	//TODO here: map playerIds to colors and set...
 	road.hover(function(){
 		console.log("hovering in on built road...");

@@ -8,6 +8,7 @@ exports.Game = function(room) { // constructor
 	initPlayers(this);
 	this.privateCopyForPlayer = privateCopyForPlayer;
 	this.placeRoad = placeRoad;
+	this.placeSettlement = placeSettlement;
 }
 
 function initPlayers(game) {
@@ -20,6 +21,10 @@ function initPlayers(game) {
 }
 
 function placeRoad(coords, playerId){
+
+}
+
+function placeSettlement(coords, playerId){
 
 }
 
