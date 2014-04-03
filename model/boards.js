@@ -101,6 +101,10 @@ function shuffle(array) {
     return array;
 }
 
+var O = 1; // land
+var _ = 2; // dead non-existing space
+var W = 3; // water
+
 var defaultMap = {
 	brickTypes: [
 		{ type: 'field', resource: 'grain', amount: 4 },
@@ -111,14 +115,14 @@ var defaultMap = {
 		{ type: 'desert', resource: null, amount: 1 },
 	],
 	grid: [
-		[false, false, true, false, false],
-		[false, true, false, true, false],
-		[true, false, true, false, true],
-		[false, true, false, true, false],
-		[true, false, true, false, true],
-		[false, true, false, true, false],
-		[true, false, true, false, true],
-		[false, true, false, true, false],
-		[false, false, true, false, false]
+		[_, _, O, _, _],
+		[_, O, _, O, _],
+		[O, _, O, _, O],
+		[_, O, _, O, _],
+		[O, _, O, _, O],
+		[_, O, _, O, _],
+		[O, _, O, _, O],
+		[_, O, _, O, _],
+		[_, _, O, _, _]
 	]
 };
