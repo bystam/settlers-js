@@ -1,3 +1,11 @@
+/*
+	This module fills the purpose of a single object creating the
+	state structure for one entire game (in a single room).
+
+	This will contain all the different state required to access,
+	examine and mutate gamestate.
+*/
+
 var boards = require('./boards.js'),
 	stashes = require('./stash.js'),
 	ruleset = require('./ruleset.js');
