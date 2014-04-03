@@ -5,7 +5,7 @@ This represents the personal stash of items for a player, such as unused roads, 
 10) Twenty (20) Settlements (5 of Each Color Shaped like Houses).
 11) Sixty (60) Roads (15 of Each Color Shaped like Bars).
 
-The idea is that the stash is meant to be private for every user, and separate from the game state
+The idea is that the stash is meant to be private for every user
 */
 
 exports.Stash = function(playerId) {

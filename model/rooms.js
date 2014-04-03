@@ -1,11 +1,25 @@
+
+/*
+	The module that handles the combination of all other modules, containing the
+	main gamestate collection and all the different game "rooms"
+
+	This is responsible for initiating all other I/O modules with
+	the gamestates and io objects
+*/
+
 var io = require('socket.io'),
 	sessions = require('./sessions'),
 	gamestate = require('./gamestate'),
-	players = require('./players'),
-	ruleset = require('./ruleset'),
+	building = require('./event-io/building'),
+	players = require('./event-io/players'),
+	trades = require('./event-io/trades'),
+	turns = require('./event-io/turns'),
 	games = {};
 
+building.init(games, io);
 players.init(games, io);
+trades.init(games, io);
+turns.init(games, io);
 
 exports.init = function(server) {
 	io = io.listen(server, {log: false});
@@ -49,5 +63,5 @@ function registerConnection (socket, room, playerId) {
 	socket.join(room);
 
 	players.registerNewPlayer(socket, room, playerId);
-	ruleset.init(socket, room, games[room], playerId);
+	building.setupBuldingEvents(socket, room, playerId);
 }

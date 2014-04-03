@@ -1,4 +1,11 @@
-var playerQueue = require('../logic/player-queue');
+/*
+	The module that handles I/O events that are related to turn events.
+
+	Turn events are, for example, players clicking "end my turn", dice rolling and so on
+	(perhaps even resource giving based on cities?)
+*/
+
+//var playerQueue = require('../logic/player-queue');
 
 var games = null;
 var io = null;

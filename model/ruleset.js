@@ -1,3 +1,4 @@
+
 /*Defines the API and acts as a controller */
 //The controller part should probably be sliced into sections,
 //so that we can do socket.on("event", specificHandler.doEvent());
@@ -7,62 +8,37 @@
 //Idiot idea:
 //each query method could be configured into modularizable rules,
 //and then one could build an arbitrary ruleset from them...
-var costs = {road:[0,0,0,0,0], settlement:[0,0,0,0,0], city:[0,0,0,0,0], developmentCard:[0,0,0,0,0]}
-var buildingTypes = {road:"road", settlement:"settlements", city:"city"};
-exports.init = function(socket, room, game, playerId){
-	socket.on("buildRoad", function(coords){
-		var buildingOk = false;
-		if(hasInStash(game, playerId, buildingTypes.road)){
-			if(!roadExists(game,coords)){
-				if(isFirstRound(game, playerId)){
-					buildingOk = true;
-				} else if(isStartupPhase(game, playerId)){
-					if(hasConnecting(game,playerId, coords, buildingTypes.road) || 
-						hasConnecting(game, playerId, coords,buildingTypes.settlement))
-						buildingOk = true;
-				} else if(hasConnecting(game, playerId, coords, buildingTypes.road)){
-					if(hasResources(game, costs.road, playerId))
-						buildingOk = true;
-					else if(hasFreeRoads(game, playerId))
-						buildingOk = true;
-				}
-			}
-		}
-		if(buildingOk)
-			game.placeRoad (coords, playerId);
-		socket.emit("buildRoad", {playerId:playerId, coords:coords, allowed:buildingOk});
-	});
-
-	socket.on("buildSettlement", function(coords){
-		var buildingOk = false;
-		if(!settlementExists(game, coords)){
-			if(hasInStash(game, playerId, buildingTypes.settlement)){
-				if(!settlementInProximity(game, coords)){
-					if(isFirstRound(game, playerId))
-						buildingOk = true;
-					else if(isStartupPhase(game, playerId)){
-						if(hasConnecting(game, playerId, coords, buildingTypes.road))
-							buildingOk = true;
-					} else if(hasConnecting(game, playerId, coords, buildingTypes.road)){
-						if(hasResources(game, costs.settlement, playerId))
-							buildingOk = true;
-					}
-				}
-			}
-		} else if(settlementIsOwnedByPlayer(game, coords, playerId)){
-			if(hasInStash(game, playerId, buildingTypes.city)){
-				if(hasResources(game, costs.city, playerId))
-					buildingOk = true;
-			}
-		}
-		console.log("city allowed: "+buildingOk);
-		if(buildingOk)
-			game.placeSettlement(coords, playerId)
-		socket.emit("buildSettlement", {playerId:playerId, coords:coords, allowed:buildingOk});
-	});
-}
 
 // The methods below should probably be in gamestate.js, but when you assume...
+/*
+	Module suggestion:
+
+	this servers as the validator of actions and events based on gamestate
+
+	I/O modules can use this to validate events they receive before performing
+	gamestate mutation
+*/
+
+/*
+	Jag döpte maps.js till något dåligt (efter min allra första diskussion med nikbac), men tanken
+	var att den ska hantera alla typer av konstruktion i spelet. den heter building.js nu
+
+	ruleset.js känns som att det borde vara regel-validatorn för saker man gör, inte den
+	som faktiskt placerar vägen. jag föreställer mig alltså ett flöde likt det här
+
+	i building.js
+	socket.on('build-road', function(data) {
+		if (game.rules.roadBuildIsLegal(data))
+			buildRoad(data)
+	})
+
+	det finns fler saker som beror på regler, till exempel trades. om både vägbygge
+	och trading ska ligga i den här modulen kommer den bli knull
+*/
+
+exports.Rules = function(game) { // rules constructor
+	this.game = game;
+}
 
 function settlementInProximity(game, coords){
 	return false;
@@ -116,5 +92,6 @@ function isFirstRound(game, playerId){
 function roadExists (game, coords){
 	return false;
 }
+
 
 	

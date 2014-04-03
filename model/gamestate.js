@@ -1,14 +1,14 @@
 var boards = require('./boards.js'),
-	stashes = require('./stash.js');
+	stashes = require('./stash.js'),
+	ruleset = require('./ruleset.js');
 
 exports.Game = function(room) { // constructor
 	this.room = room;
-	this.board = new boards.Board();
-	this.board.generateRandomMap();
+	
 	initPlayers(this);
+	initBoard(this);
+	initRules(this);
 	this.privateCopyForPlayer = privateCopyForPlayer;
-	this.placeRoad = placeRoad;
-	this.placeSettlement = placeSettlement;
 }
 
 function initPlayers(game) {
@@ -20,15 +20,15 @@ function initPlayers(game) {
 	}
 }
 
-function placeRoad(coords, playerId){
-
+function initBoard(game) {
+	game.board = new boards.Board();
+	game.board.generateRandomMap();
 }
 
-function placeSettlement(coords, playerId){
-
+function initRules(game) {
+	game.rules = new ruleset.Rules(game);
 }
 
-// stämmer inte
 function privateCopyForPlayer(playerId) {
 	/*
 	1. public board
@@ -39,7 +39,19 @@ function privateCopyForPlayer(playerId) {
 	6. achievements
 	7. amount of building left
 	*/
-	var copy = JSON.parse(JSON.stringify(this));
-	delete copy.stashes;
+	var copy = {};
+	copy.room = this.room;
+	copy.board = this.board;
+	copy.players = this.players;
+	copy.privateStash = {}; // TODO!!!
 	return copy;
+}
+
+function clone(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
 }

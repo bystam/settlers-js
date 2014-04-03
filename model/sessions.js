@@ -1,5 +1,8 @@
-var crypto = require('crypto'),
-	io = require('socket.io');
+/*
+	The module that handles simple hash ID creation
+*/
+
+var crypto = require('crypto');
 
 var games = {};
 
