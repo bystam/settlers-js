@@ -1,33 +1,25 @@
 var roadLocations = {};
 function createRoadsForHex(board, hex, roadWidth, hexagons){
 	var corners = getHexCorners(hex);
-	if(hex.neighbours.n === undefined){
-		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, direction.n));
-	}
-	else{
-		var neighbourcorners = getHexCorners(hexagons[hex.neighbours.n]);
-		createRoadShape (board, hex, hexagons[hex.neighbours.n], [corners[1], corners[2], neighbourcorners[4], neighbourcorners[5]]);
-	}
-	if(hex.neighbours.nw === undefined){
-		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, direction.nw));
-	}
-	else{
-		var neighbourcorners = getHexCorners(hexagons[hex.neighbours.nw]);
-		createRoadShape (board, hex, hexagons[hex.neighbours.nw], [corners[2], corners[3], neighbourcorners[5], neighbourcorners[6]]);
-	}
-	if(hex.neighbours.ne === undefined){
-		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, direction.ne));
-	}
-	else{
-		var neighbourcorners = getHexCorners(hexagons[hex.neighbours.ne]);
-		createRoadShape (board, hex, hexagons[hex.neighbours.ne], [corners[1], corners[6], neighbourcorners[4], neighbourcorners[3]]);
-	}
-	if(hex.neighbours.s === undefined)
-		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, direction.s));
-	if(hex.neighbours.sw === undefined)
-		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, direction.sw));
-	if(hex.neighbours.se === undefined)
-		createRoadShape(board, hex, null, getCoordsForRoad(corners, roadWidth, direction.se));
+	
+
+	neighbourcorners = getHexCorners(hexagons[hex.neighbours.n]);
+	createRoadShape (board, hex, hexagons[hex.neighbours.n], [corners[1], corners[2], neighbourcorners[4], neighbourcorners[5]]);
+	
+	neighbourcorners = getHexCorners(hexagons[hex.neighbours.nw]);
+	createRoadShape (board, hex, hexagons[hex.neighbours.nw], [corners[2], corners[3], neighbourcorners[5], neighbourcorners[6]]);
+	
+	neighbourcorners = getHexCorners(hexagons[hex.neighbours.ne]);
+	createRoadShape (board, hex, hexagons[hex.neighbours.ne], [corners[1], corners[6], neighbourcorners[4], neighbourcorners[3]]);
+
+	neighbourcorners = getHexCorners(hexagons[hex.neighbours.s]);
+	createRoadShape (board, hex, hexagons[hex.neighbours.s], [corners[4], corners[5], neighbourcorners[1], neighbourcorners[2]]);
+
+	neighbourcorners = getHexCorners(hexagons[hex.neighbours.se]);
+	createRoadShape (board, hex, hexagons[hex.neighbours.se], [corners[6], corners[5], neighbourcorners[3], neighbourcorners[2]]);
+
+	neighbourcorners = getHexCorners(hexagons[hex.neighbours.sw]);
+	createRoadShape (board, hex, hexagons[hex.neighbours.sw], [corners[3], corners[4], neighbourcorners[6], neighbourcorners[1]]);
 }
 
 //calculate points for a road without a neighbour

@@ -1,67 +1,57 @@
 function setneighboursOfHex (hex){
 	hex.neighbours= {};
 	var index = hex.boardIndex;
-	var n = -5;
-	var s = 5;
-	var nw = -3;
-	var sw = 2;
-	var ne = -2;
-	var se = 3;
+	var n = -7;
+	var s = 7;
+	var nw = -4;
+	var sw = 3;
+	var ne = -3;
+	var se = 4;
 
-	if(index === 0){
-		s--;
-		sw--;
-		se--;
+	if(index ===4){
+		n += 3;
+		ne+=1;
+		nw+=1;
 	}
-	if(index === 1)
-		ne++;
-	if(index === 2)
-		nw++;
-	if(index === 4)
-		n++;
-	if(index === 18){
-		nw++;
-		n++;
-		ne++;
+	if(index === 32){
+		s -=3;
+		sw -=1;
+		se -= 1;
 	}
-	if(index === 16)
-		se--;
-	if(index === 14)
-		s--;
-	if(index === 17)
-		sw--;
+	if(index === 7 || index === 8)
+		n+=1;
+	if(index === 28 || index === 29)
+		s-=1;
 
-	var nLess = [0,1,2,3,5];
-	var nwLess = [0,1,3,8,13];
-	var neLess = [0,2,5,10,15];
-	var sLess = [13,15,16,17,18];
-	var swLess = [3,8,13,16,18];
-	var seLess = [5,10,15,17,18];
-
-	if(nLess.indexOf(index) === -1)
-		hex.neighbours.n = index + n;
-	if(nwLess.indexOf(index) === -1)
-		hex.neighbours.nw = index + nw;
-	if(neLess.indexOf(index) === -1)
-		hex.neighbours.ne = index + ne;
-	if(sLess.indexOf(index) === -1)
-		hex.neighbours.s = index + s;
-	if(swLess.indexOf(index) === -1)
-		hex.neighbours.sw = index + sw;
-	if(seLess.indexOf(index) === -1)
-		hex.neighbours.se = index + se;
+	hex.neighbours.n = index + n;
+	hex.neighbours.nw = index + nw;
+	hex.neighbours.ne = index + ne;
+	hex.neighbours.s = index + s;
+	hex.neighbours.sw = index + sw;
+	hex.neighbours.se = index + se;
 }
 
-function createHexRow(board, size, startX, ycoord, hexRadius, xJump){
+var hexagonsIndex = 0;
+function createHexRow(board, size, startX, ycoord, hexRadius, xJump, startsWithOcean){
 	for(var i=0;i<size;i++){
 		var index = hexagons.length;
+		var isOcean = true;
+		var color = "blue";
+		if(!startsWithOcean || (i > 0 && i < size-1)){
+			console.log("not ocean cause i="+i+ "and size="+size);
+			isOcean = false;
+			color = colors[game.board.hexes[hexagonsIndex].type];
+		}
 		var xcoord = startX+(i*xJump);
-		var hexagon = createHex(board, index, xcoord, ycoord, colors[game.board.hexes[index].type], hexRadius);
-		if(game.board.hexes[index].token !== null)
-			drawNumberOnHex (board, xcoord+hexRadius, ycoord + hexRadius, game.board.hexes[index].token.value);
+		var hexagon = createHex(board, index, xcoord, ycoord, color, hexRadius);
+		// if(game.board.hexes[hexagonsIndex].token !== null)
+			drawNumberOnHex (board, xcoord+hexRadius, ycoord + hexRadius, index);//game.board.hexes[hexagonsIndex].token.value);
+		hexagon.isOcean = isOcean;
 		// hexagon.neighbours = game.board.hexes[index].neighbours //Use THIS LATER
-		setneighboursOfHex (hexagon);
-
+		if(!isOcean)
+			setneighboursOfHex (hexagon);
+		if(!isOcean)
+			hexagonsIndex++;
 		// debug corner indices
 		// var cornerNo = 0;
 		// getHexCorners(hexagon).forEach (function(entry){

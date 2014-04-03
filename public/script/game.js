@@ -45,23 +45,29 @@ function createEmptyBoard(){
 	//defines the amount of empty space on the board above the first hex
 	var yPadding = 100;
 	
-	createHexRow(board,1,middle,yPadding,hexRadius, xJump);
-	createHexRow(board,2,middle-(xJump/2),yPadding+yJump, hexRadius, xJump);
-	createHexRow(board,3,middle-xJump,yPadding+yJump*2, hexRadius, xJump);
-	createHexRow(board,2,middle-(xJump/2),yPadding+yJump*3, hexRadius, xJump);
-	createHexRow(board,3,middle-xJump,yPadding+yJump*4, hexRadius, xJump);
-	createHexRow(board,2,middle-(xJump/2),yPadding+yJump*5, hexRadius, xJump);
-	createHexRow(board,3,middle-xJump,yPadding+yJump*6, hexRadius, xJump);
-	createHexRow(board,2,middle-(xJump/2),yPadding+yJump*7, hexRadius, xJump);
-	createHexRow(board,1,middle,yPadding+yJump*8, hexRadius, xJump);
+	createHexRow(board,1,middle,yPadding,hexRadius, xJump, true);
+	createHexRow(board,2,middle-(xJump/2),yPadding+yJump, hexRadius, xJump, true);
+	createHexRow(board,3,middle-xJump,yPadding+yJump*2, hexRadius, xJump, true);
+	createHexRow(board,4,middle-(xJump +(xJump/2)),yPadding+yJump*3, hexRadius, xJump, true);
+	createHexRow(board,3,middle-xJump,yPadding+yJump*4, hexRadius, xJump, false);
+	createHexRow(board,4,middle-(xJump+(xJump/2)),yPadding+yJump*5, hexRadius, xJump, true);
+	createHexRow(board,3,middle-xJump,yPadding+yJump*6, hexRadius, xJump, false);
+	createHexRow(board,4,middle-(xJump+(xJump/2)),yPadding+yJump*7, hexRadius, xJump, true);
+	createHexRow(board,3,middle-xJump,yPadding+yJump*8, hexRadius, xJump, false);
+	createHexRow(board,4,middle-(xJump+(xJump/2)),yPadding+yJump*9, hexRadius, xJump, true);
+	createHexRow(board,3,middle-xJump,yPadding+yJump*10, hexRadius, xJump, true);
+	createHexRow(board,2,middle-(xJump/2),yPadding+yJump*11, hexRadius, xJump, true);
+	createHexRow(board,1,middle,yPadding+yJump*12, hexRadius, xJump, true);
 
 	var roadWidth = 10-yMargin;
 	hexagons.forEach(function(hexagon){
-		createRoadsForHex(board, hexagon, roadWidth, hexagons);
+		if(!hexagon.isOcean)
+			createRoadsForHex(board, hexagon, roadWidth, hexagons);
 	});
 	var cityRadius = 10;
 	hexagons.forEach(function(hexagon){
-		createCitiesForHex(board, hexagon, cityRadius);
+		if(!hexagon.isOcean)
+			createCitiesForHex(board, hexagon, cityRadius);
 	});
 	initializePlayerStashes(game, board);
 	setServerResponseHandlers (socket);
