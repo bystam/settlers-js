@@ -23,31 +23,23 @@ exports.Board = function() { // constructor
 }
 
 var generateRandomMap = function () {
-	var hexes = getHexes();
-	shuffle(hexes);
+	var map = getRandomMapFromStructure(defaultMap);
 	var tokens = getTokens();
 	shuffle(tokens);
-	placeTokensOnHexes(tokens, hexes)
-	this.hexes = hexes;
+	placeTokensOnHexes(tokens, map.hexes)
+	this.hexes = map.hexes;
+	this.map = map.map;
 }
 
-/*
-	4 Fields (Grain Resource)
-	4 Forest (Lumber Resource)
-	4 Pasture (Wool Resource)
-	3 Mountains (Ore Resource)
-	3 Hills (Brick Resource)
-	1 Desert (No Resource)
-*/
-function getHexes () {
+function getRandomMapFromStructure (mapStructure) {
 	var hexes = [];
-	addHexesOfType(hexes, 4, 'field', 'grain');
-	addHexesOfType(hexes, 4, 'forest', 'lumber');
-	addHexesOfType(hexes, 4, 'pasture', 'wool');
-	addHexesOfType(hexes, 3, 'mountain', 'ore');
-	addHexesOfType(hexes, 3, 'hill', 'brick');
-	addHexesOfType(hexes, 1, 'desert', null);
-	return hexes;
+	mapStructure.brickTypes.forEach(function(brickType) {
+		addHexesOfType(hexes, brickType.amount, brickType.type, brickType.resource);
+	});
+	shuffle(hexes);
+
+	var map = createMapFromHexesAndStructure(hexes, mapStructure);
+	return { hexes: hexes, map: map };
 }
 
 function addHexesOfType(hexes, amount, type, resource) {
@@ -55,19 +47,26 @@ function addHexesOfType(hexes, amount, type, resource) {
 		hexes.push ({ type: type, resource: resource });
 }
 
+function createMapFromHexesAndStructure (hexes, mapStructure) {
+	var grid = mapStructure.grid;
+	var map = [];
+	var hex = 0;
+	for (var row = 0; row < grid.length; row++) {
+		map.push([]);
+		for (var col = 0; col < grid[row].length; col++) {
+			if (grid[row][col])
+				map[row].push(hexes[hex++]);
+			else
+				map[row].push(null);
+		}
+	}
+	return map;
+}
+
 /*
-	One "2"
-	Two "3"
-	Two "4"
-	Two "5"
-	Two "6"
-	Two "8"
-	Two "9"
-	Two "10"
-	Two "11"
-	One "12"
+	One "2", Two "3", Two "4", Two "5", Two "6", Two "8", Two "9", Two "10", Two "11", One "12"
 */
-function getTokens() {
+function getTokens() { // TODO make generic
 	var tokens = [];
 	for (var i = 2; i <= 12; i++) {
 		if (i === 7)
@@ -80,7 +79,7 @@ function getTokens() {
 }
 
 function placeTokensOnHexes(tokens, hexes) {
-	for (var i = 0; i < 19; i++) {
+	for (var i = 0; i < hexes.length; i++) {
 		if (hexes[i].type === 'desert')
 			hexes[i].token = null;
 		else
@@ -101,6 +100,28 @@ function shuffle(array) {
     }
     return array;
 }
+
+var defaultMap = {
+	brickTypes: [
+		{ type: 'field', resource: 'grain', amount: 4 },
+		{ type: 'forest', resource: 'lumber', amount: 4 },
+		{ type: 'pasture', resource: 'wool', amount: 4 },
+		{ type: 'mountain', resource: 'ore', amount: 3 },
+		{ type: 'hill', resource: 'brick', amount: 3 },
+		{ type: 'desert', resource: null, amount: 1 },
+	],
+	grid: [
+		[false, false, true, false, false],
+		[false, true, false, true, false],
+		[true, false, true, false, true],
+		[false, true, false, true, false],
+		[true, false, true, false, true],
+		[false, true, false, true, false],
+		[true, false, true, false, true],
+		[false, true, false, true, false],
+		[false, false, true, false, false]
+	]
+};
 
 var neighborStructure = [
 /*  0 */ {n: null, ne: null, se: 2, s: 4, sw: 1, nw: null},		
