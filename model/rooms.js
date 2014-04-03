@@ -2,6 +2,7 @@ var io = require('socket.io'),
 	sessions = require('./sessions'),
 	gamestate = require('./gamestate'),
 	players = require('./players'),
+	ruleset = require('./ruleset'),
 	games = {};
 
 players.init(games, io);
@@ -48,4 +49,5 @@ function registerConnection (socket, room, playerId) {
 	socket.join(room);
 
 	players.registerNewPlayer(socket, room, playerId);
+	ruleset.init(socket, games[room], playerId);
 }

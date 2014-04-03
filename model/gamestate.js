@@ -7,6 +7,7 @@ exports.Game = function(room) { // constructor
 	this.board.generateRandomMap();
 	initPlayers(this);
 	this.privateCopyForPlayer = privateCopyForPlayer;
+	this.placeRoad = placeRoad;
 }
 
 function initPlayers(game) {
@@ -16,6 +17,10 @@ function initPlayers(game) {
 		game.players.push(playerId);
 		game.stashes[playerId] = new stashes.Stash(playerId);
 	}
+}
+
+function placeRoad(coords, playerId){
+
 }
 
 // stämmer inte

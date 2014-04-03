@@ -1,31 +1,32 @@
 God requirement: Your turn
 
 Place road:
-	No road present
-		First Round
-			No conditions
-		Startup phase
-			Connecting road OR Connecting city (Can be modified with stricter rules in startup phase)
-		Connecting road
-			Has resources
-			Has adventure card charge
+	Has roads left
+		No road present
+			First Round
+				No conditions
+			Startup phase
+				Connecting road OR Connecting city (Can be modified with stricter rules in startup phase)
+			Connecting road
+				Has resources
+				Has adventure card charge
 								-> Place road, give longest road if connection is longest(increment victory points)
 
 Place town:
-	No town present
-		No town 2 roads away
-			First round
-				No conditions
-			Startup phase
+	Has towns left
+		No town present
+			No town 2 roads away
+				First round
+					No conditions
+				Startup phase
+					Connecting road
 				Connecting road
-			Connecting road
-				Has resources
+					Has resources
 								-> Place town, increment victory points
-	Own town present
-		Has resources
+		Own town present
+			Has resources
 								-> Place city, increment victory points
 								
-
 Roll dice:
 	Always allowed
 								-> for each city gain resources of sourrounding hexes without knight, enable/disable knight placement(increment riddarmakt)

@@ -1,10 +1,9 @@
-
 var game = null;
 var hexagons = [];
 var socket;
 var colors = {'field':'#FFE658', 'forest':'#126B32', 'pasture':'#6DD572', 'mountain':'#5E707A', 'hill':'#E03634', 'desert':'#D5CC6A'};
 
-var serverCommands = {canBuildRoad:"canBuildRoad", canBuildCity:"canBuildCity"};
+var serverCommands = {canBuildRoad:"buildRoad", canBuildCity:"canBuildCity"};
 function populateGameWithLogic(game) {
 	game.addPlayer = function(playerId) {
 		game.players.push(playerId);
@@ -35,12 +34,16 @@ $ (document).ready(function(){
 function createEmptyBoard(){
 	var board = Snap("#board");
 	var hexRadius = 50.0;
-	//we want to control road width & height with these
+	//we sort of control road width & height with these
 	var yMargin = 3.0;
 	var xMargin = yMargin / Math.cos(29.918);
+	// /////////
+	//the amount of pixels between hexes in x/y axes
 	var yJump = hexRadius - yMargin;
 	var xJump = hexRadius*4 - xMargin;
+	//defines middle point of board
 	var middle = 350.0;
+	//defines the amount of empty space on the board above the first hex
 	var yPadding = 100;
 	
 	createHexRow(board,1,middle,yPadding,hexRadius, xJump);
@@ -61,6 +64,7 @@ function createEmptyBoard(){
 	hexagons.forEach(function(hexagon){
 		createCitiesForHex(board, hexagon, cityRadius);
 	});
+	setServerResponseHandlers (socket);
 	// createCardsForExistingPlayers()
 	// createDice()
 	// createExtras()
