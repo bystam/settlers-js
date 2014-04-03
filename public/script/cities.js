@@ -95,9 +95,10 @@ function placeCity (coords, playerId){
 	animX = animX-100;
 
 	city.unclick(null);
-	var stashCity = stashLocations[playerId];
+	var stashCity = stashLocations[playerId].clone();
 	console.log("stashCity:");
 	console.log(stashCity);
+
 	stashCity.attr({
 		stroke:"lightblue",
 			strokeWidth:3,
