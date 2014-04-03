@@ -54,7 +54,7 @@ function createMapFromHexesAndStructure (hexes, mapStructure) {
 	for (var row = 0; row < grid.length; row++) {
 		map.push([]);
 		for (var col = 0; col < grid[row].length; col++) {
-			if (grid[row][col])
+			if (grid[row][col] === O)
 				map[row].push(hexes[hex++]);
 			else
 				map[row].push(null);
@@ -102,8 +102,8 @@ function shuffle(array) {
 }
 
 var O = 1; // land
-var _ = 2; // dead non-existing space
-var W = 3; // water
+var W = 2; // water
+var _ = 0; // dead non-existing space
 
 var defaultMap = {
 	brickTypes: [
