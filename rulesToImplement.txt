@@ -1,0 +1,62 @@
+God requirement: Your turn
+
+Place road:
+	No road present
+		First Round
+			No conditions
+		Startup phase
+			Connecting road OR Connecting city (Can be modified with stricter rules in startup phase)
+		Connecting road
+			Has resources
+			Has adventure card charge
+								-> Place road, give longest road if connection is longest(increment victory points)
+
+Place town:
+	No town present
+		No town 2 roads away
+			First round
+				No conditions
+			Startup phase
+				Connecting road
+			Connecting road
+				Has resources
+								-> Place town, increment victory points
+	Own town present
+		Has resources
+								-> Place city, increment victory points
+								
+
+Roll dice:
+	Always allowed
+								-> for each city gain resources of sourrounding hexes without knight, enable/disable knight placement(increment riddarmakt)
+
+Trade with players:
+								-> Post trade to players (bluffing enabled?)
+
+Trade with bank:
+	Has resources
+		Modifiers: ports, adventure cards
+								-> Get new resources, lose old
+
+Place knight:
+	Knight enabled this turn
+								-> Place knight, enable resource steal, disable knight placement
+
+Steal resource:
+	Resource stealing enabled
+								-> Steal resource from player, disable resource steal
+
+Draw adventure card:
+	Has resources
+								-> Get adventure card
+
+Play adventure card:
+	Has adventure card not bought this turn
+		Has not played any adventure card this turn
+								-> Special rules: 
+									enable knight placement(increment riddarmakt)
+									increment victory points
+									enable 2 road building charges
+									get 2 resources
+									steal all of 1 resource from players
+
