@@ -18,28 +18,37 @@ List of pieces:
 
 */
 
+var LAND = 1;
+var WATER = 2;
+var DEAD_SPACE = 0;
+
 exports.Board = function() { // constructor
 	this.generateRandomMap = generateRandomMap; // initial state creating function
 }
 
 var generateRandomMap = function () {
 	var map = getRandomMapFromStructure(defaultMap);
-	var tokens = getTokens();
-	shuffle(tokens);
-	placeTokensOnHexes(tokens, map.hexes)
 	this.hexes = map.hexes;
 	this.map = map.map;
 }
 
 function getRandomMapFromStructure (mapStructure) {
-	var hexes = [];
-	mapStructure.brickTypes.forEach(function(brickType) {
-		addHexesOfType(hexes, brickType.amount, brickType.type, brickType.resource);
-	});
-	shuffle(hexes);
-
+	
 	var map = createMapFromHexesAndStructure(hexes, mapStructure);
 	return { hexes: hexes, map: map };
+}
+
+function getLandHexes () {
+	var landHexes = [];
+	mapStructure.brickTypes.forEach(function(brickType) {
+		addHexesOfType(landHexes, brickType.amount, brickType.type, brickType.resource);
+	});
+	shuffle(landHexes);
+
+	var tokens = getTokens();
+	shuffle(tokens);
+	placeTokensOnHexes(tokens, landHexes);
+	return landHexes;
 }
 
 function addHexesOfType(hexes, amount, type, resource) {
@@ -54,7 +63,7 @@ function createMapFromHexesAndStructure (hexes, mapStructure) {
 	for (var row = 0; row < grid.length; row++) {
 		map.push([]);
 		for (var col = 0; col < grid[row].length; col++) {
-			if (grid[row][col] === O)
+			if (grid[row][col] === LAND)
 				map[row].push(hexes[hex++]);
 			else
 				map[row].push(null);
@@ -101,9 +110,9 @@ function shuffle(array) {
     return array;
 }
 
-var O = 1; // land
-var W = 2; // water
-var _ = 0; // dead non-existing space
+var $ = LAND;
+var w = WATER;
+var _ = DEAD_SPACE;
 
 var defaultMap = {
 	brickTypes: [
@@ -115,14 +124,18 @@ var defaultMap = {
 		{ type: 'desert', resource: null, amount: 1 },
 	],
 	grid: [
-		[_, _, O, _, _],
-		[_, O, _, O, _],
-		[O, _, O, _, O],
-		[_, O, _, O, _],
-		[O, _, O, _, O],
-		[_, O, _, O, _],
-		[O, _, O, _, O],
-		[_, O, _, O, _],
-		[_, _, O, _, _]
+		[_, w, _, w, _, w, _],
+		[w, _, w, _, w, _, w],
+		[_, w, _, $, _, w, _],
+		[w, _, $, _, $, _, w],
+		[_, $, _, $, _, $, _],
+		[w, _, $, _, $, _, w],
+		[_, $, _, $, _, $, _],
+		[w, _, $, _, $, _, w],
+		[_, $, _, $, _, $, _],
+		[w, _, $, _, $, _, w],
+		[_, w, _, $, _, w, _],
+		[w, _, w, _, w, _, w],
+		[_, w, _, w, _, w, _]
 	]
 };
