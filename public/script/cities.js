@@ -1,3 +1,5 @@
+var stashCoordinates = [{x:400,y:100}, {x:50,y:400}];
+
 function createCitiesForHex(board, hex, cityRadius){
 	var corners = getHexCorners(hex);
 	//create ne city at all hexes...
@@ -31,7 +33,6 @@ function createCitiesForHex(board, hex, cityRadius){
 }
 
 
-
 function createCityShape (board, coords, hex, neighbours, radius){
 	var first = hex.boardIndex, second = hex.boardIndex, third = hex.boardIndex;
 	if(neighbours !== null){
@@ -59,7 +60,7 @@ function createCityShape (board, coords, hex, neighbours, radius){
 		socket.emit(serverCommands.canBuildCity, {key:cityKey, type:"click"});
 		//remove when backend is done
 		if(canPlaceCity (cityKey)){
-			placeCity (city);
+			placeCity (city, board);
 		} else{
 			console.log("can't build city there");
 		}
@@ -83,21 +84,35 @@ function createCityShape (board, coords, hex, neighbours, radius){
 	})
 }
 
-function canPlaceCity(key){
-	if(Math.random() > 0.5)
-		return true;
-	return false;}
 
-function placeCity (road){
-	road.hover(function(){
+function canPlaceCity(key){
+	return true;
+}
+
+function placeCity (city, board){
+	var animX = parseFloat(city.attr("cx"));
+	console.log("animX: "+animX);
+	animX = animX-100;
+	city.hover(function(){
 		console.log("hovering in on built city...");
+
 	}, function(){
 		console.log("hovering out on built city...");
 	})
-	road.attr({
+	city.unclick(null);
+	var stashCity = board.circle(stashCoordinates[1].x, stashCoordinates[1].y, 10);
+	stashCity.attr({
 		stroke:"lightblue",
-		strokeWidth:3,
-		fill:"blue"
+			strokeWidth:3,
+			fill:"blue"
 	});
+	stashCity.animate({cx:city.attr("cx"), cy:city.attr("cy")}, 3000, mina.easein, function(){
+		city.attr({
+			stroke:"lightblue",
+			strokeWidth:3,
+			fill:"blue"
+		});
+	});
+	
 }
 
