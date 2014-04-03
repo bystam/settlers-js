@@ -36,13 +36,25 @@
 	och trading ska ligga i den här modulen kommer den bli knull
 */
 
+// TODO ska alla de här ligga här eller är någon av dem en del av board-objektet?
 exports.Rules = function(game) { // rules constructor
 	this.game = game;
+	this.settlementInProximity = settlementInProximity;
+	this.hasInStash = hasInStash;
+	this.hasConnecting = hasConnecting;
+	this.settlementIsOwnedByPlayer = settlementIsOwnedByPlayer;
+	this.settlementExists = settlementExists;
+	this.hasFreeRoads = hasFreeRoads
+	this.hasResources = hasResources
+	this.isStartupPhase =  isStartupPhase;
+	this.isFirstRound = isFirstRound
+	this.roadExists =  roadExists;
 }
 
 function settlementInProximity(game, coords){
 	return false;
 }
+
 function hasInStash (game, playerId, type){
 	/*
 	if(type === buildingTypes.road)
@@ -92,6 +104,3 @@ function isFirstRound(game, playerId){
 function roadExists (game, coords){
 	return false;
 }
-
-
-	
