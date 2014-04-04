@@ -1,7 +1,7 @@
 var game = null;
 var hexagons = [];
 var socket;
-var colors = {'field':'#FFE658', 'forest':'#126B32', 'pasture':'#6DD572', 'mountain':'#5E707A', 'hill':'#E03634', 'desert':'#D5CC6A'};
+
 var serverCommands = {canBuildRoad:"buildRoad", canBuildCity:"buildSettlement"};
 function populateGameWithLogic(game) {
 	game.addPlayer = function(playerId) {
@@ -16,8 +16,8 @@ $ (document).ready(function(){
 	socket.on("game-joined", function(gameState){
 		populateGameWithLogic(gameState);
 		game = gameState;
-		$("body").append("Successfully joined room: "+game.room);
 		console.log(game);
+		$("body").append("Successfully joined room: "+game.room);
 		createEmptyBoard();
 	});
 	socket.on("room-404", function(data){
@@ -32,18 +32,22 @@ $ (document).ready(function(){
 
 function createEmptyBoard(){
 	var board = Snap("#board");
-	var hexRadius = 50.0;
+	var boardWidthInPixels = board.getBBox().width;
+	var hexRadius = 40.0;
 	//we sort of control road width & height with these
-	var yMargin = 3.0;
+	var yMargin = 2.0;
 	var xMargin = yMargin / Math.cos(29.918);
 	// /////////
+	var cityRadius = 7;
 	//the amount of pixels between hexes in x/y axes
 	var yJump = hexRadius - yMargin;
 	var xJump = hexRadius*4 - xMargin;
 	//defines middle point of board
 	var middle = 350.0;
 	//defines the amount of empty space on the board above the first hex
-	var yPadding = 100;
+	var yPadding = 120;
+	var roadWidth = 10-yMargin;
+	// createHexesFromMap(game.board.map, boardWidthInPixels);//Make this the <only> method call regarding board construction?
 	
 	createHexRow(board,1,middle,yPadding,hexRadius, xJump, true);
 	createHexRow(board,2,middle-(xJump/2),yPadding+yJump, hexRadius, xJump, true);
@@ -55,16 +59,16 @@ function createEmptyBoard(){
 	createHexRow(board,4,middle-(xJump+(xJump/2)),yPadding+yJump*7, hexRadius, xJump, true);
 	createHexRow(board,3,middle-xJump,yPadding+yJump*8, hexRadius, xJump, false);
 	createHexRow(board,4,middle-(xJump+(xJump/2)),yPadding+yJump*9, hexRadius, xJump, true);
+
 	createHexRow(board,3,middle-xJump,yPadding+yJump*10, hexRadius, xJump, true);
 	createHexRow(board,2,middle-(xJump/2),yPadding+yJump*11, hexRadius, xJump, true);
 	createHexRow(board,1,middle,yPadding+yJump*12, hexRadius, xJump, true);
 
-	var roadWidth = 10-yMargin;
+	
 	hexagons.forEach(function(hexagon){
 		if(!hexagon.isOcean)
 			createRoadsForHex(board, hexagon, roadWidth, hexagons);
 	});
-	var cityRadius = 10;
 	hexagons.forEach(function(hexagon){
 		if(!hexagon.isOcean)
 			createCitiesForHex(board, hexagon, cityRadius);

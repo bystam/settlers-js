@@ -31,6 +31,31 @@ function setneighboursOfHex (hex){
 	hex.neighbours.se = index + se;
 }
 
+var colors = {'ocean':'blue', 'field':'#FFE658', 'forest':'#126B32', 'pasture':'#6DD572', 'mountain':'#5E707A', 'hill':'#E03634', 'desert':'#D5CC6A'};
+function createHexesFromMap(map, pixelWidth){
+	var gridWidth = map[0].length;
+	var hexRadius = pixelWidth / gridWidth;
+	//we sort of control road width & height with these
+	var yMargin = 2.0;
+	var xMargin = yMargin / Math.cos(29.918);
+	//////////////
+	var yJump = hexRadius - yMargin;
+	var xJump = hexRadius*2 - xMargin;
+
+	var xcoord = 0; var ycoord = 0;
+
+	for(var row = 0;row<map.length;row++){
+		for(var column=0;column<gridWidth;column++){
+			var hex = map[row][column];
+			var color = colors[hex.type];
+			var hexagon = createHex(board, )
+			console.log(hex);
+			xcoord += xJump;
+		}
+		ycoord += yJump;
+	}
+}
+
 var hexagonsIndex = 0;
 function createHexRow(board, size, startX, ycoord, hexRadius, xJump, startsWithOcean){
 	for(var i=0;i<size;i++){
@@ -38,20 +63,19 @@ function createHexRow(board, size, startX, ycoord, hexRadius, xJump, startsWithO
 		var isOcean = true;
 		var color = "blue";
 		if(!startsWithOcean || (i > 0 && i < size-1)){
-			console.log("not ocean cause i="+i+ "and size="+size);
 			isOcean = false;
 			color = colors[game.board.hexes[hexagonsIndex].type];
 		}
 		var xcoord = startX+(i*xJump);
 		var hexagon = createHex(board, index, xcoord, ycoord, color, hexRadius);
-		// if(game.board.hexes[hexagonsIndex].token !== null)
-			drawNumberOnHex (board, xcoord+hexRadius, ycoord + hexRadius, index);//game.board.hexes[hexagonsIndex].token.value);
+		if(!isOcean && game.board.hexes[hexagonsIndex].token !== null)
+			drawNumberOnHex (board, xcoord+hexRadius, ycoord + hexRadius, game.board.hexes[hexagonsIndex].token.value);//index
 		hexagon.isOcean = isOcean;
 		// hexagon.neighbours = game.board.hexes[index].neighbours //Use THIS LATER
-		if(!isOcean)
+		if(!isOcean){
 			setneighboursOfHex (hexagon);
-		if(!isOcean)
 			hexagonsIndex++;
+		}
 		// debug corner indices
 		// var cornerNo = 0;
 		// getHexCorners(hexagon).forEach (function(entry){

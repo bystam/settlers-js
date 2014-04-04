@@ -10,7 +10,7 @@ Place road:
 			Connecting road
 				Has resources
 				Has adventure card charge
-								-> Place road, give longest road if connection is longest(increment victory points)
+								-> Place road, give longest road if connection is longest(increment victory points), add any port modifiers
 
 Place town:
 	No town present	

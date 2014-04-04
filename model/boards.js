@@ -33,12 +33,12 @@ var generateRandomMap = function () {
 }
 
 function getRandomMapFromStructure (mapStructure) {
-	
+	var hexes = getLandHexes(mapStructure);
 	var map = createMapFromHexesAndStructure(hexes, mapStructure);
-	return { hexes: hexes, map: map };
+	return { hexes:hexes, map: map };
 }
 
-function getLandHexes () {
+function getLandHexes (mapStructure) {
 	var landHexes = [];
 	mapStructure.brickTypes.forEach(function(brickType) {
 		addHexesOfType(landHexes, brickType.amount, brickType.type, brickType.resource);
@@ -65,6 +65,8 @@ function createMapFromHexesAndStructure (hexes, mapStructure) {
 		for (var col = 0; col < grid[row].length; col++) {
 			if (grid[row][col] === LAND)
 				map[row].push(hexes[hex++]);
+			else if(grid[row][col] === WATER)
+				map[row].push({type:'ocean'});
 			else
 				map[row].push(null);
 		}
@@ -124,8 +126,8 @@ var defaultMap = {
 		{ type: 'desert', resource: null, amount: 1 },
 	],
 	grid: [
-		[_, w, _, w, _, w, _],
-		[w, _, w, _, w, _, w],
+		[_, _, _, w, _, _, _],
+		[_, _, w, _, w, _, _],
 		[_, w, _, $, _, w, _],
 		[w, _, $, _, $, _, w],
 		[_, $, _, $, _, $, _],
@@ -135,7 +137,7 @@ var defaultMap = {
 		[_, $, _, $, _, $, _],
 		[w, _, $, _, $, _, w],
 		[_, w, _, $, _, w, _],
-		[w, _, w, _, w, _, w],
-		[_, w, _, w, _, w, _]
+		[_, _, w, _, w, _, _],
+		[_, _, _, w, _, _, _]
 	]
 };

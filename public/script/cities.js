@@ -23,33 +23,30 @@ function createCitiesForHex(board, hex, cityRadius){
 	var corners = getHexCorners(hex);
 	//create ne city
 	var coords = {x:corners[1].x+2, y:corners[1].y-2}
-	createCityShape(board, coords, hex, [hex.neighbours.n, hex.neighbours.ne], cityRadius);
-
-	//create sw city
-	var coords = {x:corners[4].x-2, y:corners[4].y+2}
-	createCityShape(board, coords, hex, [hex.neighbours.sw, hex.neighbours.s], cityRadius);
-
-	//create se city
-	var coords = {x:corners[5].x+2, y:corners[5].y-2}
-	createCityShape(board, coords, hex, [hex.neighbours.se, hex.neighbours.s], cityRadius);
+	createCityShape(board, coords, [hex.boardIndex, hex.neighbours.n, hex.neighbours.ne], cityRadius);
 	//create nw city
 	var coords = {x:corners[2].x-2, y:corners[2].y-2}
-	createCityShape(board, coords, hex, [hex.neighbours.nw, hex.neighbours.n], cityRadius);
+	createCityShape(board, coords, [hex.boardIndex, hex.neighbours.n, hex.neighbours.nw], cityRadius);
 	//create w city
 	var coords = {x:corners[3].x-2, y:corners[3].y}
-	createCityShape(board, coords, hex, [hex.neighbours.nw, hex.neighbours.sw], cityRadius);
+	createCityShape(board, coords, [hex.boardIndex, hex.neighbours.nw, hex.neighbours.sw], cityRadius);
+	//create sw city
+	var coords = {x:corners[4].x-2, y:corners[4].y+2}
+	createCityShape(board, coords, [hex.boardIndex, hex.neighbours.sw, hex.neighbours.s], cityRadius);
+	//create se city
+	var coords = {x:corners[5].x+2, y:corners[5].y+2}
+	createCityShape(board, coords, [hex.boardIndex, hex.neighbours.se, hex.neighbours.s], cityRadius);
 	//create e city
 	var coords = {x:corners[6].x+2, y:corners[6].y}
-	createCityShape(board, coords, hex, [hex.neighbours.ne, hex.neighbours.se], cityRadius);
+	createCityShape(board, coords, [hex.boardIndex, hex.neighbours.ne, hex.neighbours.se], cityRadius);
 }
 
 
-function createCityShape (board, coords, hex, neighbours, radius){
-	var first = hex.boardIndex, second = hex.boardIndex, third = hex.boardIndex;
-	if(neighbours !== null){
-		first = neighbours[0]; second = neighbours[1]; 
-	}
-	var cityKey = ""+first+","+second+","+third; //maybe replace with a proper coord system...
+function createCityShape (board, coords, hexes, radius){
+	hexes.sort(function(a,b){return a-b}); //ascending
+	var cityKey = ""+hexes[0]+","+hexes[1]+","+hexes[3]; //maybe replace with a proper coord system...
+	if(cityLocations[cityKey] !== undefined)//prevent doubles
+		return;
 	var city = board.circle(coords.x, coords.y, radius);
 	city.attr({
 		fill:"transparent"
@@ -94,13 +91,13 @@ function placeCity (coords, playerId){
 
 	stashCity.attr({
 		stroke:"lightblue",
-			strokeWidth:3,
+			strokeWidth:2,
 			fill:"blue"
 	});
-	stashCity.animate({cx:city.attr("cx"), cy:city.attr("cy")}, 3000, mina.easein, function(){
+	stashCity.animate({cx:city.attr("cx"), cy:city.attr("cy")}, 3000, mina.elastic, function(){
 		city.attr({
 			stroke:"lightblue",
-			strokeWidth:3,
+			strokeWidth:2,
 			fill:"blue"
 		});
 	});
