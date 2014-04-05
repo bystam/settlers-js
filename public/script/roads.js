@@ -72,18 +72,18 @@ function getRoadGraphics (playerId){
 	var minorColor = tinycolor.complement(majorColor);//tinycolor.lighten(majorColor, amount = 10);
 	return {stroke:minorColor, strokeWidth:1,fill:majorColor}
 }
-
+//skip animation until I figure this out...
 function placeRoadWithAnimation (coords, playerId){
 	var road = roadLocations[coords];
-	road.unclick(null);
-	road.unhover();
 	var stashRoad = stashObjects[playerId].roads.shift();
-	var translate = new Snap.Matrix().translate(0,0);
-	stashRoad.transform(translate);
-	stashRoad.animate({d:road.attr("d")}, 3000, mina.bounce, function(){
-		placeRoad(coords, playerId);
-		stashRoad.remove();
-	});
+	placeRoad(coords, playerId);
+	stashRoad.remove();
+}
+
+function getPositionOfRoadShape (road){
+	var roadXY = road.attr("d").split("L")[0];
+	roadXY = roadXY.substr(1, roadXY.length).split(",");
+	return {x:parseFloat(roadXY[0]), y:parseFloat(roadXY[1])};
 }
 
 function getRoadShape (canvas, coords, playerId, path){
