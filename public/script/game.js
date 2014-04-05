@@ -31,49 +31,13 @@ $ (document).ready(function(){
 });
 
 function createEmptyBoard(){
-	var board = Snap("#board");
-	var boardWidthInPixels = board.getBBox().width;
-	var hexRadius = 40.0;
-	//we sort of control road width & height with these
-	var yMargin = 2.0;
-	var xMargin = yMargin / Math.cos(29.918);
-	// /////////
-	var cityRadius = 7;
-	//the amount of pixels between hexes in x/y axes
-	var yJump = hexRadius - yMargin;
-	var xJump = hexRadius*4 - xMargin;
-	//defines middle point of board
-	var middle = 350.0;
-	//defines the amount of empty space on the board above the first hex
-	var yPadding = 120;
-	var roadWidth = 10-yMargin;
-	// createHexesFromMap(game.board.map, boardWidthInPixels);//Make this the <only> method call regarding board construction?
-	
-	createHexRow(board,1,middle,yPadding,hexRadius, xJump, true);
-	createHexRow(board,2,middle-(xJump/2),yPadding+yJump, hexRadius, xJump, true);
-	createHexRow(board,3,middle-xJump,yPadding+yJump*2, hexRadius, xJump, true);
-	createHexRow(board,4,middle-(xJump +(xJump/2)),yPadding+yJump*3, hexRadius, xJump, true);
-	createHexRow(board,3,middle-xJump,yPadding+yJump*4, hexRadius, xJump, false);
-	createHexRow(board,4,middle-(xJump+(xJump/2)),yPadding+yJump*5, hexRadius, xJump, true);
-	createHexRow(board,3,middle-xJump,yPadding+yJump*6, hexRadius, xJump, false);
-	createHexRow(board,4,middle-(xJump+(xJump/2)),yPadding+yJump*7, hexRadius, xJump, true);
-	createHexRow(board,3,middle-xJump,yPadding+yJump*8, hexRadius, xJump, false);
-	createHexRow(board,4,middle-(xJump+(xJump/2)),yPadding+yJump*9, hexRadius, xJump, true);
-
-	createHexRow(board,3,middle-xJump,yPadding+yJump*10, hexRadius, xJump, true);
-	createHexRow(board,2,middle-(xJump/2),yPadding+yJump*11, hexRadius, xJump, true);
-	createHexRow(board,1,middle,yPadding+yJump*12, hexRadius, xJump, true);
-
-	
-	hexagons.forEach(function(hexagon){
-		if(!hexagon.isOcean)
-			createRoadsForHex(board, hexagon, roadWidth, hexagons);
-	});
-	hexagons.forEach(function(hexagon){
-		if(!hexagon.isOcean)
-			createCitiesForHex(board, hexagon, cityRadius);
-	});
-	initializePlayerStashes(game, board);
+	var canvas = Snap("#board");
+	var boardWidthInPixels = canvas.attr("width");
+	var boardWidthInPixels = parseInt(boardWidthInPixels.substring(0, boardWidthInPixels.length - 2));
+	createHexShapesFromMap(canvas, game.board.map, boardWidthInPixels);
+	createRoadShapesFromMap(canvas, game.board.map);
+	createCityShapesFromMap(canvas, game.board.map);
+	initializePlayerStashes(game, canvas);
 	setServerResponseHandlers (socket);
 	// createCardsForExistingPlayers()
 	// createDice()

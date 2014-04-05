@@ -13,6 +13,17 @@ function drawBorder (element, color, width){
 	});
 }
 
+//Move this to general utils if you need to separate
+function getCornerClosestTo(corner, candidates){
+	var closest = {distance:999999999.9};
+	candidates.forEach(function(coord){
+		var distance = Math.sqrt(((corner.x-coord.x)*(corner.x-coord.x)) + ((corner.y-coord.y)*(corner.y-coord.y)));
+		if(distance < closest.distance)
+			closest = {distance:distance, coord:coord};
+	});
+	return closest.coord;
+}
+
 function getExamplePattern(board, player){
 	if(player === null){
 		var patternPath = board.path("M28,66L0,50L0,16L28,0L56,16L56,50L28,66L28,100");

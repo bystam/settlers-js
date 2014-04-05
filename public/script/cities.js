@@ -1,53 +1,53 @@
-var stashCoordinates = [{x:350,y:100}, {x:50,y:400}, {x:350, y:600}, {x:700, y:400}, {x:10, y:10}, {x:10, y:10}, {x:10, y:10}, {x:10, y:10}];
 var cityLocations = {};
-var stashLocations = {};
-//probably move the stash specific code out of here, stash.js ?
-function addStashLocation (board, playerId){
-	var numStashes = Object.keys(stashLocations).length;
-	var stashCoords = stashCoordinates[numStashes];
-	console.log(numStashes);
-	var cityShape = board.circle(stashCoords.x, stashCoords.y, 10);
-	cityShape.attr({
-		fill:"transparent"
-	})
-	stashLocations[playerId] = cityShape
+var debugC;
+function createCityShapesFromMap(canvas, map){
+	debugC = canvas;
+	for(var row = 0;row<map.length;row++){
+		for(var column=0;column<map[0].length;column++){
+			var hexagon = map[row][column];
+			if(hexagon !== null && hexagon.type !== 'ocean')
+				createCityShapesForHex (canvas, map, hexagon);
+		}
+	}
 }
 
-function initializePlayerStashes (game, board){
-	game.players.forEach(function(playerId){
-		addStashLocation(board, playerId);
+function createCityShapesForHex(canvas, map, hexagon){
+	var corners = getHexCorners(hexagon.shape);
+	var neighbourList = getNeighbourListForHex(map, hexagon);
+	for(var i=0;i<6;i++){
+		var neighbours = [hexagon, neighbourList[(i+4)%6], neighbourList[(i+5)%6]];
+		var cityCoords = 
+		getCoordsForCity(
+			corners[i],
+			[map[neighbours[1].row][neighbours[1].column],
+			map[neighbours[2].row][neighbours[2].column]]);
+		createCityShape(canvas, neighbours, cityCoords);
+	}
+}
+
+function getCoordsForCity (firstCorner, hexes){
+	var firstNeighbourCorner = getCornerClosestTo(firstCorner, getHexCorners(hexes[0].shape));
+	var secondNeighbourCorner = getCornerClosestTo(firstCorner, getHexCorners(hexes[1].shape));
+	return findMiddle(firstCorner, firstNeighbourCorner, secondNeighbourCorner);
+}
+
+function findMiddle(a, b, c){
+	var bcMidpoint = {x:((b.x+c.x)/2), y:((b.y+c.y)/2)};
+	return {x:(a.x+(2/3*(bcMidpoint.x-a.x))), y:(a.y+(2/3*(bcMidpoint.y-a.y)))};
+}
+
+function createCityShape (canvas, hexes, coords){
+	var radius = 7;
+	hexes.sort(function(a,b){	//ascending
+		if(a.row === b.row)
+			return a.column - b.column;
+		return a.row - b.row;
 	});
-}
-
-function createCitiesForHex(board, hex, cityRadius){
-	var corners = getHexCorners(hex);
-	//create ne city
-	var coords = {x:corners[1].x+2, y:corners[1].y-2}
-	createCityShape(board, coords, [hex.boardIndex, hex.neighbours.n, hex.neighbours.ne], cityRadius);
-	//create nw city
-	var coords = {x:corners[2].x-2, y:corners[2].y-2}
-	createCityShape(board, coords, [hex.boardIndex, hex.neighbours.n, hex.neighbours.nw], cityRadius);
-	//create w city
-	var coords = {x:corners[3].x-2, y:corners[3].y}
-	createCityShape(board, coords, [hex.boardIndex, hex.neighbours.nw, hex.neighbours.sw], cityRadius);
-	//create sw city
-	var coords = {x:corners[4].x-2, y:corners[4].y+2}
-	createCityShape(board, coords, [hex.boardIndex, hex.neighbours.sw, hex.neighbours.s], cityRadius);
-	//create se city
-	var coords = {x:corners[5].x+2, y:corners[5].y+2}
-	createCityShape(board, coords, [hex.boardIndex, hex.neighbours.se, hex.neighbours.s], cityRadius);
-	//create e city
-	var coords = {x:corners[6].x+2, y:corners[6].y}
-	createCityShape(board, coords, [hex.boardIndex, hex.neighbours.ne, hex.neighbours.se], cityRadius);
-}
-
-
-function createCityShape (board, coords, hexes, radius){
-	hexes.sort(function(a,b){return a-b}); //ascending
-	var cityKey = ""+hexes[0]+","+hexes[1]+","+hexes[3]; //maybe replace with a proper coord system...
+	var cityKey = "["+hexes[0].row+","+hexes[0].column+"]["+hexes[1].row+","+hexes[1].column+"]["+hexes[2].row+","+hexes[2].column+"]";
 	if(cityLocations[cityKey] !== undefined)//prevent doubles
 		return;
-	var city = board.circle(coords.x, coords.y, radius);
+	console.log("building city at "+cityKey);
+	var city = canvas.circle(coords.x, coords.y, radius);
 	city.attr({
 		fill:"transparent"
 	});

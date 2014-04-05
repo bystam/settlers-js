@@ -1,22 +1,42 @@
 var roadLocations = {};
-function createRoadsForHex(board, hex, roadWidth, hexagons){
-	var corners = getHexCorners(hex);
-	var n = hex.neighbours;
-	var neighbourList = [n.n, n.nw, n.sw, n.s, n.se, n.ne];
-	for(var i=1;i<7;i++){
-		var neighbourIndex = neighbourList[i-1];
-		var neighbourCorners = getHexCorners(hexagons[neighbourIndex]);
-		createRoadShape (board, [hex.boardIndex, hexagons[neighbourIndex].boardIndex], [corners[i], corners[(i%6)+1], neighbourCorners[((i+2)%6)+1], neighbourCorners[((i+3)%6)+1]])
+function createRoadShapesFromMap (canvas, map){
+	for(var row = 0;row<map.length;row++){
+		for(var column=0;column<map[0].length;column++){
+			var hexagon = map[row][column];
+			if(hexagon !== null && hexagon.type !== 'ocean')
+				createRoadShapesForHex (canvas, map, hexagon);
+		}
 	}
 }
 
-function createRoadShape (board, hexes, coords){
-	hexes.sort(function(a,b){return a-b}); //ascending
-	var roadKey = ""+hexes[0]+","+hexes[1];
+function createRoadShapesForHex(canvas, map, hexagon){
+	var corners = getHexCorners(hexagon.shape);
+	var neighbourList = getNeighbourListForHex(map, hexagon);
+	for(var i=0;i<6;i++){
+		var neighbour = neighbourList[i];
+		var roadCoords = getRoadCoords(hexagon, map[neighbour.row][neighbour.column], corners[i+1], corners[(i+2)%6]);
+		createRoadShape(canvas, [neighbour, hexagon], roadCoords);
+	}
+}
+
+function getRoadCoords (from, to, firstCorner, secondCorner){
+	var toCorners = getHexCorners (to.shape);
+	var toFirst = getCornerClosestTo(firstCorner, toCorners);
+	var toSecond = getCornerClosestTo(secondCorner, toCorners);
+	return [firstCorner, toFirst, toSecond, secondCorner];
+}
+
+function createRoadShape (canvas, hexes, coords){
+	hexes.sort(function(a,b){	//ascending
+		if(a.row === b.row)
+			return a.column - b.column;
+		return a.row - b.row;
+	});
+	var roadKey = "["+hexes[0].row+","+hexes[0].column+"]["+hexes[1].row+","+hexes[1].column+"]";
 	if(roadLocations[roadKey] !== undefined) // prevent doubles
 		return;
 	var shapePath = createRectangleStringFromArray(coords);
-	var road = board.path(shapePath);
+	var road = canvas.path(shapePath);
 	road.attr({
 		fill:"transparent"
 	});
