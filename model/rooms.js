@@ -16,15 +16,16 @@ var io = require('socket.io'),
 	turns = require('./event-io/turns'),
 	games = {};
 
-building.init(games, io);
-players.init(games, io);
-trades.init(games, io);
-turns.init(games, io);
 
 exports.init = function(server) {
 	io = io.listen(server, {log: false});
 
 	io.sockets.on('connection', newConnection);
+	building.init(games, io);
+	players.init(games, io);
+	trades.init(games, io);
+	turns.init(games, io);
+
 }
 
 function newConnection (socket) {
@@ -63,5 +64,5 @@ function registerConnection (socket, room, playerId) {
 	socket.join(room);
 
 	players.registerNewPlayer(socket, room, playerId);
-	building.setupBuldingEvents(socket, room, playerId);
+	building.setupBuildingEvents(socket, room, playerId);
 }

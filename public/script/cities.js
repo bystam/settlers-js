@@ -46,7 +46,6 @@ function createCityShape (canvas, hexes, coords){
 	var cityKey = "["+hexes[0].row+","+hexes[0].column+"]["+hexes[1].row+","+hexes[1].column+"]["+hexes[2].row+","+hexes[2].column+"]";
 	if(cityLocations[cityKey] !== undefined)//prevent doubles
 		return;
-	console.log("building city at "+cityKey);
 	var city = canvas.circle(coords.x, coords.y, radius);
 	city.attr({
 		fill:"transparent"
@@ -54,7 +53,6 @@ function createCityShape (canvas, hexes, coords){
 
 	cityLocations[cityKey] = city;
 	city.click(function(){
-		console.log("City clicked between hex "+cityKey);
 		socket.emit(serverCommands.canBuildCity, cityKey);
 	});
 	city.hover(function(){
@@ -76,31 +74,25 @@ function canPlaceCity(key){
 	return true;
 }
 
-function placeCity (coords, playerId){
-	console.log("coords: "+coords+", playerID: "+playerId);
+var cityGraphics = {stroke:"lightblue", strokeWidth:2,fill:"blue"};
+
+function placeCityWithAnimation (coords, playerId, canvas){
 	var city = cityLocations[coords];
-	console.log(city);
-	var animX = parseFloat(city.attr("cx"));
-	console.log("animX: "+animX);
-	animX = animX-100;
-
 	city.unclick(null);
-	var stashCity = stashLocations[playerId].clone();
-	console.log("stashCity:");
-	console.log(stashCity);
+	city.unhover();
+	var stashCoords = stashLocations[playerId];
+	var cityAnimation = canvas.circle(stashCoords.x, stashCoords.y, 7);
+	cityAnimation.attr(cityGraphics);
+	cityAnimation.animate({cx:city.attr("cx"), cy:city.attr("cy")}, 3000, mina.bounce, function(){
+		placeCity(coords, playerId);
+		cityAnimation.remove();
+	});
+}
 
-	stashCity.attr({
-		stroke:"lightblue",
-			strokeWidth:2,
-			fill:"blue"
-	});
-	stashCity.animate({cx:city.attr("cx"), cy:city.attr("cy")}, 3000, mina.elastic, function(){
-		city.attr({
-			stroke:"lightblue",
-			strokeWidth:2,
-			fill:"blue"
-		});
-	});
-	
+function placeCity(coords, playerId){
+	var city = cityLocations[coords];
+	city.unclick(null);
+	city.unhover();
+	city.attr(cityGraphics);
 }
 

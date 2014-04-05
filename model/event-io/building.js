@@ -19,7 +19,7 @@ exports.init = function(gamesState, socketIo) {
 	Hela det här monstruösa if-grejset borde kunna flyttas till ruleset/boards
 	på något sätt. Set exemplet i ruleset.js
 */
-exports.setupBuldingEvents = function(socket, room, playerId){
+exports.setupBuildingEvents = function(socket, room, playerId){
 	var game = games[room];
 	var rules = game.rules;
 	socket.on("buildRoad", function(coords){
@@ -42,7 +42,7 @@ exports.setupBuldingEvents = function(socket, room, playerId){
 		}
 		if(buildingOk)
 			placeRoad (coords, playerId);
-		socket.emit("buildRoad", {playerId:playerId, coords:coords, allowed:buildingOk});
+		io.sockets.in(room).emit("buildRoad", {playerId:playerId, coords:coords, allowed:buildingOk});
 	});
 
 	socket.on("buildSettlement", function(coords){
@@ -70,7 +70,7 @@ exports.setupBuldingEvents = function(socket, room, playerId){
 		console.log("city allowed: "+buildingOk);
 		if(buildingOk)
 			placeSettlement(coords, playerId)
-		socket.emit("buildSettlement", {playerId:playerId, coords:coords, allowed:buildingOk});
+		io.sockets.in(room).emit("buildSettlement", {playerId:playerId, coords:coords, allowed:buildingOk});
 	});
 }
 

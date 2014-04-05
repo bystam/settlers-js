@@ -1,6 +1,4 @@
-var game = null;
-var hexagons = [];
-var socket;
+var socket, boardCanvas, game;
 
 var serverCommands = {canBuildRoad:"buildRoad", canBuildCity:"buildSettlement"};
 function populateGameWithLogic(game) {
@@ -16,9 +14,9 @@ $ (document).ready(function(){
 	socket.on("game-joined", function(gameState){
 		populateGameWithLogic(gameState);
 		game = gameState;
-		console.log(game);
-		$("body").append("Successfully joined room: "+game.room);
-		createEmptyBoard();
+		console.log(gameState);
+		$("body").append("Successfully joined room: "+gameState.room);
+		createEmptyBoard(gameState);
 	});
 	socket.on("room-404", function(data){
 		// alert("THIS FUCKING ROOM DOESNT EXIST!!!")
@@ -27,21 +25,24 @@ $ (document).ready(function(){
 		$("body").append("<p>Player joined: "+playerId+"</p>");
 		console.log(playerId);
 		game.addPlayer(playerId);
+		initializeNewPlayer(boardCanvas, playerId);
 	});
 });
 
-function createEmptyBoard(){
-	var canvas = Snap("#board");
-	var boardWidthInPixels = canvas.attr("width");
+function createEmptyBoard(game){
+	boardCanvas = Snap("#board");
+	var boardWidthInPixels = boardCanvas.attr("width");
 	var boardWidthInPixels = parseInt(boardWidthInPixels.substring(0, boardWidthInPixels.length - 2));
-	createHexShapesFromMap(canvas, game.board.map, boardWidthInPixels);
-	createRoadShapesFromMap(canvas, game.board.map);
-	createCityShapesFromMap(canvas, game.board.map);
-	initializePlayerStashes(game, canvas);
+	createHexShapesFromMap(boardCanvas, game.board.map, boardWidthInPixels);
+	createRoadShapesFromMap(boardCanvas, game.board.map);
+	createCityShapesFromMap(boardCanvas, game.board.map);
+
+	game.players.forEach(function(playerId){
+		initializeNewPlayer(boardCanvas, playerId);
+	});
+
 	setServerResponseHandlers (socket);
-	// createCardsForExistingPlayers()
 	// createDice()
-	// createExtras()
 }
 
 function setServerResponseHandlers (socket){
@@ -50,10 +51,8 @@ function setServerResponseHandlers (socket){
 			placeRoad(data.coords, data.playerId);
 	});
 	socket.on(serverCommands.canBuildCity, function(data){
-		console.log("building city from server");
-		console.log(data);
 		if(data.allowed)
-			placeCity(data.coords, data.playerId);
+			placeCityWithAnimation(data.coords, data.playerId, boardCanvas);
 	});
 
 }
