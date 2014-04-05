@@ -26,7 +26,7 @@ $ (document).ready(function(){
 		$("body").append("<p>Player joined: "+playerId+"</p>");
 		console.log(playerId);
 		game.addPlayer(playerId);
-		initializeNewPlayer(boardCanvas, playerId);
+		initializeNewPlayer(boardCanvas, playerId, game);
 	});
 });
 
@@ -49,11 +49,11 @@ function createEmptyBoard(game){
 function setServerResponseHandlers (socket){
 	socket.on(serverCommands.canBuildRoad, function(data){
 		if(data.allowed)
-			placeRoad(data.coords, data.playerId);
+			placeRoadWithAnimation(data.coords, data.playerId);
 	});
 	socket.on(serverCommands.canBuildCity, function(data){
 		if(data.allowed)
-			placeCityWithAnimation(data.coords, data.playerId, boardCanvas);
+			placeCityWithAnimation(data.coords, data.playerId, boardCanvas, data.isCity);
 	});
 
 }

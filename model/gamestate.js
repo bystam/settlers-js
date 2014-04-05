@@ -51,7 +51,8 @@ function privateCopyForPlayer(playerId) {
 	copy.room = this.room;
 	copy.board = this.board;
 	copy.players = this.players;
-	copy.privateStash = {}; // TODO!!!
+	copy.privateStash = this.stashes[playerId]; // TODO!!!
+	copy.stashes = this.stashes; //REDO LATER, should not send resources/cards
 	return copy;
 }
 

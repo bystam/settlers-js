@@ -12,6 +12,10 @@ function drawBorder (element, color, width){
 		strokeWidth: width
 	});
 }
+//general
+function getRandomInt (min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 //Move this to general utils if you need to separate
 function getCornerClosestTo(corner, candidates){

@@ -44,12 +44,9 @@ function createCityShape (canvas, hexes, coords){
 		return a.row - b.row;
 	});
 	var cityKey = "["+hexes[0].row+","+hexes[0].column+"]["+hexes[1].row+","+hexes[1].column+"]["+hexes[2].row+","+hexes[2].column+"]";
-	if(cityLocations[cityKey] !== undefined)//prevent doubles
+	if(cityLocations[cityKey] !== undefined)//prevent doublettes
 		return;
-	var city = canvas.circle(coords.x, coords.y, radius);
-	city.attr({
-		fill:"transparent"
-	});
+	var city = getSettlementShape(canvas, coords, null);
 
 	cityLocations[cityKey] = city;
 	city.click(function(){
@@ -74,29 +71,43 @@ function canPlaceCity(key){
 	return true;
 }
 
-function placeCityWithAnimation (coords, playerId, canvas){
+//TODO separate between settlement and city lacement
+function placeCityWithAnimation (coords, playerId, canvas, isCity){
 	var city = cityLocations[coords];
 	city.unclick(null);
 	city.unhover();
-	var stashCoords = stashLocations[playerId];
-	var cityAnimation = canvas.circle(stashCoords.x, stashCoords.y, 7);
-	cityAnimation.attr(getCityGraphics(playerId));
-	cityAnimation.animate({cx:city.attr("cx"), cy:city.attr("cy")}, 3000, mina.bounce, function(){
+
+	var stashCity = isCity ? stashObjects[playerId].cities.shift() : stashObjects[playerId].settlements.shift();
+	stashCity.animate({cx:city.attr("cx"), cy:city.attr("cy")}, 3000, mina.easin, function(){
 		placeCity(coords, playerId);
-		cityAnimation.remove();
+		stashCity.remove();
 	});
 }
 
-function placeCity(coords, playerId){
+function placeCity(coords, playerId, isCity){
 	var city = cityLocations[coords];
 	city.unclick(null);
 	city.unhover();
 	city.attr(getCityGraphics(playerId));
 }
 
+function getSettlementShape (canvas, coords, playerId){
+	return getIntersectionShape(canvas, coords, playerId, 10);
+}
+
+function getCityShape (canvas, coords, playerId){
+	return getIntersectionShape(canvas, coords, playerId, 13);
+}
+
+function getIntersectionShape (canvas, coords, playerId, radius){
+	var shape = canvas.circle(coords.x, coords.y, radius);
+	shape.attr(getCityGraphics(playerId));
+	return shape;
+}
+
 function getCityGraphics (playerId){
-	var majorColor = buildingColors[playerId];
-	var minorColor = tinycolor.lighten(majorColor, amount = 20);
-	return {stroke:minorColor, strokeWidth:2,fill:majorColor}
+	var majorColor = playerId !== null ? buildingColors[playerId] : "transparent";
+	var minorColor = tinycolor.complement(majorColor);//tinycolor.lighten(majorColor, amount = 10);
+	return {stroke:minorColor, strokeWidth:1,fill:majorColor}
 }
 

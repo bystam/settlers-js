@@ -43,7 +43,6 @@ function createRoadShape (canvas, hexes, coords){
 	roadLocations[roadKey] = road;
 
 	road.click(function(){
-		console.log("Road clicked between hex "+roadKey);
 		socket.emit(serverCommands.canBuildRoad, roadKey);
 	});
 
@@ -68,13 +67,36 @@ function canPlaceRoad(key){
 		return true;
 	return false;}
 
-function placeRoad (coords, playerId){
+function getRoadGraphics (playerId){
+	var majorColor = buildingColors[playerId];
+	var minorColor = tinycolor.complement(majorColor);//tinycolor.lighten(majorColor, amount = 10);
+	return {stroke:minorColor, strokeWidth:1,fill:majorColor}
+}
+
+function placeRoadWithAnimation (coords, playerId){
 	var road = roadLocations[coords];
-	//TODO here: map playerIds to colors and set...
+	road.unclick(null);
 	road.unhover();
-	road.attr({
-		stroke:"lightblue",
-		strokeWidth:2,
-		fill:"blue"
+	var stashRoad = stashObjects[playerId].roads.shift();
+	var translate = new Snap.Matrix().translate(0,0);
+	stashRoad.transform(translate);
+	stashRoad.animate({d:road.attr("d")}, 3000, mina.bounce, function(){
+		placeRoad(coords, playerId);
+		stashRoad.remove();
 	});
 }
+
+function getRoadShape (canvas, coords, playerId, path){
+	var shape = canvas.circle(coords.x, coords.y, radius);
+	shape.attr(getCityGraphics(playerId));
+	return shape;
+}
+
+function placeRoad (coords, playerId){
+	var road = roadLocations[coords];
+	road.unclick(null);
+	road.unhover();
+	road.attr(getRoadGraphics(playerId));
+}
+
+

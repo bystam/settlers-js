@@ -47,6 +47,7 @@ exports.setupBuildingEvents = function(socket, room, playerId){
 
 	socket.on("buildSettlement", function(coords){
 		var buildingOk = false;
+		var isCity = false;
 		if(!rules.settlementExists(game, coords)){
 			if(rules.hasInStash(game, playerId, buildingTypes.settlement)){
 				if(!rules.settlementInProximity(game, coords)){
@@ -63,14 +64,16 @@ exports.setupBuildingEvents = function(socket, room, playerId){
 			}
 		} else if(rules.settlementIsOwnedByPlayer(game, coords, playerId)){
 			if(rules.hasInStash(game, playerId, buildingTypes.city)){
-				if(rules.hasResources(game, costs.city, playerId))
+				if(rules.hasResources(game, costs.city, playerId)){
 					buildingOk = true;
+					isCity = true;
+				}
 			}
 		}
 		console.log("city allowed: "+buildingOk);
 		if(buildingOk)
 			placeSettlement(coords, playerId)
-		io.sockets.in(room).emit("buildSettlement", {playerId:playerId, coords:coords, allowed:buildingOk});
+		io.sockets.in(room).emit("buildSettlement", {playerId:playerId, coords:coords, allowed:buildingOk, isCity:isCity});
 	});
 }
 
