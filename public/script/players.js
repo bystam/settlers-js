@@ -40,42 +40,50 @@ function initializeStash (playerId){
 }
 
 // draw roads, settlements and cities for local player
-//we should keep track of these and use them for animations instead of new objects...
 function drawInitialStash(canvas, stash, playerId){
-	var corner = stashObjects[playerId].corner;
-	corner.x = corner.x + 40;
-	var stashInfo = game.stashes[playerId];
-	var spaceBetweenPiles = 50;
-
-	var roadPileSize = playerId === localPlayerId ? 50 : 30;
-	var y = {from: corner.y, to:corner.y+roadPileSize};
-	var x = {from: corner.x, to:corner.x+roadPileSize}; 
-	console.log(stashInfo);
 	stashObjects[playerId].roads = [];
-	for(var i=0;i<stashInfo.roads;i++){
-		var coords = {x:getRandomInt(x.from, x.to),y:getRandomInt(y.from, y.to)};
+	stashObjects[playerId].settlements = [];
+	stashObjects[playerId].cities = [];
+
+	var spaceBetweenPiles = playerId === localPlayerId ? 50 : 20;
+	var pileHeight = playerId === localPlayerId ? 50 : 20;
+	var pileWidth = playerId === localPlayerId ? 50 : 50;
+	
+	var rect = {x:stashObjects[playerId].corner.x+40, y:stashObjects[playerId].corner.y, width: pileWidth, height:pileHeight};
+	drawRoadStash(canvas, game.stashes[playerId].roads, rect, playerId);
+	rect.y = rect.y + pileHeight + spaceBetweenPiles;
+	drawSettlementStash(canvas, game.stashes[playerId].settlements, rect, playerId);
+	rect.y = rect.y + pileHeight + spaceBetweenPiles;
+	drawCityStash(canvas, game.stashes[playerId].cities, rect, playerId);
+
+}
+
+function drawSettlementStash(canvas, amount, rect, playerId){
+	canvas.rect(rect.x, rect.y, rect.width, rect.height);
+	for(var i=0;i<amount;i++){
+		var coords = {x:getRandomInt(rect.x, rect.x+rect.width),y:getRandomInt(rect.y, rect.y+rect.height)};
+		var shape = getShape(canvas, coords, stashObjectTypes.settlement, playerId);
+		stashObjects[playerId].settlements.push(shape);
+	}
+}
+function drawCityStash(canvas, amount, rect, playerId){
+	canvas.rect(rect.x, rect.y, rect.width, rect.height);
+	for(var i=0;i<amount;i++){
+		var coords = {x:getRandomInt(rect.x, rect.x+rect.width),y:getRandomInt(rect.y, rect.y+rect.height)};
+		var shape = getShape(canvas, coords, stashObjectTypes.city, playerId);
+		stashObjects[playerId].cities.push(shape);
+	}
+}
+
+function drawRoadStash (canvas, amount, rect, playerId){
+	canvas.rect(rect.x, rect.y, rect.width, rect.height);
+	for(var i=0;i<amount;i++){
+		var coords = {x:getRandomInt(rect.x, rect.x+rect.width),y:getRandomInt(rect.y, rect.y+rect.height)};
 		var shape = getShape(canvas, coords, stashObjectTypes.road, playerId);
 		var rotation = new Snap.Matrix().rotate(getRandomInt(0,360), coords.x, coords.y);
 		shape.transform(rotation);
 		stashObjects[playerId].roads.push (shape);
 	}
-
-	var settlementPileSize = playerId === localPlayerId ? 50 : 20;
-	var y = {from: y.to +spaceBetweenPiles, to:y.to + spaceBetweenPiles + settlementPileSize};
-	var x = {from: corner.x, to:corner.x+settlementPileSize}; 
-	stashObjects[playerId].settlements = [];
-	for(var i=0;i<stashInfo.settlements;i++){
-		var coords = {x:getRandomInt(x.from, x.to),y:getRandomInt(y.from, y.to)};
-		var shape = getShape(canvas, coords, stashObjectTypes.settlement, playerId);
-		stashObjects[playerId].settlements.push(shape);
-	}
-	stashObjects[playerId].cities = [];
-	for(var i=0;i<stashInfo.cities;i++){
-		var coords = {x:getRandomInt(x.from, x.to),y:getRandomInt(y.from, y.to)};
-		var shape = getShape(canvas, coords, stashObjectTypes.city, playerId);
-		stashObjects[playerId].cities.push(shape);
-	}
-
 }
 
 function getShape (canvas, coords, type, playerId){
