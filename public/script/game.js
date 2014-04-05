@@ -1,4 +1,4 @@
-var socket, boardCanvas, game;
+var socket, boardCanvas, game, localPlayerId;
 
 var serverCommands = {canBuildRoad:"buildRoad", canBuildCity:"buildSettlement"};
 function populateGameWithLogic(game) {
@@ -12,11 +12,12 @@ $ (document).ready(function(){
 	socket = io.connect('http://localhost:5000');
 	socket.emit("room", {playerId:Math.random(), room:roomUrl})
 	socket.on("game-joined", function(gameState){
-		populateGameWithLogic(gameState);
-		game = gameState;
-		console.log(gameState);
-		$("body").append("Successfully joined room: "+gameState.room);
-		createEmptyBoard(gameState);
+		game = gameState.game;
+		localPlayerId = gameState.playerId;
+		populateGameWithLogic(game);
+		console.log(game);
+		$("body").append("Successfully joined room: "+game.room);
+		createEmptyBoard(game);
 	});
 	socket.on("room-404", function(data){
 		// alert("THIS FUCKING ROOM DOESNT EXIST!!!")

@@ -74,15 +74,13 @@ function canPlaceCity(key){
 	return true;
 }
 
-var cityGraphics = {stroke:"lightblue", strokeWidth:2,fill:"blue"};
-
 function placeCityWithAnimation (coords, playerId, canvas){
 	var city = cityLocations[coords];
 	city.unclick(null);
 	city.unhover();
 	var stashCoords = stashLocations[playerId];
 	var cityAnimation = canvas.circle(stashCoords.x, stashCoords.y, 7);
-	cityAnimation.attr(cityGraphics);
+	cityAnimation.attr(getCityGraphics(playerId));
 	cityAnimation.animate({cx:city.attr("cx"), cy:city.attr("cy")}, 3000, mina.bounce, function(){
 		placeCity(coords, playerId);
 		cityAnimation.remove();
@@ -93,6 +91,12 @@ function placeCity(coords, playerId){
 	var city = cityLocations[coords];
 	city.unclick(null);
 	city.unhover();
-	city.attr(cityGraphics);
+	city.attr(getCityGraphics(playerId));
+}
+
+function getCityGraphics (playerId){
+	var majorColor = buildingColors[playerId];
+	var minorColor = tinycolor.lighten(majorColor, amount = 20);
+	return {stroke:minorColor, strokeWidth:2,fill:majorColor}
 }
 
