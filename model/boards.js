@@ -33,9 +33,9 @@ var generateRandomMap = function () {
 }
 
 function getRandomMapFromStructure (mapStructure) {
-	var hexes = getLandHexes(mapStructure);
-	var map = createMapFromHexesAndStructure(hexes, mapStructure);
-	return { hexes:hexes, map: map };
+	var landHexes = getLandHexes(mapStructure);
+	var map = createMapFromHexesAndStructure(landHexes, mapStructure);
+	return { hexes: landHexes, map: map };
 }
 
 function getLandHexes (mapStructure) {
@@ -56,7 +56,7 @@ function addHexesOfType(hexes, amount, type, resource) {
 		hexes.push ({ type: type, resource: resource });
 }
 
-function createMapFromHexesAndStructure (hexes, mapStructure) {
+function createMapFromHexesAndStructure (landHexes, mapStructure) {
 	var grid = mapStructure.grid;
 	var map = [];
 	var hex = 0;
