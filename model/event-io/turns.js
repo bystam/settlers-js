@@ -17,10 +17,23 @@ exports.init = function(gamesState, socketIo) {
 exports.registerPlayerForTurns = function(socket, room, playerId) {
 	var game = games[room];
 	socket.on('turn-ended', function(data) {
-		var dices = diceRoll();
-		game.updateFromDiceRoll(dices);
+		game.lastDiceRoll = diceRoll();
 		io.sockets.in(room).emit('new-turn', game);
 	});
+
+	socket.on('draw-cards', function(data) {
+		
+	});
+
+	socket.on('start-game', function(data) {
+		if (!gameIsFull(room))
+			return io.sockets.in(room).emit('need-more-players', {} );
+		io.sockets.in(room).emit(game.stashes);
+	});
+}
+
+function gameIsFull (room) {
+	return games[room].players.length === 4;
 }
 
 function diceRoll () {
