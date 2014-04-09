@@ -44,10 +44,8 @@ function drawInitialStash(canvas, stash, playerId, isLocalPLayer){
 	stashObjects[playerId].roads = [];
 	stashObjects[playerId].settlements = [];
 	stashObjects[playerId].cities = [];
-	stashObjects[playerId].resources = {};
-	stashObjects[playerId].resources.cards = [];
 
-	var spaceBetweenPiles = isLocalPLayer ? 50 : 30;
+	var spaceBetweenPiles = isLocalPLayer ? 50 : 20;
 	var pileHeight = isLocalPLayer ? 50 : 20;
 	var pileWidth = isLocalPLayer ? 50 : 50;
 
@@ -59,38 +57,77 @@ function drawInitialStash(canvas, stash, playerId, isLocalPLayer){
 	rect.x = rect.x + pileWidth + spaceBetweenPiles;
 	drawCityStash(canvas, stash.cities, rect, playerId);
 
-	stashObjects[playerId].resources = getResourceCardArea(canvas, stashObjects[playerId].corner.x, rect.y + pileHeight + spaceBetweenPiles, playerId, isLocalPLayer);
-	var resources = [1,2,3,4,5,6,7]; //array should be stash.resources
+	stashObjects[playerId].resources = getResourceCardArea(canvas, stashObjects[playerId].corner.x, rect.y + pileHeight + spaceBetweenPiles+40, pileWidth, playerId, isLocalPLayer);
+	var resources = [1,1,1,1,1,1,1]; //array should be stash.resources
 	for(var i=0;i<resources.length;i++){
 		stashObjects[playerId].resources.addResource(resources[i]);
 	}
-	rect.y = rect.y + pileHeight + spaceBetweenPiles;
-	rect.x = stashObjects[playerId].corner.x+10;
-	rect.width = pileWidth * 3;
-	rect.height = pileWidth * 3/2;
-	drawResourceStash(canvas, [1,2,3,4,5,6,7], rect, playerId, isLocalPLayer);	
+	// rect.y = rect.y + pileHeight + spaceBetweenPiles;
+	// rect.x = stashObjects[playerId].corner.x+10;
+	// rect.width = pileWidth * 3;
+	// rect.height = pileWidth * 3/2;
+	// drawResourceStash(canvas, [1,2,3,4,5,6,7], rect, playerId, isLocalPLayer);	
 }
 
-function getResourceCardArea(canvas, cornerX, cornerY, playerId, isLocalPLayer){
-	var area = {};
+function getResourceCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPLayer){
+	var area = canvas.rect(cornerX, cornerY + 300, 100, 100);
+	area.click(function(){
+		area.addResource(1);
+	})
+	area.attr({stroke:"blue", fill:"transparent"});
 	area.cards = [];
-	area.addResource = function(resource){
+	area.shapeGroup = canvas.g();
+	area.maxRows = isLocalPLayer ? 2 : 1;
+	var cardHeight = cardWidth * (4/3);
+	coords = {width:cardWidth, height:cardHeight};
+	var xJump = cardWidth - 10;
+	var yJump = cardHeight + 30;
 
+	area.addResource = function(resource){
+		coords.x = cornerX + (area.position.column-1)*xJump;
+		coords.y = cornerY + area.position.row*yJump;
+		var resourceShape = getShape(canvas, coords, stashObjectTypes.resource, playerId);
+		if(area.position.column % 4 == 0){
+			area.position.row++;
+			area.position.column = 0;
+		}
+		area.position.column++;
+		resourceShape.resource = resource;
+		area.cards.push(resourceShape);
+		area.shapeGroup.add(resourceShape);
 	}
 	area.removeResource = function(resource){
-		for(var i=0;i<area.cards.length;i++){
-			if(area.cards[i].resource === resource){
-				area.cards[i].remove();
+		for(var i=area.cards.length-1;i>=0;i--){
+			console.log(area.cards[i].resource);
+			if(area.cards[i].resource == resource){
+				var toRemove = area.cards[i];
 				area.cards.splice(i, 1);
+				toRemove.remove();
+				console.log(area.cards);
 				break;
 			}
 		}
 		area.reshuffle();
 	}
 	area.reshuffle = function (){
-
+		area.reset();
+		var resources = area.cards;
+		area.cards = [];
+		resources.forEach(function(card){
+			area.addResource(card.resource);
+		});
+	}
+	area.reset = function (){
+		area.position = {row:0, column:1};
+		area.currentX = cornerX;
+		area.currentY = cornerY;
+		area.row = 0;
+		area.column = 1;
+		area.shapeGroup.remove();
+		area.shapeGroup = canvas.g();
 	}
 
+	area.reset();
 	return area;
 }
 
@@ -106,7 +143,6 @@ function drawResourceStash(canvas, resources, rect, playerId, isLocalPlayer){
 		}
 
 	}
-
 	for(var i=0;i<resources.length;i++){
 		xCoord = rect.x + resourceWidth*(i%3)-(10*(i%3));
 		if(i%3 === 0  && i>0){
@@ -120,7 +156,7 @@ function drawResourceStash(canvas, resources, rect, playerId, isLocalPlayer){
 }
 
 function drawSettlementStash(canvas, amount, rect, playerId){
-	canvas.rect(rect.x, rect.y, rect.width, rect.height);
+	// canvas.rect(rect.x, rect.y, rect.width, rect.height);
 	for(var i=0;i<amount;i++){
 		var coords = {x:getRandomInt(rect.x, rect.x+rect.width),y:getRandomInt(rect.y, rect.y+rect.height)};
 		var shape = getShape(canvas, coords, stashObjectTypes.settlement, playerId);
@@ -128,7 +164,7 @@ function drawSettlementStash(canvas, amount, rect, playerId){
 	}
 }
 function drawCityStash(canvas, amount, rect, playerId){
-	canvas.rect(rect.x, rect.y, rect.width, rect.height);
+	// canvas.rect(rect.x, rect.y, rect.width, rect.height);
 	for(var i=0;i<amount;i++){
 		var coords = {x:getRandomInt(rect.x, rect.x+rect.width),y:getRandomInt(rect.y, rect.y+rect.height)};
 		var shape = getShape(canvas, coords, stashObjectTypes.city, playerId);
@@ -137,7 +173,7 @@ function drawCityStash(canvas, amount, rect, playerId){
 }
 
 function drawRoadStash (canvas, amount, rect, playerId){
-	canvas.rect(rect.x, rect.y, rect.width, rect.height);
+	// canvas.rect(rect.x, rect.y, rect.width, rect.height);
 	for(var i=0;i<amount;i++){
 		var coords = {x:getRandomInt(rect.x, rect.x+rect.width),y:getRandomInt(rect.y, rect.y+rect.height)};
 		var shape = getShape(canvas, coords, stashObjectTypes.road, playerId);
@@ -178,13 +214,16 @@ function getResourceShape (canvas, coords, playerId){
 			width:coords.width*(4/3),
 			height:coords.height*(7/6)
 		});
-		resource.toFront();
+		// resource.parent().before(resource);
 	}, function (){
 		resource.attr({
 			// x:coords.x,
 			width:coords.width,
 			height:coords.height
 		});
+	})
+	resource.click(function(){
+		stashObjects[playerId].resources.removeResource(1);
 	})
 	return resource;
 }

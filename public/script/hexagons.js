@@ -1,4 +1,5 @@
-var colors = {'ocean':'blue', 'field':'#FFE658', 'forest':'#126B32', 'pasture':'#6DD572', 'mountain':'#5E707A', 'hill':'#E03634', 'desert':'#D5CC6A'};
+var colors = {'ocean':'transparent', 'field':'#FFE658', 'forest':'#126B32', 'pasture':'#6DD572', 'mountain':'#5E707A', 'hill':'#E03634', 'desert':'#D5CC6A'};
+//sepia water: #4a46dc
 function createHexShapesFromMap(canvas, map, pixelWidth){
 	var gridWidth = map[0].length;
 	var hexRadius = ((pixelWidth-400) / gridWidth) / 2;
@@ -48,15 +49,26 @@ function drawNumberOnHex(canvas, xcoord, ycoord, value){
 }
 
 function createHexShape (canvas, x, y, color, radius){
-	var r = radius;
-	var sepiaFilter = canvas.filter(Snap.filter.sepia(0.4));
-	var hexShape = canvas.hex(r, a = 0, roundness = 0, originCenter = false, x, y);
+	var isOcean = color === colors['ocean'];
+	var filter = canvas.filter(Snap.filter.sepia(0.4));
+	var border = isOcean ? 0 : 0;
+	if(!isOcean){
+		var hexShapeBackground = canvas.hex(radius+9, a = 0, roundness = 0, originCenter = false, x-9, y-9);
+		var backgroundFilter = canvas.filter(Snap.filter.blur(20,20));
+		hexShapeBackground.attr({
+			fill:"#EDC9AF",
+			filter: backgroundFilter
+		});
+
+	}
+	var hexShape = canvas.hex(radius, a = 0, roundness = 0, originCenter = false, x, y);
 	hexShape.attr({
 		fill:color,
-		strokeWidth: 1,
+		strokeWidth: border,
 		stroke: "#000",
-		filter:sepiaFilter
+		filter:filter
 	});
+	
 	return hexShape;
 }
 

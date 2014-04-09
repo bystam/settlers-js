@@ -1,5 +1,6 @@
 body {
-	background-image: url("../img/startupplank.jpg");
+	background: url("../img/startupwater.jpg") center center;
+	background-size: 100%;
 }
 
 #refLink {
