@@ -86,7 +86,7 @@ function placeCityWithAnimation (coords, playerId, canvas, isCity){
 	}
 	var stashCity = isCity ? stashObjects[playerId].cities.shift() : stashObjects[playerId].settlements.shift();
 	stashCity.animate({cx:city.attr("cx"), cy:city.attr("cy")}, 3000, mina.easin, function(){
-		placeCity(coords, playerId);
+		placeCity(JSON.stringify(coords), playerId);
 		stashCity.remove();
 	});
 }
