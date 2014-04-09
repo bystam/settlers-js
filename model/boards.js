@@ -24,6 +24,7 @@ var DEAD_SPACE = 0;
 
 exports.Board = function() { // constructor
 	this.generateRandomMap = generateRandomMap; // initial state creating function
+	this.getHexesWithToken = getHexesWithToken;
 }
 
 var generateRandomMap = function () {
@@ -75,15 +76,10 @@ function createMapFromHexesAndStructure (landHexes, mapStructure) {
 }
 
 function setHexNeighbors (map) {
-	var height = map.length;
-	var width = map[0].length;
-	for (var row = 0; row < height; row++) {
-		for (var col = 0; col < width; col++) {
-			var hex = map[row][col];
-			if (hex !== null && hex.type !== 'ocean')
-				setNeighbors(hex, row, col, map)
-		}
-	}
+	forEachHex (map, function(hex, row, col) {
+		if (hex.type !== 'ocean')
+			setNeighbors(hex, row, col, map)
+	});
 }
 
 function setNeighbors(hex, row, col) {
@@ -119,6 +115,27 @@ function placeTokensOnHexes(tokens, hexes) {
 			hexes[i].token = null;
 		else
 			hexes[i].token = tokens.pop();
+	}
+}
+
+function getHexesWithToken (tokenValue) {
+	var hexes = [];
+	forEachHex (this.map, function(hex) {
+		if (hex.token && hex.token.value === tokenValue)
+			hexes.push (hex);
+	});
+	return hexes;
+}
+
+function forEachHex(map, action) {
+	var height = map.length;
+	var width = map[0].length;
+	for (var row = 0; row < height; row++) {
+		for (var col = 0; col < width; col++) {
+			var hex = map[row][col];
+			if (hex)
+				action(hex, row, col);
+		}
 	}
 }
 

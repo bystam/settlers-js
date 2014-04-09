@@ -17,15 +17,31 @@ exports.init = function(gamesState, socketIo) {
 exports.registerPlayerForTurns = function(socket, room, playerId) {
 	var game = games[room];
 	socket.on('turn-ended', function(data) {
-		var dices = diceRoll();
-		game.updateFromDiceRoll(dices);
+		game.lastDiceRoll = diceRoll();
 		io.sockets.in(room).emit('new-turn', game);
 	});
+
+	socket.on('draw-cards', function(data) {
+		var diceSum = game.lastDiceRoll.sum();
+		var hexesWithDiceSum = game.board.getHexesWithToken(diceSum);
+		// TODO filter cities for this player with adjacent target hexes
+	});
+
+	socket.on('start-game', function(data) {
+		if (!gameIsFull(room))
+			return io.sockets.in(room).emit('need-more-players', {} );
+		io.sockets.in(room).emit(game.stashes);
+	});
+}
+
+function gameIsFull (room) {
+	return games[room].players.length === 4;
 }
 
 function diceRoll () {
 	var dices = {};
 	dices.first = Math.floor(Math.random() * 6) + 1;
 	dices.second = Math.floor(Math.random() * 6) + 1;
+	dices.sum = function () { return this.first + this.second };
 	return dices;
 }
