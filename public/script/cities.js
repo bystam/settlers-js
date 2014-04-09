@@ -13,6 +13,10 @@ function createCityShapesFromMap(canvas, map){
 
 function createCityShapesForHex(canvas, map, hexagon){
 	var corners = getHexCorners(hexagon.shape);
+	corners.forEach (function(corner){
+		console.log("corner: X="+corner.x+", Y="+corner.y);
+	});
+		console.log("--------------");
 	var neighbourList = getNeighbourListForHex(map, hexagon);
 	for(var i=0;i<6;i++){
 		var neighbours = [hexagon, neighbourList[(i+4)%6], neighbourList[(i+5)%6]];
@@ -43,14 +47,16 @@ function createCityShape (canvas, hexes, coords){
 			return a.column - b.column;
 		return a.row - b.row;
 	});
-	var cityKey = "["+hexes[0].row+","+hexes[0].column+"]["+hexes[1].row+","+hexes[1].column+"]["+hexes[2].row+","+hexes[2].column+"]";
+	var cityNeighbours = [{row:hexes[0].row, column:hexes[0].column},{row:hexes[1].row, column:hexes[1].column},{row:hexes[2].row, column:hexes[2].column}];
+	var cityKey = JSON.stringify(cityNeighbours);
+	
 	if(cityLocations[cityKey] !== undefined)//prevent doublettes
 		return;
 	var city = getSettlementShape(canvas, coords, null);
 
 	cityLocations[cityKey] = city;
 	city.click(function(){
-		socket.emit(serverCommands.canBuildCity, cityKey);
+		socket.emit(serverCommands.canBuildCity, cityNeighbours);
 	});
 	city.hover(function(){
 		//only do local check on hover
@@ -73,7 +79,7 @@ function canPlaceCity(key){
 
 //TODO separate between settlement and city lacement
 function placeCityWithAnimation (coords, playerId, canvas, isCity){
-	var city = cityLocations[coords];
+	var city = cityLocations[JSON.stringify(coords)];
 	if(isCity){
 		city.unclick(null);
 		city.unhover();

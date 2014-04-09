@@ -39,7 +39,7 @@ function createEmptyBoard(game){
 	createCityShapesFromMap(boardCanvas, game.board.map);
 
 	game.players.forEach(function(playerId){
-		initializeNewPlayer(boardCanvas, playerId);
+		initializeNewPlayer(boardCanvas, playerId, game);
 	});
 
 	setServerResponseHandlers (socket);
