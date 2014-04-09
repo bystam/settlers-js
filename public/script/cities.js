@@ -2,8 +2,8 @@ var cityLocations = {};
 var debugC;
 function createCityShapesFromMap(canvas, map){
 	debugC = canvas;
-	for(var row = 0;row<map.length;row++){
-		for(var column=0;column<map[0].length;column++){
+	for(var row = 0; row < map.length; row++){
+		for(var column=0; column < map[0].length; column++){
 			var hexagon = map[row][column];
 			if(hexagon !== null && hexagon.type !== 'ocean')
 				createCityShapesForHex (canvas, map, hexagon);

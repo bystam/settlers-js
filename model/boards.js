@@ -28,14 +28,14 @@ exports.Board = function() { // constructor
 
 var generateRandomMap = function () {
 	var map = getRandomMapFromStructure(defaultMap);
-	this.hexes = map.hexes;
 	this.map = map.map;
 }
 
 function getRandomMapFromStructure (mapStructure) {
 	var landHexes = getLandHexes(mapStructure);
 	var map = createMapFromHexesAndStructure(landHexes, mapStructure);
-	return { hexes: landHexes, map: map };
+	setHexNeighbors(map);
+	return { map: map };
 }
 
 function getLandHexes (mapStructure) {
@@ -64,14 +64,38 @@ function createMapFromHexesAndStructure (landHexes, mapStructure) {
 		map.push([]);
 		for (var col = 0; col < grid[row].length; col++) {
 			if (grid[row][col] === LAND)
-				map[row].push(hexes[hex++]);
-			else if(grid[row][col] === WATER)
-				map[row].push({type:'ocean'});
+				map[row].push(landHexes[hex++]);
+			else if (grid[row][col] === WATER)
+				map[row].push({ type: 'ocean' });
 			else
 				map[row].push(null);
 		}
 	}
 	return map;
+}
+
+function setHexNeighbors (map) {
+	var height = map.length;
+	var width = map[0].length;
+	for (var row = 0; row < height; row++) {
+		for (var col = 0; col < width; col++) {
+			var hex = map[row][col];
+			if (hex !== null && hex.type !== 'ocean')
+				setNeighbors(hex, row, col, map)
+		}
+	}
+}
+
+function setNeighbors(hex, row, col) {
+	// neighbor order determined by snap.svg corner point ordering
+	var neighbors = [];
+	neighbors.push ({ row: row-1, col: col+1 }); // north east
+	neighbors.push ({ row: row+1, col: col+1 }); // south east
+	neighbors.push ({ row: row+2, col: col }); // south
+	neighbors.push ({ row: row+1, col: col-1 }); // south west
+	neighbors.push ({ row: row-1, col: col-1 }); // south east
+	neighbors.push ({ row: row-2, col: col }); // north
+	hex.neighbors = neighbors;
 }
 
 /*
