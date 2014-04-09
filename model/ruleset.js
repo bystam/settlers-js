@@ -36,38 +36,84 @@
 	och trading ska ligga i den här modulen kommer den bli knull
 */
 
+var buildingTypes = {road:"road", settlement:"settlements", city:"city"};
+var costs = {road:[0,0,0,0,0], town:[0,0,0,0,0], city:[0,0,0,0,0], developmentCard:[0,0,0,0,0]}
+
 // TODO ska alla de här ligga här eller är någon av dem en del av board-objektet?
 exports.Rules = function(game) { // rules constructor
 	this.game = game;
-	this.settlementInProximity = settlementInProximity;
-	this.hasInStash = hasInStash;
-	this.hasConnecting = hasConnecting;
-	this.settlementIsOwnedByPlayer = settlementIsOwnedByPlayer;
-	this.settlementExists = settlementExists;
-	this.hasFreeRoads = hasFreeRoads
-	this.hasResources = hasResources
-	this.isStartupPhase =  isStartupPhase;
-	this.isFirstRound = isFirstRound
-	this.roadExists =  roadExists;
+	this.roadBuildIsLegal = roadBuildIsLegal;
+	this.settlementBuildIsLegal = settlementBuildIsLegal;
 }
 
-function settlementInProximity(game, coords){
+function roadBuildIsLegal (roadCoordinates, playerId) {
+	var isLegal = false;
+	if(hasInStash(playerId, buildingTypes.road)) {
+		if(!roadExists(roadCoordinates)){
+			if(isFirstRound(playerId)){
+				isLegal = true;
+			} else if(isStartupPhase(playerId)){
+				if(hasConnecting(playerId, roadCoordinates, buildingTypes.road) || 
+					hasConnecting(playerId, roadCoordinates, buildingTypes.settlement))
+					isLegal = true;
+			} else if(hasConnecting(playerId, roadCoordinates, buildingTypes.road)){
+				if(rules.hasResources(costs.road, playerId))
+					isLegal = true;
+				else if(hasFreeRoads(playerId))
+					isLegal = true;
+			}
+		}
+	}
+
+	return isLegal;
+}
+
+function settlementBuildIsLegal (settlementCoords, playerId) {
+	var isLegal = false;
+	var isCity = false;
+	if(!settlementExists(settlementCoords)){
+		if(hasInStash(playerId, buildingTypes.settlement)){
+			if(!settlementInProximity(settlementCoords)){
+				if(isFirstRound(playerId))
+					isLegal = true;
+				else if(isStartupPhase(playerId)){
+					if(hasConnecting(playerId, settlementCoords, buildingTypes.road))
+						isLegal = true;
+				} else if(hasConnecting(playerId, settlementCoords, buildingTypes.road)){
+					if(hasResources(costs.settlement, playerId))
+						isLegal = true;
+				}
+			}
+		}
+	} else if (settlementIsOwnedByPlayer(settlementCoords, playerId)) {
+		if(hasInStash(playerId, buildingTypes.city)){
+			if(hasResources(costs.city, playerId)){
+				isLegal = true;
+				isCity = true;
+			}
+		}
+	}
+
+	return { legal: isLegal, city: isCity };
+}
+
+function settlementInProximity(coords){
 	return false;
 }
 
-function hasInStash (game, playerId, type){
+function hasInStash (playerId, type){
 	/*
 	if(type === buildingTypes.road)
-		return game.stashes[playerId].roads > 0;
+		return tashes[playerId].roads > 0;
 	if(type == buildingTypes.settlements)
-		return game.stashes[playerId].settlements > 0;
+		return tashes[playerId].settlements > 0;
 	if(type == buildingTypes.city)
-		return game.stashes[playerId].cities > 0;
+		return tashes[playerId].cities > 0;
 	*/
 	return true;
 }
 
-function hasConnecting (game, playerId, coords, type){
+function hasConnecting (playerId, coords, type){
 	/*
 	if(type === buildingTypes.road)
 		return true;
@@ -77,30 +123,30 @@ function hasConnecting (game, playerId, coords, type){
 	return true;
 }
 
-function settlementIsOwnedByPlayer(game, coords, playerId){
+function settlementIsOwnedByPlayer(coords, playerId){
 	return true;
 }
 
-function settlementExists(game, coords){
+function settlementExists(coords){
 
 }
 
-function hasFreeRoads(game, playerId){
+function hasFreeRoads(playerId){
 	return true;
 }
 
-function hasResources(game, cost, playerId){
+function hasResources(cost, playerId){
 	return true;
 }
 
-function isStartupPhase (game, playerId){
+function isStartupPhase (playerId){
 	return true;
 }
 
-function isFirstRound(game, playerId){
+function isFirstRound(playerId){
 	return true;
 }
 
-function roadExists (game, coords){
+function roadExists (coords){
 	return false;
 }
