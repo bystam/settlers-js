@@ -13,10 +13,6 @@ function createCityShapesFromMap(canvas, map){
 
 function createCityShapesForHex(canvas, map, hexagon){
 	var corners = getHexCorners(hexagon.shape);
-	corners.forEach (function(corner){
-		console.log("corner: X="+corner.x+", Y="+corner.y);
-	});
-		console.log("--------------");
 	var neighbourList = getNeighbourListForHex(map, hexagon);
 	for(var i=0;i<6;i++){
 		var neighbours = [hexagon, neighbourList[(i+4)%6], neighbourList[(i+5)%6]];
