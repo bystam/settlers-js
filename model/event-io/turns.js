@@ -22,7 +22,9 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 	});
 
 	socket.on('draw-cards', function(data) {
-		
+		var diceSum = game.lastDiceRoll.sum();
+		var hexesWithDiceSum = game.board.getHexesWithToken(diceSum);
+		// TODO filter cities for this player with adjacent target hexes
 	});
 
 	socket.on('start-game', function(data) {
@@ -40,5 +42,6 @@ function diceRoll () {
 	var dices = {};
 	dices.first = Math.floor(Math.random() * 6) + 1;
 	dices.second = Math.floor(Math.random() * 6) + 1;
+	dices.sum = function () { return this.first + this.second };
 	return dices;
 }
