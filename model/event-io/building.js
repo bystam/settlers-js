@@ -4,10 +4,6 @@
 	roads, settlements and cities
 */
 
-
-var costs = {road:[0,0,0,0,0], town:[0,0,0,0,0], city:[0,0,0,0,0], developmentCard:[0,0,0,0,0]}
-var buildingTypes = {road:"road", settlement:"settlements", city:"city"};
-
 var games = null;
 var io = null;
 exports.init = function(gamesState, socketIo) {
@@ -22,58 +18,19 @@ exports.init = function(gamesState, socketIo) {
 exports.setupBuildingEvents = function(socket, room, playerId){
 	var game = games[room];
 	var rules = game.rules;
+	
 	socket.on("buildRoad", function(coords){
-		var buildingOk = false;
-		if(rules.hasInStash(game, playerId, buildingTypes.road)){
-			if(!rules.roadExists(game,coords)){
-				if(rules.isFirstRound(game, playerId)){
-					buildingOk = true;
-				} else if(rules.isStartupPhase(game, playerId)){
-					if(rules.hasConnecting(game,playerId, coords, buildingTypes.road) || 
-						hasConnecting(game, playerId, coords, buildingTypes.settlement))
-						buildingOk = true;
-				} else if(rules.hasConnecting(game, playerId, coords, buildingTypes.road)){
-					if(rules.hasResources(game, costs.road, playerId))
-						buildingOk = true;
-					else if(rules.hasFreeRoads(game, playerId))
-						buildingOk = true;
-				}
-			}
-		}
-		if(buildingOk)
+		var buildIsLegal = rules.roadBuildIsLegal(coords, playerId);
+		if (buildIsLegal)
 			placeRoad (coords, playerId);
-		io.sockets.in(room).emit("buildRoad", {playerId:playerId, coords:coords, allowed:buildingOk});
+		io.sockets.in(room).emit("buildRoad", {playerId:playerId, coords:coords, allowed:buildIsLegal});
 	});
 
 	socket.on("buildSettlement", function(coords){
-		var buildingOk = false;
-		var isCity = false;
-		if(!rules.settlementExists(game, coords)){
-			if(rules.hasInStash(game, playerId, buildingTypes.settlement)){
-				if(!rules.settlementInProximity(game, coords)){
-					if(rules.isFirstRound(game, playerId))
-						buildingOk = true;
-					else if(rules.isStartupPhase(game, playerId)){
-						if(rules.hasConnecting(game, playerId, coords, buildingTypes.road))
-							buildingOk = true;
-					} else if(rules.hasConnecting(game, playerId, coords, buildingTypes.road)){
-						if(rules.hasResources(game, costs.settlement, playerId))
-							buildingOk = true;
-					}
-				}
-			}
-		} else if(rules.settlementIsOwnedByPlayer(game, coords, playerId)){
-			if(rules.hasInStash(game, playerId, buildingTypes.city)){
-				if(rules.hasResources(game, costs.city, playerId)){
-					buildingOk = true;
-					isCity = true;
-				}
-			}
-		}
-		console.log("city allowed: "+buildingOk);
-		if(buildingOk)
+		var build = rules.settlementBuildIsLegal(coords, playerId);
+		if(build.legal)
 			placeSettlement(coords, playerId)
-		io.sockets.in(room).emit("buildSettlement", {playerId:playerId, coords:coords, allowed:buildingOk, isCity:isCity});
+		io.sockets.in(room).emit("buildSettlement", {playerId:playerId, coords:coords, allowed:build.legal, isCity:build.city});
 	});
 }
 
