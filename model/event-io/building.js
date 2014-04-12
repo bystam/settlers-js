@@ -11,14 +11,10 @@ exports.init = function(gamesState, socketIo) {
 	io = socketIo;
 }
 
-/*
-	Hela det här monstruösa if-grejset borde kunna flyttas till ruleset/boards
-	på något sätt. Set exemplet i ruleset.js
-*/
 exports.setupBuildingEvents = function(socket, room, playerId){
 	var game = games[room];
 	var rules = game.rules;
-	
+
 	socket.on("buildRoad", function(coords){
 		var buildIsLegal = rules.roadBuildIsLegal(coords, playerId);
 		if (buildIsLegal)

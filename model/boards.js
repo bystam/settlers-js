@@ -25,6 +25,7 @@ var DEAD_SPACE = 0;
 exports.Board = function() { // constructor
 	this.generateRandomMap = generateRandomMap; // initial state creating function
 	this.getHexesWithToken = getHexesWithToken;
+	this.forEachHex = forEachHex;
 }
 
 var generateRandomMap = function () {
@@ -94,9 +95,6 @@ function setNeighbors(hex, row, col) {
 	hex.neighbors = neighbors;
 }
 
-/*
-	One "2", Two "3", Two "4", Two "5", Two "6", Two "8", Two "9", Two "10", Two "11", One "12"
-*/
 function getTokens() { // TODO make generic
 	var tokens = [];
 	for (var i = 2; i <= 12; i++) {
@@ -140,17 +138,7 @@ function forEachHex(map, action) {
 }
 
 function shuffle(array) {
-    var counter = array.length, temp, index;
-
-    while (counter > 0) {
-        index = Math.floor(Math.random() * counter);
-        counter--;
-
-        temp = array[counter];
-        array[counter] = array[index];
-        array[index] = temp;
-    }
-    return array;
+    array.sort(function() { return 0.5 - Math.random() });
 }
 
 var $ = LAND;
