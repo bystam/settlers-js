@@ -22,13 +22,11 @@ function initializeStash (playerId, isLocalPlayer){
 }
 
 
-function drawStashForPlayer(canvas, stash, playerId, isLocalPLayer){
-	//initialize arrays to keep game piece shapes in
-
+function drawStashForPlayer(canvas, stash, playerId, isLocalPlayer){
 	//set distances and sizes of stash objects
-	var spaceBetweenPiles = isLocalPLayer ? 50 : 20;
-	var pileHeight = isLocalPLayer ? 50 : 20;
-	var pileWidth = isLocalPLayer ? 50 : 50;
+	var spaceBetweenPiles = isLocalPlayer ? 50 : 20;
+	var pileHeight = isLocalPlayer ? 50 : 20;
+	var pileWidth = isLocalPlayer ? 50 : 50;
 
 	var rect = {x:stashObjects[playerId].corner.x+10, y:stashObjects[playerId].corner.y, width: pileWidth, height:pileHeight};
 	drawRoadStash(canvas, stash.roads, rect, playerId);
@@ -37,24 +35,31 @@ function drawStashForPlayer(canvas, stash, playerId, isLocalPLayer){
 	rect.x = rect.x + pileWidth + spaceBetweenPiles;
 	drawCityStash(canvas, stash.cities, rect, playerId);
 
-	//Initialize card area
-	stashObjects[playerId].cards = 
+	//Initialize card areas
+	stashObjects[playerId].developmentCards = 
+		getCardArea(
+			canvas, 
+			stashObjects[playerId].corner.x, 
+			rect.y + pileHeight + spaceBetweenPiles+140, 
+			pileWidth, playerId, isLocalPlayer, {setYPosition:function(){}});
+
+	stashObjects[playerId].resourceCards = 
 		getCardArea(
 			canvas, 
 			stashObjects[playerId].corner.x, 
 			rect.y + pileHeight + spaceBetweenPiles+40, 
-			pileWidth, playerId, isLocalPLayer);
-	var cards = []; //array should be stash.resources
-	for(var i=0;i<cards.length;i++){
-		stashObjects[playerId].cards.addResource(cards[i]);
+			pileWidth, playerId, isLocalPlayer, stashObjects[playerId].developmentCards);
+	var resourceCards = []; //array should be stash.resources
+	for(var i=0;i<resourceCards.length;i++){
+		stashObjects[playerId].resourceCards.addCard(cards[i]);
 	}
 }
 
-function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlayer){
-	var area = {resourceCards:[], shapeGroup:canvas.g()};
-	area.developmentCardArea = canvas.rect(cornerX, cornerY + 100, 100, 100);
+function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlayer, areaBelow){
+	var area = {cards:[], shapeGroup:canvas.g(), corner:{x:cornerX, y:cornerY}, startCorner:{x:cornerX, y:cornerY}};
+	area.developmentCardArea = canvas.rect(cornerX, cornerY + 200, 100, 100);
 	area.developmentCardArea.click(function(){
-		area.addResource(1);
+		area.addCard(1);
 	})
 	area.developmentCardArea.attr({stroke:"blue", fill:"transparent"});
 
@@ -64,31 +69,29 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 	var xJump = cardWidth - 10;
 	var yJump = cardHeight + 30;
 
-	area.addResource = function(resource){
+	area.addCard = function(card){
 		if(area.position.row >= area.maxRows){
 			return;
 		}
-		coords.x = cornerX + (area.position.column-1)*xJump;
-		coords.y = cornerY + area.position.row*yJump;
-		var resourceShape = getShape(canvas, coords, stashObjectTypes.resource, playerId, isLocalPLayer);
+		coords.x = area.corner.x + (area.position.column-1)*xJump;
+		coords.y = area.corner.y + area.position.row*yJump;
+		var shape = getShape(canvas, coords, stashObjectTypes.card, playerId, isLocalPlayer);
 		if(area.position.column % 4 == 0){
 			area.position.row++;
 			area.position.column = 0;
 		}
 		area.position.column++;
-		resourceShape.resource = resource;
-		area.resourceCards.push(resourceShape);
-		area.shapeGroup.add(resourceShape);
-		area.developmentCardArea.attr({y:coords.y + yJump});
+		shape.card = card;
+		area.cards.push(shape);
+		area.shapeGroup.add(shape);
+		areaBelow.setYPosition (coords.y + yJump);
 	}
-	area.removeResource = function(resource){
-		for(var i=area.resourceCards.length-1;i>=0;i--){
-			console.log(area.resourceCards[i].resource);
-			if(area.resourceCards[i].resource == resource){
-				var toRemove = area.resourceCards[i];
-				area.resourceCards.splice(i, 1);
+	area.removeCard = function(card){
+		for(var i=area.cards.length-1;i>=0;i--){
+			if(area.cards[i].card == card){
+				var toRemove = area.cards[i];
+				area.cards.splice(i, 1);
 				toRemove.remove();
-				console.log(area.resourceCards);
 				break;
 			}
 		}
@@ -96,29 +99,24 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 	}
 	area.reshuffle = function (){
 		area.reset();
-		var resources = area.resourceCards;
-		area.resourceCards = [];
-		resources.forEach(function(card){
-			area.addResource(card.resource);
+		var cardsCopy = area.cards;
+		area.cards = [];
+		cardsCopy.forEach(function(card){
+			area.addCard(card.card);
 		});
 	}
 
 	area.reset = function (){
 		area.position = {row:0, column:1};
-		area.developmentCardArea.attr({y:cornerY+100});
+		area.corner = {x:area.startCorner.x, y:area.startCorner.y};
+		areaBelow.setYPosition(cornerY+100);
 		area.shapeGroup.remove();
 		area.shapeGroup = canvas.g();
 	}
 
-	area.addDevelopmentCard = function(card){
-		var box = 
-		{	x:area.developmentCardArea.x, 
-			y:area.developmentCardArea.y, 
-			width:cardWidth, height:cardHeight};
-	}
-
-	area.removeDevelopmentCard = function(card){
-
+	area.setYPosition = function (yPos){
+		area.startCorner.y = yPos;
+		area.reshuffle();
 	}
 
 	area.reset();
@@ -160,11 +158,8 @@ function getShape (canvas, coords, type, playerId, isLocalPlayer){
 		return getSettlementShape(canvas, coords, playerId);
 	if(type === stashObjectTypes.city)
 		return getCityShape(canvas, coords, playerId);
-	if(type === stashObjectTypes.resource){
-		return getCardShape(canvas, coords, playerId, isLocalPlayer);
-	}
 	if(type === stashObjectTypes.card){
-		//deal...
+		return getCardShape(canvas, coords, playerId, isLocalPlayer);
 	}
 }
 
@@ -197,7 +192,7 @@ function getCardShape (canvas, coords, playerId, isLocalPlayer){
 	}
 	//TODO: remove this
 	resource.click(function(){
-		stashObjects[playerId].cards.removeResource(1);
+		stashObjects[playerId].resourceCards.removeCard(1);
 	})
 	///////
 	return resource;
