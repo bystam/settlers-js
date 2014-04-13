@@ -30,7 +30,7 @@ function getCoordsForCity (firstCorner, hexes){
 	var secondNeighbourCorner = getCornerClosestTo(firstCorner, getHexCorners(hexes[1].shape));
 	return findMiddle(firstCorner, firstNeighbourCorner, secondNeighbourCorner);
 }
-
+//calculates the middle point of the triangle defined by the parameter coordinates
 function findMiddle(a, b, c){
 	var bcMidpoint = {x:((b.x+c.x)/2), y:((b.y+c.y)/2)};
 	return {x:(a.x+(2/3*(bcMidpoint.x-a.x))), y:(a.y+(2/3*(bcMidpoint.y-a.y)))};

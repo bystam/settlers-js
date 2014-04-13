@@ -67,7 +67,7 @@ function canPlaceRoad(key){
 		return true;
 	return false;}
 
-function getRoadGraphics (playerId){
+function getRoadColors (playerId){
 	var majorColor = buildingColors[playerId];
 	var minorColor = tinycolor.complement(majorColor);//tinycolor.lighten(majorColor, amount = 10);
 	return {stroke:minorColor, strokeWidth:1,fill:majorColor}
@@ -96,7 +96,7 @@ function placeRoad (coords, playerId){
 	var road = roadLocations[coords];
 	road.unclick(null);
 	road.unhover();
-	road.attr(getRoadGraphics(playerId));
+	road.attr(getRoadColors(playerId));
 }
 
 

@@ -54,7 +54,7 @@ function createHexShape (canvas, x, y, color, radius){
 	var border = isOcean ? 0 : 0;
 	if(!isOcean){
 		var hexShapeBackground = canvas.hex(radius+9, a = 0, roundness = 0, originCenter = false, x-9, y-9);
-		var backgroundFilter = canvas.filter(Snap.filter.blur(20,20));
+		var backgroundFilter = canvas.filter(Snap.filter.blur(8,8));
 		hexShapeBackground.attr({
 			fill:"#EDC9AF",
 			filter: backgroundFilter
