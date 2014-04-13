@@ -176,27 +176,40 @@ function getShape (canvas, coords, type, playerId, isLocalPlayer, params){
 }
 
 function getCardShape (canvas, coords, playerId, isLocalPlayer, cardType){
-	// var resource = canvas.rect(coords.x, coords.y, coords.width, coords.height, 10, 10);
-	var filter = canvas.filter(Snap.filter.sepia(0.4));
+	var filter = canvas.filter(Snap.filter.sepia(0.5));
+	// var filter = canvas.filter(Snap.filter.blur(1,1));
 
 	var imageUrl = '../img/'+cardType+'.png';
-	var resource = canvas.image(imageUrl,coords.x, coords.y, coords.width, coords.height);
-	resource.attr({
-		filter:filter,
-		strokeWidth:1,
-		stroke:buildingColors[playerId]
+	var image = canvas.image(imageUrl,coords.x, coords.y, coords.width, coords.height);
+	image.attr({
+		filter:filter
 	})
+	var border = canvas.rect(coords.x, coords.y, coords.width, coords.height, 10, 10);
+	border.attr({
+		fill:'transparent',
+		strokeWidth:2,
+		stroke:buildingColors[playerId]
+	});
+	var resource = canvas.g(image, border);
 	//make card larger on mouse hover
 	if(isLocalPlayer){
 		resource.hover(function (){
-			resource.attr({
+			image.attr({
+				width:coords.width*(3/2),
+				height:coords.height*(6/5)
+			});
+			border.attr({
 				width:coords.width*(3/2),
 				height:coords.height*(6/5)
 			});
 			resource.parentGroup = resource.parent();
 			resource.parent().after(resource);
 		}, function (){
-			resource.attr({
+			image.attr({
+				width:coords.width,
+				height:coords.height
+			});
+			border.attr({
 				width:coords.width,
 				height:coords.height
 			});
