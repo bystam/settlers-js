@@ -12,7 +12,7 @@ function createHexShapesFromMap(canvas, map, pixelWidth){
 
 	var xcoord = 250; 
 	var ycoord = 0;
-
+	
 	for(var row = 0;row<map.length;row++){
 		for(var column=0;column<gridWidth;column++){
 			var hexagon = map[row][column];

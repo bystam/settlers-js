@@ -78,7 +78,7 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 	area.maxRows = isLocalPlayer ? 7 : 1;
 	var cardHeight = cardWidth * (4/3);
 	coords = {width:cardWidth, height:cardHeight};
-	var xJump = cardWidth - 10;
+	var xJump = cardWidth - 5;
 	var yJump = cardHeight + 30;
 
 	area.addCard = function(card){
@@ -176,15 +176,16 @@ function getShape (canvas, coords, type, playerId, isLocalPlayer, params){
 }
 
 function getCardShape (canvas, coords, playerId, isLocalPlayer, cardType){
-	var resource = canvas.rect(coords.x, coords.y, coords.width, coords.height, 10, 10);
-	console.log(cardType);
+	// var resource = canvas.rect(coords.x, coords.y, coords.width, coords.height, 10, 10);
 	var filter = canvas.filter(Snap.filter.sepia(0.4));
+
+	var imageUrl = '../img/'+cardType+'.png';
+	var resource = canvas.image(imageUrl,coords.x, coords.y, coords.width, coords.height);
 	resource.attr({
-		stroke: buildingColors[playerId],
+		filter:filter,
 		strokeWidth:1,
-		fill:getBackgroundForCardType(canvas, cardType),
-		filter:filter
-	});
+		stroke:buildingColors[playerId]
+	})
 	//make card larger on mouse hover
 	if(isLocalPlayer){
 		resource.hover(function (){
