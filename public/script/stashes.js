@@ -1,11 +1,11 @@
 
-//For the time being only fitted to 4 players
+//For the time being only fitted to 4 players, this is 'easily' expanded by adding coordinates and colors
 var stashObjectTypes = {road:"road", settlement:"settlement", city:"city", resource:"resource", card:"card" };
 var stashCoordinates = [{x:950,y:100}, {x:950, y:400}, {x:950, y:700}];
 var possibleBuildingColors = ['green', 'red', 'blue', 'yellow']; 
 var stashObjects = {};
 var buildingColors = {};
-//probably move the stash specific code out of here, stash.js ?
+
 function initializeNewPlayer(canvas, playerId, game){
 	if(stashObjects[playerId] !== undefined)
 		return;
@@ -15,7 +15,7 @@ function initializeNewPlayer(canvas, playerId, game){
 }
 
 function initializeStash (playerId, isLocalPlayer){
-	var playerOneLocation = {x:50,y:100};
+	var playerOneLocation = {x:60,y:100};
 	var stashCoords = isLocalPlayer ? playerOneLocation : stashCoordinates.shift();
 	stashObjects[playerId] = {roads:[], settlements:[], cities:[], corner:stashCoords};
 	buildingColors[playerId] = possibleBuildingColors.shift();
@@ -28,7 +28,7 @@ function drawStashForPlayer(canvas, stash, playerId, isLocalPlayer){
 	var pileHeight = isLocalPlayer ? 50 : 20;
 	var pileWidth = isLocalPlayer ? 50 : 50;
 
-	var rect = {x:stashObjects[playerId].corner.x+10, y:stashObjects[playerId].corner.y, width: pileWidth, height:pileHeight};
+	var rect = {x:stashObjects[playerId].corner.x, y:stashObjects[playerId].corner.y, width: pileWidth, height:pileHeight};
 	drawRoadStash(canvas, stash.roads, rect, playerId);
 	rect.x = rect.x + pileWidth + spaceBetweenPiles;
 	drawSettlementStash(canvas, stash.settlements, rect, playerId);
@@ -49,20 +49,32 @@ function drawStashForPlayer(canvas, stash, playerId, isLocalPlayer){
 			stashObjects[playerId].corner.x, 
 			rect.y + pileHeight + spaceBetweenPiles+40, 
 			pileWidth, playerId, isLocalPlayer, stashObjects[playerId].developmentCards);
-	var resourceCards = []; //array should be stash.resources
-	for(var i=0;i<resourceCards.length;i++){
-		stashObjects[playerId].resourceCards.addCard(cards[i]);
-	}
+	//// REMOVE LATER, demo cards
+	var cards = isLocalPlayer ? ['forest', 'hill', 'field', 'pasture', 'mountain'] : ['hidden', 'hidden', 'hidden']; //array should be stash.resources
+	cards.forEach(function(card){
+		stashObjects[playerId].resourceCards.addCard(card);
+	});
+	cards = isLocalPlayer ? ['development', 'development'] : ['hidden', 'hidden'];
+	cards.forEach(function(card){
+		stashObjects[playerId].developmentCards.addCard(card);
+	});
+	///////////
+
 }
 
 function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlayer, areaBelow){
 	var area = {cards:[], shapeGroup:canvas.g(), corner:{x:cornerX, y:cornerY}, startCorner:{x:cornerX, y:cornerY}};
-	area.developmentCardArea = canvas.rect(cornerX, cornerY + 200, 100, 100);
-	area.developmentCardArea.click(function(){
-		area.addCard(1);
-	})
-	area.developmentCardArea.attr({stroke:"blue", fill:"transparent"});
-
+	//remove all of this eventually
+	// area.developmentCardArea = canvas.rect(cornerX, cornerY + 200, 100, 100);
+	// area.developmentCardArea.click(function(){
+	// 	var isDevArea = areaBelow.maxRows === undefined ? true : false;
+	// 	if(isDevArea)
+	// 		area.addCard ('development');
+	// 	else
+	// 		area.addCard('hill');
+	// })
+	// area.developmentCardArea.attr({stroke:"blue", fill:"transparent"});
+	///////////
 	area.maxRows = isLocalPlayer ? 7 : 1;
 	var cardHeight = cardWidth * (4/3);
 	coords = {width:cardWidth, height:cardHeight};
@@ -75,7 +87,7 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 		}
 		coords.x = area.corner.x + (area.position.column-1)*xJump;
 		coords.y = area.corner.y + area.position.row*yJump;
-		var shape = getShape(canvas, coords, stashObjectTypes.card, playerId, isLocalPlayer);
+		var shape = getShape(canvas, coords, stashObjectTypes.card, playerId, isLocalPlayer, card);
 		if(area.position.column % 4 == 0){
 			area.position.row++;
 			area.position.column = 0;
@@ -148,7 +160,7 @@ function drawRoadStash (canvas, amount, rect, playerId){
 	}
 }
 
-function getShape (canvas, coords, type, playerId, isLocalPlayer){
+function getShape (canvas, coords, type, playerId, isLocalPlayer, params){
 	if(type == stashObjectTypes.road){ //replace with clean method in roads.js
 		var road = canvas.rect(coords.x, coords.y, 10, 50);
 		road.attr(getRoadColors(playerId));
@@ -159,21 +171,21 @@ function getShape (canvas, coords, type, playerId, isLocalPlayer){
 	if(type === stashObjectTypes.city)
 		return getCityShape(canvas, coords, playerId);
 	if(type === stashObjectTypes.card){
-		return getCardShape(canvas, coords, playerId, isLocalPlayer);
+		return getCardShape(canvas, coords, playerId, isLocalPlayer, params);
 	}
 }
 
-function getCardShape (canvas, coords, playerId, isLocalPlayer){
+function getCardShape (canvas, coords, playerId, isLocalPlayer, cardType){
 	var resource = canvas.rect(coords.x, coords.y, coords.width, coords.height, 10, 10);
+	console.log(cardType);
+	var filter = canvas.filter(Snap.filter.sepia(0.4));
 	resource.attr({
 		stroke: buildingColors[playerId],
 		strokeWidth:1,
-		fill:"transparent"
+		fill:getBackgroundForCardType(canvas, cardType),
+		filter:filter
 	});
-	
-	resource.attr({
-		fill:getHiddenResourceBackgroundPattern(canvas, buildingColors[playerId])
-	});
+
 	if(isLocalPlayer){
 		resource.hover(function (){
 			resource.attr({
@@ -192,21 +204,10 @@ function getCardShape (canvas, coords, playerId, isLocalPlayer){
 	}
 	//TODO: remove this
 	resource.click(function(){
-		stashObjects[playerId].resourceCards.removeCard(1);
+		stashObjects[playerId].resourceCards.removeCard(cardType);
 	})
 	///////
 	return resource;
-}
-
-//returns a black/grey backgorund pattern for use on enemy cards
-function getHiddenResourceBackgroundPattern(canvas, color){
-	var pRect = canvas.rect(0,0,50,50).attr({fill:'#282828'});
-	var c1 = canvas.circle(3,4.3,1.8).attr({fill:'#393939'});
-	var c2 = canvas.circle(3,3,1.8).attr({fill:'black'});
-	var c3 = canvas.circle(10.5,12.5,1.8).attr({fill:'#393939'});	
-	var c4 = canvas.circle(10.5,11.3,1.8).attr({fill:'black'});
-	return canvas.g(pRect,c1,c2,c3,c4).pattern(0,0,10,10);
-
 }
 
 function addToStash (playerId, type){
