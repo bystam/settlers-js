@@ -185,7 +185,7 @@ function getCardShape (canvas, coords, playerId, isLocalPlayer, cardType){
 		fill:getBackgroundForCardType(canvas, cardType),
 		filter:filter
 	});
-
+	//make card larger on mouse hover
 	if(isLocalPlayer){
 		resource.hover(function (){
 			resource.attr({

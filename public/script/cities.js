@@ -57,6 +57,8 @@ function createCityShape (canvas, hexes, coords){
 	city.hover(function(){
 		//only do local check on hover
 		var color = canPlaceCity(cityKey) ? "green" : "red";
+		city.originalStroke = city.attr("stroke");
+		city.originalStrokeWidth = city.attr("strokeWidth");
 		city.attr({
 			stroke:color,
 			strokeWidth:4
@@ -64,7 +66,8 @@ function createCityShape (canvas, hexes, coords){
 	}, function(){
 		// hover out
 		city.attr({
-			stroke:"transparent"
+			strokeWidth: city.originalStrokeWidth,
+			stroke: city.originalStroke
 		});
 	})
 }
@@ -112,7 +115,7 @@ function getIntersectionShape (canvas, coords, playerId, radius){
 
 function getCityGraphics (playerId){
 	var majorColor = playerId !== null ? buildingColors[playerId] : "transparent";
-	var minorColor = tinycolor.complement(majorColor);//tinycolor.lighten(majorColor, amount = 10);
+	var minorColor = playerId !== null ? 'black' : "transparent";//tinycolor.complement(majorColor);//tinycolor.lighten(majorColor, amount = 10);
 	return {stroke:minorColor, strokeWidth:1,fill:majorColor}
 }
 

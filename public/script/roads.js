@@ -70,7 +70,7 @@ function canPlaceRoad(key){
 function getRoadColors (playerId){
 	var majorColor = buildingColors[playerId];
 	var minorColor = tinycolor.complement(majorColor);//tinycolor.lighten(majorColor, amount = 10);
-	return {stroke:minorColor, strokeWidth:1,fill:majorColor}
+	return {stroke:'black', strokeWidth:1,fill:majorColor}
 }
 //skip animation until I figure this out...
 function placeRoadWithAnimation (coords, playerId){
