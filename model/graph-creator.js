@@ -6,14 +6,13 @@ exports.populateWithGraph = function(board) {
 
   board.forEachHex(board.map, function (hex, row, col) {
     forEachExistingNeighborTriplet (hex, function(hexCoords, n1, n2) {
-      var roadKey = [hexCoords, n1];
-      var buildingKey = [hexCoords, n1, n2];
+      var road = getOrCreateRoad(hexCoords, n1, roadLookup, board.map);
+      var building = getOrCreateBuilding(hexCoords, n1, n2, buildingLookup);
 
-      var road = getOrCreateRoad(roadKey, roadLookup);
-      var building = getOrCreateBuilding(buildingKey, buildingLookup);
-
-      road.buildings.push(building);
-      building.roads.push(road);
+      if (road) { // roads between two ocean hexes don't exist
+        road.buildings.push(building);
+        building.roads.push(road);
+      }
     });
   });
 
@@ -37,12 +36,20 @@ exports.populateWithGraph = function(board) {
   }
 }
 
-function getOrCreateRoad (roadKey, roadLookup) {
+function getOrCreateRoad (hexCoords, n1, roadLookup, map) {
+  var roadIsBetweenTwoOceans =
+      map[hexCoords.row][hexCoords.col].type === 'ocean' &&
+      map[n1.row][n1.col].type === 'ocean';
+  if (roadIsBetweenTwoOceans)
+      return null;
+
+  var roadKey = [hexCoords, n1];
   var road;
   if (road = roadLookup.get(roadKey)) { // road already exists
     // TODO do we need code here?
   } else { // create new road piece
     road = {};
+    road.key = roadKey;
     road.occupyingPlayerId = null;
     road.buildings = [];
     roadLookup.put(roadKey, road);
@@ -50,12 +57,14 @@ function getOrCreateRoad (roadKey, roadLookup) {
   return road;
 }
 
-function getOrCreateBuilding (buildingKey, buildingLookup) {
+function getOrCreateBuilding (hexCoords, n1, n2, buildingLookup) {
+  var buildingKey = [hexCoords, n1, n2];
   var building;
   if (building = buildingLookup.get(buildingKey)) { // building already exists
     // TODO do we need code here?
   } else { // create new building
     building = {};
+    building.key = buildingKey;
     building.occupyingPlayerId = null;
     building.type = null; // settlement, city
     building.roads = []; // TODO
