@@ -101,7 +101,7 @@ function noBuildingsTooClose (game, playerId, data) {
 	var allRoadsFilter = function (road) { return true; };
 	var start = game.board.getBuilding(data.coords);
 	var tooClose = false;
-	game.board.breadthFirstSearch(start, allRoadsFilter, function(node) {
+	var checkIfABuildingIsOneRoadAway = function(node) {
 		if (node.depth > 1)
 			return false; // stop searching
 		var building = node.building;
@@ -110,7 +110,9 @@ function noBuildingsTooClose (game, playerId, data) {
 			return false;
 		}
 		return true;
-	});
+	};
+
+	game.board.breadthFirstSearch(start, allRoadsFilter, checkIfABuildingIsOneRoadAway);
 	return !tooClose;
 }
 
@@ -120,7 +122,7 @@ function canAffordSettlement (game, playerId, data) {
 
 function settlementOwned (game, playerId, data) {
 	var building = game.board.getBuilding(data.coords);
-	return building && building.occupyingPlayerId === playerId;
+	return building.type === 'settlement' && building.occupyingPlayerId === playerId;
 }
 
 
