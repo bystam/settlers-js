@@ -62,16 +62,22 @@ function addHexesOfType(hexes, amount, type, resource) {
 function createMapFromHexesAndStructure (landHexes, mapStructure) {
 	var grid = mapStructure.grid;
 	var map = [];
-	var hex = 0;
+	var landHexIndex = 0;
 	for (var row = 0; row < grid.length; row++) {
 		map.push([]);
 		for (var col = 0; col < grid[row].length; col++) {
+			var hex;
 			if (grid[row][col] === LAND)
-				map[row].push(landHexes[hex++]);
+				hex = landHexes[landHexIndex++];
 			else if (grid[row][col] === WATER)
-				map[row].push({ type: 'ocean' });
+				hex = { type: 'ocean' };
 			else
-				map[row].push(null);
+				hex = null;
+			if (hex) {
+				hex.row = row;
+				hex.col = col;
+			}
+			map[row].push(hex);
 		}
 	}
 
@@ -79,12 +85,14 @@ function createMapFromHexesAndStructure (landHexes, mapStructure) {
 }
 
 function setHexNeighbors (map) {
-	forEachHex (map, function(hex, row, col) {
-		setNeighbors(hex, row, col, map)
+	forEachHex (map, function(hex) {
+		setNeighbors(hex, map)
 	});
 }
 
-function setNeighbors(hex, row, col, map) {
+function setNeighbors(hex, map) {
+	var row = hex.row;
+	var col = hex.col;
 	var hexExists = function(coords) {
 		return map[coords.row] && map[coords.row][coords.col];
 	}
@@ -141,7 +149,7 @@ function forEachHex(map, action) {
 		for (var col = 0; col < width; col++) {
 			var hex = map[row][col];
 			if (hex)
-				action(hex, row, col);
+				action(hex);
 		}
 	}
 }

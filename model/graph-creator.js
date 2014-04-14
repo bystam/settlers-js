@@ -5,14 +5,7 @@ exports.populateWithGraph = function(board) {
   var roadLookup = new Lookup();
 
   board.forEachHex(board.map, function (hex, row, col) {
-    var neighbors = hex.neighbors;
-    for (var i = 0; i < neighbors.length; i++) {
-      var n1 = neighbors[i];
-      var n2 = neighbors[(i+1) % neighbors.length];
-      if (n1 === null || n2 === null)
-        continue;
-
-      var hexCoords = { row: row, col: col };
+    forEachExistingNeighborTriplet (hex, function(hexCoords, n1, n2) {
       var roadKey = [hexCoords, n1];
       var buildingKey = [hexCoords, n1, n2];
 
@@ -21,7 +14,7 @@ exports.populateWithGraph = function(board) {
 
       road.buildings.push(building);
       building.roads.push(road);
-    }
+    });
   });
 
   //board.buildingLookup = buildingLookup;
@@ -33,6 +26,14 @@ exports.populateWithGraph = function(board) {
 
   board.getBuilding = function(coords) {
     return buildingLookup.get(coords);
+  }
+
+  board.getRoadLocationsForHex = function (hex) {
+    return getRoadLocationsForHex (hex, roadLookup);
+  }
+
+  board.getBuildingLocationsForHex = function (hex) {
+    return getBuildingLocationsForHex (hex, buildingLookup);
   }
 }
 
@@ -62,6 +63,39 @@ function getOrCreateBuilding (buildingKey, buildingLookup) {
   }
   return building;
 }
+
+function forEachExistingNeighborTriplet (hex, action) {
+  var neighbors = hex.neighbors;
+  for (var i = 0; i < neighbors.length; i++) {
+    var n1 = neighbors[i];
+    var n2 = neighbors[(i+1) % neighbors.length];
+    if (n1 === null || n2 === null)
+      continue;
+
+    var hexCoords = { row: hex.row, col: hex.col };
+    action (hexCoords, n1, n2);
+  }
+}
+
+function getBuildingLocationsForHex (hex, buildingLookup) {
+  var cityLocations = [];
+  forEachExistingNeighborTriplet (hex, function(hexCoords, n1, n2) {
+    var buildingKey = [hexCoords, n1, n2];
+    cityLocations.push(buildingLookup.get(buildingKey));
+  });
+  return cityLocations;
+}
+
+function getRoadLocationsForHex (hex, roadLookup) {
+  var roadLocations = [];
+  forEachExistingNeighborTriplet (hex, function(hexCoords, n1) {
+    var roadKey = [hexCoords, n1];
+    roadLocations.push(roadLookup.get(roadKey));
+  });
+  return roadLocations;
+}
+
+// The following is the Lookup for placeable pieces (like a hashtable)
 
 function Lookup() {
   this.hashes = {};
