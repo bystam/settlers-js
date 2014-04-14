@@ -18,6 +18,8 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 	var game = games[room];
 
 	socket.on('turn-ended', function(data) {
+		if (game.queue.getCurrentPlayer() !== playerId)
+			return;
 		game.lastDiceRoll = diceRoll();
 		game.queue.changeTurn();
 		var nextTurnData = { dices: game.lastDiceRoll,
