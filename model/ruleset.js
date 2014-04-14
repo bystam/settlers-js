@@ -162,19 +162,20 @@ function settlementBuildIsLegal (settlementCoords, playerId) {
 }
 */
 
-function roundPermitsPlacement (roadCoordinates, playerId) {
+
+function roundPermitsPlacement (game, playerId, data) {
 	return true;
 }
 
-function settlementInProximity(coords){
+function settlementInProximity (game, playerId, data) {
 	return false;
 }
 
-function locationIsValid (settlementCoords, playerId) {
+function locationIsValid (game, playerId, data) {
 	return true;
 }
 
-function hasInStash (playerId, type){
+function hasInStash (game, playerId, data){
 	/*
 	if(type === buildingTypes.road)
 		return tashes[playerId].roads > 0;
@@ -186,7 +187,7 @@ function hasInStash (playerId, type){
 	return true;
 }
 
-function hasConnecting (playerId, coords, type){
+function hasConnecting (game, playerId, data) {
 	/*
 	if(type === buildingTypes.road)
 		return true;
@@ -196,31 +197,31 @@ function hasConnecting (playerId, coords, type){
 	return true;
 }
 
-function settlementIsOwnedByPlayer(coords, playerId){
+function settlementIsOwnedByPlayer (game, playerId, data) {
 	return true;
 }
 
-function settlementExists(coords){
+function settlementExists (game, playerId, data) {
 
 }
 
-function hasFreeRoads(playerId){
+function hasFreeRoads (game, playerId, data){
 	return true;
 }
 
-function hasResources(cost, playerId){
+function hasResources (game, playerId, data) {
 	return true;
 }
 
-function isStartupPhase (playerId){
+function isStartupPhase (game, playerId, data) {
 	return true;
 }
 
-function isFirstRound(playerId){
+function isFirstRound (game, playerId, data) {
 	return true;
 }
 
-function roadExists (coords){
+function roadExists (game, playerId, data) {
 	return false;
 }
 
@@ -228,7 +229,7 @@ function evaluateRuleTree (rule) {
 	return evaluateDisjunction(rule);
 }
 
-function evaluateNode (node) {
+function evaluateNode (node, game, playerId, data) {
 	var disjunctionGroups = getDisjunctionGroups(node);
 
 	var orResult = false;
@@ -236,9 +237,9 @@ function evaluateNode (node) {
 		var andResult = true;
 		group.forEach(function(statement) {
 			if (typeof statement === 'object')
-				andResult = andResult && evaluateNode (statement);
+				andResult = andResult && evaluateNode (statement, game, playerId, data);
 			else if (typeof statement === 'function')
-				andResult = andResult && statement();
+				andResult = andResult && statement (game, playerId, data);
 		});
 		orResult |= andResult;
 	});
