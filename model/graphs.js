@@ -34,6 +34,10 @@ exports.populateWithGraph = function(board) {
   board.getBuildingsForHex = function (hex) {
     return getBuildingLocationsForHex (hex, buildingLookup);
   }
+
+  board.breadthFirstSearch = function (start, roadFilter, graphAction) {
+    return breadthFirstSearch (start, board, roadFilter, graphAction);
+  }
 }
 
 function getOrCreateRoad (hexCoords, n1, roadLookup, map) {
@@ -100,6 +104,32 @@ function getRoadLocationsForHex (hex, roadLookup) {
     roadLocations.push(roadLookup.get(roadKey));
   });
   return roadLocations;
+}
+
+// graphAction returns true === keep going
+function breadthFirstSearch(start, board, roadFilter, graphAction) {
+  var queue = [];
+  var visited = new Lookup();
+  queue.push({ building: start.key, depth: 0 });
+  visited.put(start.key);
+
+  while (queue.length > 0) {
+    var node = queue.splice(0, 1)[0];
+    if (!graphAction (node))
+      return;
+
+    var roadKeys = board.getBuilding(node.building).roads;
+    roadKeys.filter(roadFilter).forEach (function (roadKey) {
+      var road = board.getRoad(roadKey);
+
+      road.buildings.forEach(function (next) {
+        if (!visited.get(next)) {
+          visited.put(next);
+          queue.push({ building: next, depth: node.depth+1 });
+        }
+      });
+    });
+  }
 }
 
 // The following is the Lookup for placeable pieces (like a hashtable)

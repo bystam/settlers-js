@@ -98,7 +98,20 @@ function hasInitialSettlementsLeft (game, playerId, data) {
 }
 
 function noBuildingsTooClose (game, playerId, data) {
-	return true; // TODO
+	var allRoadsFilter = function (road) { return true; };
+	var start = game.board.getBuilding(data.coords);
+	var tooClose = false;
+	game.board.breadthFirstSearch(start, allRoadsFilter, function(node) {
+		if (node.depth > 1)
+			return false; // stop searching
+		var building = node.building;
+		if (game.board.getBuilding (building).occupyingPlayerId !== null) {
+			tooClose = true;
+			return false;
+		}
+		return true;
+	});
+	return !tooClose;
 }
 
 function canAffordSettlement (game, playerId, data) {
@@ -137,8 +150,8 @@ function evaluateRule (node, game, playerId, data) {
 			} else if (typeof statement === 'function') {
 				andResult = andResult && statement (game, playerId, data);
 			}
-			orResult = orResult || andResult;
 		});
+		orResult = orResult || andResult;
 	});
 
 	return orResult;
