@@ -30,5 +30,22 @@ exports.Stash.prototype = {
 				return;
 			}
 		}
-	}
+	},
+
+	hiddenify: hiddenify
+}
+
+
+function hiddenify(){
+	var hiddenCopy = {
+		playerId: this.playerId,
+		cities: this.cities,
+		settlements: this.settlements,
+		roads: this.roads,
+		resources: []};
+
+	this.resources.forEach(function(resource){
+		hiddenCopy.resources.push('hidden');
+	});
+	return hiddenCopy;
 }

@@ -62,9 +62,20 @@ function privateCopyForPlayer(playerId) {
 	copy.room = this.room;
 	copy.board = this.board;
 	copy.players = this.players;
-	copy.privateStash = this.stashes[playerId]; // TODO!!!
-	copy.stashes = this.stashes; //REDO LATER, should not send resources/cards
+	copy.stashes = hiddenify(this.stashes, playerId);
 	return copy;
+}
+
+function hiddenify(stashes, playerId){
+	var hiddenifiedStash = {};
+	for(playerId in stashes){
+		var stash = stashes[playerId];
+		if(stash.playerId !== playerId)
+			hiddenifiedStash[playerId] = stash.hiddenify();
+		else
+			hiddenifiedStash[playerId] = stash;
+	}
+	return hiddenifiedStash;
 }
 
 function clone(obj) {

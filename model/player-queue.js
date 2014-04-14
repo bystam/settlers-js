@@ -8,6 +8,8 @@ var getCurrentPlayer = function() {
 }
 
 var changeTurn = function() {
+	if(((this.getCurrentPlayer+1) % this.players.length) === 0)
+		this.currentTurn++;
 	this.currentPlayer = (this.currentPlayer + 1) % this.players.length
 }
 
@@ -18,6 +20,7 @@ var setCurrentPlayer = function (player) {
 exports.Queue = function () {
 	this.players = []
 	this.currentPlayer = 0
+	this.currentTurn = 1;
 }
 
 exports.Queue.prototype = {

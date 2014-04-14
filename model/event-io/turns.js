@@ -20,6 +20,11 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 	socket.on('turn-ended', function(data) {
 		if (game.queue.getCurrentPlayer() !== playerId)
 			return;
+		if(game.queue.currentTurn === 1){
+			socket.emit('gain-stash', game.stashes[playerId]);
+			socket.broadcast.to(room).emit('gain-hidden-stash', game.stashes[playerId].hiddenify());
+		}
+
 		game.lastDiceRoll = diceRoll();
 		game.queue.changeTurn();
 		var nextTurnData = { dices: game.lastDiceRoll,
@@ -41,7 +46,7 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 	socket.on('start-game', function(data) {
 		if (!gameIsFull(room))
 			return io.sockets.in(room).emit('need-more-players', {} );
-		io.sockets.in(room).emit(game.stashes);
+		
 	});
 }
 

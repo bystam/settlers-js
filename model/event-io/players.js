@@ -16,6 +16,7 @@ exports.registerNewPlayer = function(socket, room, playerId) {
 	game.addPlayer(playerId);
 	game.roadsForPlayer[playerId] = [];
 	game.buildingsForPlayer[playerId] = [];
-	socket.emit('game-joined', {playerId:playerId, game:game.privateCopyForPlayer(playerId)});
-	socket.broadcast.to(room).emit('new-player-joined', playerId);
+	var privateGameCopy = game.privateCopyForPlayer(playerId);
+	socket.emit('game-joined', {playerId:playerId, game: privateGameCopy});
+	socket.broadcast.to(room).emit('new-player-joined', {playerId: playerId, stash: privateGameCopy.stashes[playerId]});
 }
