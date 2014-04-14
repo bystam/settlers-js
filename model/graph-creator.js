@@ -16,37 +16,11 @@ exports.populateWithGraph = function(board) {
       var roadKey = [hexCoords, n1];
       var buildingKey = [hexCoords, n1, n2];
 
-      var road;
-      if (road = roadLookup.get(roadKey)) { // road already exists
-        // TODO do we need code here?
-      } else { // create new road piece
-        road = {};
-        road.occupyingPlayerId = null;
-        road.buildings = [];
-        roadLookup.put(roadKey, road);
-      }
-
-      var building;
-      if (building = buildingLookup.get(roadKey)) { // building already exists
-        // TODO do we need code here?
-      } else { // create new building
-        building = {};
-        building.occupyingPlayerId = null;
-        building.type = null; // settlement, city
-        building.roads = []; // TODO
-        buildingLookup.put(buildingKey, building);
-      }
+      var road = getOrCreateRoad(roadKey);
+      var building = getOrCreateBuilding(buildingKey);
 
       road.buildings.push(building);
       building.roads.push(road);
-      /*
-      TODO:
-      create a road between hex and n1, and a city between hex, n1 and n2
-
-      if these don't exist in the lookup, create them and add them
-
-      update references correctly
-      */
     }
   });
 
@@ -60,6 +34,33 @@ exports.populateWithGraph = function(board) {
   board.getBuilding = function(coords) {
     return buildingLookup.get(coords);
   }
+}
+
+function getOrCreateRoad (roadKey) {
+  var road;
+  if (road = roadLookup.get(roadKey)) { // road already exists
+    // TODO do we need code here?
+  } else { // create new road piece
+    road = {};
+    road.occupyingPlayerId = null;
+    road.buildings = [];
+    roadLookup.put(roadKey, road);
+  }
+  return road;
+}
+
+function getOrCreateBuilding (buildingKey) {
+  var building;
+  if (building = buildingLookup.get(roadKey)) { // building already exists
+    // TODO do we need code here?
+  } else { // create new building
+    building = {};
+    building.occupyingPlayerId = null;
+    building.type = null; // settlement, city
+    building.roads = []; // TODO
+    buildingLookup.put(buildingKey, building);
+  }
+  return building;
 }
 
 function Lookup() {
