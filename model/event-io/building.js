@@ -36,6 +36,7 @@ exports.setupBuildingEvents = function(socket, room, playerId){
 function placeRoad(coords, playerId, game){
 	var roadLocation = game.board.getRoad(coords);
 	roadLocation.occupyingPlayerId = playerId;
+	game.roadsForPlayer[playerId].push(roadLocation.key);
 }
 
 function placeBuilding(coords, playerId, game){
@@ -44,4 +45,5 @@ function placeBuilding(coords, playerId, game){
 		return buildingLocation.type = 'city'
 	buildingLocation.type = 'settlement';
 	buildingLocation.occupyingPlayerId = playerId;
+	game.buildingsForPlayer[playerId].push(buildingLocation.key);
 }

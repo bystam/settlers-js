@@ -24,6 +24,8 @@ function initPlayers(game) {
 	game.queue = new playerQueue.Queue();
 	game.players = game.queue.players;
 	game.stashes = {};
+	game.roadsForPlayer = {};
+	game.buildingsForPlayer = {};
 	game.addPlayer = function(playerId) {
 		game.queue.addPlayer(playerId);
 		game.stashes[playerId] = new stashes.Stash(playerId);
