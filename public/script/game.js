@@ -49,11 +49,11 @@ function createEmptyBoard(game){
 function setServerResponseHandlers (socket){
 	socket.on(serverCommands.canBuildRoad, function(data){
 		if(data.allowed)
-			placeRoadWithAnimation(data.coords, data.playerId);
+			placeRoadWithAnimation(JSON.stringify(data.coords), data.playerId);
 	});
 	socket.on(serverCommands.canBuildCity, function(data){
 		if(data.allowed)
-			placeCityWithAnimation(data.coords, data.playerId, boardCanvas, data.isCity);
+			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, boardCanvas, data.isCity);
 	});
 
 }

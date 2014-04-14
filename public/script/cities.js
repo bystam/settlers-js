@@ -78,7 +78,7 @@ function canPlaceCity(key){
 
 //TODO separate between settlement and city lacement
 function placeCityWithAnimation (coords, playerId, canvas, isCity){
-	var city = cityLocations[JSON.stringify(coords)];
+	var city = cityLocations[coords];
 	if(isCity){
 		city.unclick(null);
 		city.unhover();
