@@ -49,11 +49,6 @@ function drawStashForPlayer(canvas, stash, playerId, isLocalPlayer){
 			stashObjects[playerId].corner.x, 
 			rect.y + pileHeight + spaceBetweenPiles+40, 
 			pileWidth, playerId, isLocalPlayer, stashObjects[playerId].developmentCards);
-	//// REMOVE LATER, demo cards
-	// var cards = isLocalPlayer ? ['forest', 'hill', 'field', 'pasture', 'mountain'] : ['hidden', 'hidden', 'hidden']; //array should be stash.resources
-	// cards.forEach(function(card){
-	// 	stashObjects[playerId].resourceCards.addCard(card);
-	// });
 	cards = isLocalPlayer ? ['development', 'development'] : ['hidden', 'hidden'];
 	cards.forEach(function(card){
 		stashObjects[playerId].developmentCards.addCard(card);

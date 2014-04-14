@@ -1,9 +1,10 @@
 var socket, boardCanvas, game, localPlayerId;
 
 var serverCommands = {
-	canBuildRoad:"buildRoad", canBuildCity:"buildSettlement", 
+	canBuildRoad:"build-road", canBuildSettlement:"build-settlement", canBuildCity:"build-city",
 	endTurn:"turn-ended", newTurn:"new-turn", drawResource:"draw-resources",
-	gainResources:"gain-resources", gainStash:"gain-stash"};
+	gainResources:"gain-resources", gainStash:"gain-stash",
+	gainHiddenStash:"gain-hidden-stash", gainHiddenResources:"gain-hidden-resources"};
 
 function populateGameWithLogic(game) {
 	game.addPlayer = function(playerId) {
@@ -71,11 +72,18 @@ function setServerResponseHandlers (socket){
 			stashObjects[localPlayerId].resourceCards.addCard(resource);
 		});
 	});
-	socket.on(serverCommands.gainStash, function(data){
-		data.stashes.forEach(function(stash){
-			initializeNewPlayer(canvas, stash.player, stash);
-		});
+	socket.on(serverCommands.gainStash, function(stash){
+		initializeNewPlayer(canvas, localPlayerId, stash);
 	});
+	socket.on(serverCommands.gainHiddenStash, function(data){
+		initializeNewPlayer(canvas, data.playerId, data);
+	});
+	socket.on(serverCommands.gainHiddenResources, function(data){
+		data.resources.forEach(function(resource){
+			stashObjects[data.playerId].resourceCards.addCard(resource);
+		})
+	});
+
 
 }
 

@@ -55,7 +55,7 @@ function createCityShape (canvas, hexes, coords){
 
 	cityLocations[cityKey] = city;
 	city.click(function(){
-		socket.emit(serverCommands.canBuildCity, cityNeighbours);
+		socket.emit(serverCommands.canBuildSettlement, cityNeighbours);
 	});
 	city.hover(function(){
 		//only do local check on hover
@@ -98,6 +98,10 @@ function placeCity(coords, playerId, isCity){
 	if(isCity){
 		city.unclick(null);
 		city.unhover();
+	} else{
+		city.click(function(){
+			socket.emit(serverCommands.canBuildCity, coords);
+		})
 	}
 	city.attr(getCityGraphics(playerId));
 }
