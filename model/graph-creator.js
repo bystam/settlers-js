@@ -10,14 +10,14 @@ exports.populateWithGraph = function(board) {
       var building = getOrCreateBuilding(hexCoords, n1, n2, buildingLookup);
 
       if (road) { // roads between two ocean hexes don't exist
-        road.buildings.push(building);
-        building.roads.push(road);
+        road.buildings.push(building.key);
+        building.roads.push(road.key);
       }
     });
   });
 
-  //board.buildingLookup = buildingLookup;
-  //board.roadLookup = roadLookup;
+  board.buildingLookup = buildingLookup;
+  board.roadLookup = roadLookup;
 
   board.getRoad = function(coords) {
     return roadLookup.get(coords);
