@@ -28,10 +28,16 @@ exports.setupBuildingEvents = function(socket, room, playerId){
 		if(buildIsLegal)
 			placeBuilding(coords, playerId, game)
 		io.sockets.in(room).emit("build-settlement", { playerId:playerId, coords: coords,
-															allowed: buildIsLegal});
+																									 allowed: buildIsLegal});
 	});
 
-	// TODO build-city
+	socket.on("build-city", function(coords){
+		var buildIsLegal = rules.cityBuildIsLegal(coords, playerId);
+		if(buildIsLegal)
+			placeCity(coords, playerId, game)
+		io.sockets.in(room).emit("build-city", { playerId:playerId, coords: coords,
+																						 allowed: buildIsLegal});
+	});
 }
 
 
@@ -43,9 +49,12 @@ function placeRoad(coords, playerId, game){
 
 function placeBuilding(coords, playerId, game){
 	var buildingLocation = game.board.getBuilding(coords);
-	if (buildingLocation.type === 'settlement')
-		return buildingLocation.type = 'city'
 	buildingLocation.type = 'settlement';
 	buildingLocation.occupyingPlayerId = playerId;
 	game.buildingsForPlayer[playerId].push(buildingLocation.key);
+}
+
+function placeCity(coords, playerId, game) {
+	var buildingLocation = game.board.getBuilding(coords);
+	buildingLocation.type = 'city';
 }

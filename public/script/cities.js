@@ -100,7 +100,8 @@ function placeCity(coords, playerId, isCity){
 		city.unhover();
 	} else{
 		city.click(function(){
-			socket.emit(serverCommands.canBuildCity, coords);
+			// TODO coords är en sträng här, men borde vara ett object
+			socket.emit(serverCommands.canBuildCity, JSON.parse(coords));
 		})
 	}
 	city.attr(getCityGraphics(playerId));

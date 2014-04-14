@@ -4,19 +4,27 @@ var costs = {road:[0,0,0,0,0], town:[0,0,0,0,0], city:[0,0,0,0,0], developmentCa
 
 exports.Rules = function(game) { // rules constructor
 	this.game = game;
-	this.roadBuildIsLegal = roadBuildIsLegal;
-	this.settlementBuildIsLegal = settlementBuildIsLegal;
 }
 
-function roadBuildIsLegal(coords, playerId) {
-	var data = { coords: coords };
-	return evaluateRule (roadBuildRule, this.game, playerId, data);
+exports.Rules.prototype = {
+	constructor: exports.Rules,
+
+	roadBuildIsLegal: function (coords, playerId) {
+		var data = { coords: coords };
+		return evaluateRule (roadBuildRule, this.game, playerId, data);
+	},
+
+	settlementBuildIsLegal: function (coords, playerId) {
+		var data = { coords: coords };
+		return evaluateRule (settlementBuildRule, this.game, playerId, data);
+	},
+
+	cityBuildIsLegal: function(coords, playerId) {
+		var data = { coords: coords };
+		return evaluateRule (citybuildRule, this.game, playerId, data);
+	}
 }
 
-function settlementBuildIsLegal(coords, playerId) {
-	var data = { coords: coords };
-	return evaluateRule (settlementBuildRule, this.game, playerId, data);
-}
 
 var initialRoadPlacementRule = [roadNotPresent, 'AND',
 																hasInitialRoadsLeft, 'AND',
@@ -42,6 +50,10 @@ var settlementBuildRule = [buildingNotPresent, 'AND',
 													 canAffordSettlement, 'AND',
 													 hasConnectingRoad, 'AND',
 													 noBuildingsTooClose];
+
+var citybuildRule = [settlementOwned, 'AND',
+										 hasCitiesLeft, 'AND',
+										 canAffordCity]
 
 function isFirstPlacement (game, playerId, data) {
 	return game.roadsForPlayer[playerId].length === 0 &&
@@ -92,6 +104,21 @@ function noBuildingsTooClose (game, playerId, data) {
 function canAffordSettlement (game, playerId, data) {
 	return true; // TODO
 }
+
+function settlementOwned (game, playerId, data) {
+	var building = game.board.getBuilding(data.coords);
+	return building && building.occupyingPlayerId === playerId;
+}
+
+
+function hasCitiesLeft (game, playerId, data) {
+	return game.stashes[playerId].cities > 0;
+}
+
+function canAffordCity (game, playerId, data) {
+	return true; // TODO
+}
+
 
 
 function evaluateRuleTree (rule) {
