@@ -28,7 +28,7 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 		var diceSum = game.lastDiceRoll.sum();
 		var hexesWithDiceSum = game.board.getHexesWithToken(diceSum);
 		var resources = [];
-		hexesWithDiceSum.forEach (seekHexForResource (playerId));
+		hexesWithDiceSum.forEach (seekHexForResource (playerId, game.board, resources));
 
 		socket.emit('gain-resources', { resources: resources });
 	});
@@ -52,7 +52,7 @@ function diceRoll () {
 	return dices;
 }
 
-function seekHexForResource(playerId, resources) {
+function seekHexForResource(playerId, board, resources) {
 	return function (hexGeneratingResource) {
 		var surroundingBuildings = board.getBuildingForHex(hexGeneratingResource);
 
