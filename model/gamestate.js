@@ -7,8 +7,9 @@
 */
 
 var boards = require('./boards.js'),
-	stashes = require('./stash.js'),
-	ruleset = require('./ruleset.js');
+		stashes = require('./stash.js'),
+		ruleset = require('./ruleset.js'),
+		playerQueue = require('./player-queue');
 
 exports.Game = function(room) { // constructor
 	this.room = room;
@@ -20,10 +21,11 @@ exports.Game = function(room) { // constructor
 }
 
 function initPlayers(game) {
-	game.players = [];
+	game.queue = new playerQueue.Queue();
+	game.players = game.queue.players;
 	game.stashes = {};
 	game.addPlayer = function(playerId) {
-		game.players.push(playerId);
+		game.queue.addPlayer(playerId);
 		game.stashes[playerId] = new stashes.Stash(playerId);
 	}
 }

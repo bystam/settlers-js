@@ -5,8 +5,6 @@
 	(perhaps even resource giving based on cities?)
 */
 
-//var playerQueue = require('./logic/player-queue');
-
 var buildingValues = {'settlement': 1, 'city': 2};
 
 var games = null;
@@ -18,9 +16,12 @@ exports.init = function(gamesState, socketIo) {
 
 exports.registerPlayerForTurns = function(socket, room, playerId) {
 	var game = games[room];
+
 	socket.on('turn-ended', function(data) {
 		game.lastDiceRoll = diceRoll();
-		io.sockets.in(room).emit('new-turn', game);
+		game.queue.changeTurn();
+		var currentPlayer = { currentPlayer: game.queue.getCurrentPlayer() };
+		io.sockets.in(room).emit('new-turn', currentPlayer);
 	});
 
 	socket.on('draw-resources', function(data) {
