@@ -62,7 +62,7 @@ exports.Rules = function(game) { // rules constructor
 	Resten beskrivs som kombinationer av andra!
 
 	Exempel:
-	roadBuildIsLegal: hashInStash && !roadExists && roundPermitsBuild
+	roadBuildIsLegal: hasInStash && !roadExists && roundPermitsBuild
 	roundPermitsBuild (ej löv): isFirstRound || isStartupPhase || hasConnecting
 
 	osv, osv...
@@ -77,6 +77,11 @@ exports.Rules = function(game) { // rules constructor
 	Träd > statiska if-satser
 
 	BYSTAM OUT
+*/
+
+ /* TODO describe leafs as functions and nodes as arrays
+
+		var roadBuildIsLegal = [hasInStash, 'AND', ]
 */
 
 function roadBuildIsLegal (roadCoordinates, playerId) {
@@ -131,8 +136,34 @@ function settlementBuildIsLegal (settlementCoords, playerId) {
 	return { legal: isLegal, city: isCity };
 }
 
+/* attempts silly method shit... is angry now
+function settlementBuildIsLegal (settlementCoords, playerId) {
+	var illegal = { legal: false },
+			settlement = { legal: true, city: false }
+			city = { legal: true, city: true };
+
+	if (!settlementExists(settlementCoords) &&
+			hasInStash(playerId, buildingTypes.settlement) &&
+			locationIsValid(settlementCoords, playerId) &&
+			roundPermitsPlacement)
+		return settlement;
+	else if ()
+		return city;
+
+	return illegal;
+}
+*/
+
+function roundPermitsPlacement (roadCoordinates, playerId) {
+	return true;
+}
+
 function settlementInProximity(coords){
 	return false;
+}
+
+function locationIsValid (settlementCoords, playerId) {
+	return true;
 }
 
 function hasInStash (playerId, type){
@@ -183,4 +214,35 @@ function isFirstRound(playerId){
 
 function roadExists (coords){
 	return false;
+}
+
+function evaluateRuleTree (rule) {
+	return evaluateDisjunction(rule);
+}
+
+function evaluateNode (node) {
+	var disjunctionGroups = [];
+	var currentGroup = [];
+	node.forEach(element) {
+		if (element === 'OR') {
+			disjunctionGroups.push(currentGroup);
+			currentGroup = [];
+		} else if (element === 'AND') {
+			// no action required
+		} else { // piece of conjunction
+			currentGroup.push (element);
+		}
+	}
+
+	var orResult = false;
+	disjunctionGroups.forEach(function (group) {
+		var andResult = false;
+		group.forEach(function(statement) {
+			if (typeof statement === 'object')
+				andResult &= evaluateNode (statement);
+			else if (typeof statement === 'function')
+				andResult &= statement();
+		});
+		orResult |= andResult;
+	});
 }
