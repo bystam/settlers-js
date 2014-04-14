@@ -45,7 +45,7 @@ function newConnection (socket) {
 		// 	return;
 		// }
 
-		var playerId = games[room].players.length;
+		var playerId = 'p' + games[room].players.length;
 		registerConnection(socket, room, playerId);
 	});
 }
