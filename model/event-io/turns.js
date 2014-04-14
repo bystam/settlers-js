@@ -54,7 +54,7 @@ function diceRoll () {
 
 function seekHexForResource(playerId, board, resources) {
 	return function (hexGeneratingResource) {
-		var surroundingBuildings = board.getBuildingForHex(hexGeneratingResource);
+		var surroundingBuildings = board.getBuildingsForHex(hexGeneratingResource);
 
 		surroundingBuildings.forEach(function (building) {
 			if (building.type === null || building.occupyingPlayerId !== playerId)
