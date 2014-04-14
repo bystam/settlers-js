@@ -1,10 +1,10 @@
 var socket, boardCanvas, game, localPlayerId;
-var state = {settlements:{}, roads:{}};
 
 var serverCommands = {
-	canBuildRoad:"buildRoad", canBuildCity:"buildSettlement", 
+	canBuildRoad:"build-road", canBuildSettlement:"build-settlement", canBuildCity:"build-city",
 	endTurn:"turn-ended", newTurn:"new-turn", drawResource:"draw-resources",
-	gainResources:"gain-resources"};
+	gainResources:"gain-resources", gainStash:"gain-stash",
+	gainHiddenStash:"gain-hidden-stash", gainHiddenResources:"gain-hidden-resources"};
 
 function populateGameWithLogic(game) {
 	game.addPlayer = function(playerId) {
@@ -43,9 +43,11 @@ function createEmptyBoard(game){
 	createRoadShapesFromMap(boardCanvas, game.board.map);
 	createCityShapesFromMap(boardCanvas, game.board.map);
 
+	//delete later, draw stashes when ending first turn...
 	game.players.forEach(function(playerId){
 		initializeNewPlayer(boardCanvas, playerId, game);
 	});
+	///////////
 	createNewTurnButton(socket, boardCanvas, boardWidthInPixels/2);
 	setServerResponseHandlers (socket);
 	// createDice()
@@ -61,7 +63,7 @@ function setServerResponseHandlers (socket){
 			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, boardCanvas, data.isCity);
 	});
 	socket.on(serverCommands.newTurn, function(data){
-		console.log(data.diceRoll);
+		console.log(data.dices);
 		socket.emit(serverCommands.drawResource, {});
 	});
 	socket.on(serverCommands.gainResources, function(data){
@@ -70,6 +72,18 @@ function setServerResponseHandlers (socket){
 			stashObjects[localPlayerId].resourceCards.addCard(resource);
 		});
 	});
+	socket.on(serverCommands.gainStash, function(stash){
+		initializeNewPlayer(canvas, localPlayerId, stash);
+	});
+	socket.on(serverCommands.gainHiddenStash, function(data){
+		initializeNewPlayer(canvas, data.playerId, data);
+	});
+	socket.on(serverCommands.gainHiddenResources, function(data){
+		data.resources.forEach(function(resource){
+			stashObjects[data.playerId].resourceCards.addCard(resource);
+		})
+	});
+
 
 }
 
