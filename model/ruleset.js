@@ -84,6 +84,14 @@ exports.Rules = function(game) { // rules constructor
 		var roadBuildIsLegal = [hasInStash, 'AND', ]
 */
 
+var T = function () { return true };
+var F = function () { return false };
+
+var testOne = [T, 'AND', T, 'AND', T];
+var testTwo = [T, 'AND', F, 'OR', T];
+var testThree = [F, 'AND', T, 'AND', T];
+var testFour = [F, 'OR', [T, 'AND', T, 'AND', T]];
+
 function roadBuildIsLegal (roadCoordinates, playerId) {
 	var isLegal = false;
 	if(hasInStash(playerId, buildingTypes.road)) {
@@ -221,9 +229,26 @@ function evaluateRuleTree (rule) {
 }
 
 function evaluateNode (node) {
+	var disjunctionGroups = getDisjunctionGroups(node);
+
+	var orResult = false;
+	disjunctionGroups.forEach(function (group) {
+		var andResult = true;
+		group.forEach(function(statement) {
+			if (typeof statement === 'object')
+				andResult = andResult && evaluateNode (statement);
+			else if (typeof statement === 'function')
+				andResult = andResult && statement();
+		});
+		orResult |= andResult;
+	});
+	return orResult;
+}
+
+function getDisjunctionGroups(node) {
 	var disjunctionGroups = [];
 	var currentGroup = [];
-	node.forEach(element) {
+	node.forEach(function (element, i) {
 		if (element === 'OR') {
 			disjunctionGroups.push(currentGroup);
 			currentGroup = [];
@@ -232,17 +257,8 @@ function evaluateNode (node) {
 		} else { // piece of conjunction
 			currentGroup.push (element);
 		}
-	}
-
-	var orResult = false;
-	disjunctionGroups.forEach(function (group) {
-		var andResult = false;
-		group.forEach(function(statement) {
-			if (typeof statement === 'object')
-				andResult &= evaluateNode (statement);
-			else if (typeof statement === 'function')
-				andResult &= statement();
-		});
-		orResult |= andResult;
+		if (i === node.length - 1)
+			disjunctionGroups.push(currentGroup);
 	});
+	return disjunctionGroups;
 }
