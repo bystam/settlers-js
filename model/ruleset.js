@@ -27,7 +27,7 @@ var initialRoadPlacementRule = [roadNotPresent, 'AND',
 
 var initialSettlementPlacementRule = [buildingNotPresent, 'AND',
 																		  hasInitialSettlementsLeft, 'AND',
-																		  noBuildingsTwoRoadsAway, 'AND',
+																		  noBuildingsTooClose, 'AND',
 																		 	 [ isFirstPlacement, 'OR',
 																		 		 hasConnectingRoad ]
 																		  ];
@@ -41,7 +41,7 @@ var settlementBuildRule = [buildingNotPresent, 'AND',
 													 hasSettlementsLeft, 'AND',
 													 canAffordSettlement, 'AND',
 													 hasConnectingRoad, 'AND',
-													 noBuildingsTwoRoadsAway];
+													 noBuildingsTooClose];
 
 function isFirstPlacement (game, playerId, data) {
 	return game.roadsForPlayer[playerId].length === 0 &&
@@ -53,44 +53,44 @@ function roadNotPresent (game, playerId, data) {
 }
 
 function hasRoadsLeft (game, playerId, data) {
-	return true;
+	return game.stashes[playerId].roads > 0;
 }
 
 function hasInitialRoadsLeft (game, playerId, data) {
-	return true;
+	return game.roadsForPlayer[playerId].length < 2;
 }
 
 function hasConnectingRoad (game, playerId, data) {
-	return true;
+	return true; // TODO
 }
 
 function canAffordRoad (game, playerId, data) {
-	return true;
+	return true; // TODO
 }
 
 
 function hasConnectingBuilding (game, playerId, data) {
-	return true;
+	return true; // TODO
 }
 
 function buildingNotPresent (game, playerId, data) {
-	return true;
+	return game.board.getRoad(data.coords).occupyingPlayerId === null;
 }
 
 function hasSettlementsLeft (game, playerId, data) {
-	return true;
+	return game.stashes[playerId].settlements > 0;
 }
 
 function hasInitialSettlementsLeft (game, playerId, data) {
-	return true;
+	return game.buildingsForPlayer[playerId].length < 1;
 }
 
-function noBuildingsTwoRoadsAway (game, playerId, data) {
-	return true;
+function noBuildingsTooClose (game, playerId, data) {
+	return true; // TODO
 }
 
 function canAffordSettlement (game, playerId, data) {
-	return true;
+	return true; // TODO
 }
 
 
