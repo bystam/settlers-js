@@ -19,16 +19,16 @@ exports.setupBuildingEvents = function(socket, room, playerId){
 		var buildIsLegal = rules.roadBuildIsLegal(coords, playerId);
 		if (buildIsLegal)
 			placeRoad (coords, playerId, game);
-		io.sockets.in(room).emit("buildRoad", {playerId:playerId, coords:coords,
-															allowed:buildIsLegal});
+		io.sockets.in(room).emit("build-road", {playerId:playerId, coords:coords,
+															allowed: buildIsLegal});
 	});
 
 	socket.on("build-settlement", function(coords){
-		var build = rules.settlementBuildIsLegal(coords, playerId);
-		if(build.legal)
+		var buildIsLegal = rules.settlementBuildIsLegal(coords, playerId);
+		if(buildIsLegal)
 			placeBuilding(coords, playerId, game)
-		io.sockets.in(room).emit("build-settlement", {playerId:playerId, coords:coords,
-															allowed:build.legal, isCity:build.city});
+		io.sockets.in(room).emit("build-settlement", { playerId:playerId, coords: coords,
+															allowed: buildIsLegal});
 	});
 
 	// TODO build-city

@@ -58,9 +58,13 @@ function setServerResponseHandlers (socket){
 		if(data.allowed)
 			placeRoadWithAnimation(JSON.stringify(data.coords), data.playerId);
 	});
+	socket.on(serverCommands.canBuildSettlement, function(data){
+		if(data.allowed)
+			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, boardCanvas, false);
+	});
 	socket.on(serverCommands.canBuildCity, function(data){
 		if(data.allowed)
-			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, boardCanvas, data.isCity);
+			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, boardCanvas, true);
 	});
 	socket.on(serverCommands.newTurn, function(data){
 		console.log(data.dices);

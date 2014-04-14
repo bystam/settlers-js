@@ -1,33 +1,44 @@
 God requirement: Your turn
 
+Place road initially:
+	No road present
+		First Round
+			No conditions
+		Startup phase
+			Connecting road OR Connecting city (Can be modified with stricter rules in startup phase)
+		Connecting road
+			Has resources
+			Has adventure card charge
+							-> Place road, give longest road if connection is longest(increment victory points), add any port modifiers
+
 Place road:
 	Has roads left
 		No road present
-			First Round
-				No conditions
-			Startup phase
-				Connecting road OR Connecting city (Can be modified with stricter rules in startup phase)
-			Connecting road
-				Has resources
-				Has adventure card charge
-								-> Place road, give longest road if connection is longest(increment victory points), add any port modifiers
+			Has connecting road
 
-Place town:
-	No town present	
-		Has towns left
-			No town 2 roads away
-				First round
+Place settlement initially:
+	No settlement present
+		Has initial settlement left
+			No town two roads away
+				First Round
 					No conditions
 				Startup phase
-					Connecting road
+					Connecting road OR Connecting city (Can be modified with stricter rules in startup phase)
 				Connecting road
 					Has resources
-								-> Place town, increment victory points
-	Own town present
+					Has adventure card charge
+							-> Place road, give longest road if connection is longest(increment victory points), add any port modifiers
+
+Place settlement:
+	No settlement present
+		Has settlement left
+			No settlement 2 roads away
+
+	Own settlement present
 		Has cities left
 			Has resources
 								-> Place city, increment victory points
-								
+
 Roll dice:
 	Always allowed
 								-> for each city gain resources of sourrounding hexes without knight, enable/disable knight placement(increment riddarmakt)
@@ -55,10 +66,9 @@ Draw adventure card:
 Play adventure card:
 	Has adventure card not bought this turn
 		Has not played any adventure card this turn
-								-> Special rules: 
+								-> Special rules:
 									enable knight placement(increment riddarmakt)
 									increment victory points
 									enable 2 road building charges
 									get 2 resources
 									steal all of 1 resource from players
-
