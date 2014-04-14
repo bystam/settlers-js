@@ -1,9 +1,11 @@
 var socket, boardCanvas, game, localPlayerId;
+var state = {settlements:{}, roads:{}};
 
 var serverCommands = {
 	canBuildRoad:"buildRoad", canBuildCity:"buildSettlement", 
 	endTurn:"turn-ended", newTurn:"new-turn", drawResource:"draw-resources",
 	gainResources:"gain-resources"};
+
 function populateGameWithLogic(game) {
 	game.addPlayer = function(playerId) {
 		game.players.push(playerId);
@@ -59,9 +61,15 @@ function setServerResponseHandlers (socket){
 			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, boardCanvas, data.isCity);
 	});
 	socket.on(serverCommands.newTurn, function(data){
-		console.log("GOT NEW TURN");
+		console.log(data.diceRoll);
 		socket.emit(serverCommands.drawResource, {});
-	})
+	});
+	socket.on(serverCommands.gainResources, function(data){
+		console.log(data);
+		data.resources.forEach(function(resource){
+			stashObjects[localPlayerId].resourceCards.addCard(resource);
+		});
+	});
 
 }
 

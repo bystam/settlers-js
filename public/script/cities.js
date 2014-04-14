@@ -49,7 +49,6 @@ function createCityShape (canvas, hexes, coords){
 												{row: hexes[1].row, col: hexes[1].column},
 												{row: hexes[2].row, col: hexes[2].column}];
 	var cityKey = JSON.stringify(cityNeighbours);
-
 	if(cityLocations[cityKey] !== undefined)//prevent doublettes
 		return;
 	var city = getSettlementShape(canvas, coords, null);
@@ -89,12 +88,13 @@ function placeCityWithAnimation (coords, playerId, canvas, isCity){
 	}
 	var stashCity = isCity ? stashObjects[playerId].cities.shift() : stashObjects[playerId].settlements.shift();
 	stashCity.animate({cx:city.attr("cx"), cy:city.attr("cy")}, 3000, mina.easin, function(){
-		placeCity(JSON.stringify(coords), playerId);
+		placeCity(coords, playerId);
 		stashCity.remove();
 	});
 }
 
 function placeCity(coords, playerId, isCity){
+	console.log(coords);
 	var city = cityLocations[coords];
 	if(isCity){
 		city.unclick(null);
