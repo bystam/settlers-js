@@ -32,7 +32,8 @@ function createRoadShape (canvas, hexes, coords){
 			return a.column - b.column;
 		return a.row - b.row;
 	});
-	var roadCoord = [{row:hexes[0].row, col:hexes[0].column}, {row:hexes[1].row, col:hexes[1].column}];
+	var roadCoord = [{row: hexes[0].row, col: hexes[0].column},
+									 {row: hexes[1].row, col: hexes[1].column}];
 	var roadKey = JSON.stringify(roadCoord);
 	if(roadLocations[roadKey] !== undefined) // prevent doubles
 		return;
@@ -99,5 +100,3 @@ function placeRoad (coords, playerId){
 	road.unhover();
 	road.attr(getRoadColors(playerId));
 }
-
-

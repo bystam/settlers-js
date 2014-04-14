@@ -16,7 +16,7 @@ function createCityShapesForHex(canvas, map, hexagon){
 	var neighbourList = getNeighbourListForHex(map, hexagon);
 	for(var i=0;i<6;i++){
 		var neighbours = [hexagon, neighbourList[(i+4)%6], neighbourList[(i+5)%6]];
-		var cityCoords = 
+		var cityCoords =
 		getCoordsForCity(
 			corners[i],
 			[map[neighbours[1].row][neighbours[1].column],
@@ -43,9 +43,11 @@ function createCityShape (canvas, hexes, coords){
 			return a.column - b.column;
 		return a.row - b.row;
 	});
-	var cityNeighbours = [{row:hexes[0].row, column:hexes[0].column},{row:hexes[1].row, column:hexes[1].column},{row:hexes[2].row, column:hexes[2].column}];
+	var cityNeighbours = [{row: hexes[0].row, col: hexes[0].column},
+												{row: hexes[1].row, col: hexes[1].column},
+												{row: hexes[2].row, col: hexes[2].column}];
 	var cityKey = JSON.stringify(cityNeighbours);
-	
+
 	if(cityLocations[cityKey] !== undefined)//prevent doublettes
 		return;
 	var city = getSettlementShape(canvas, coords, null);
@@ -118,4 +120,3 @@ function getCityGraphics (playerId){
 	var minorColor = playerId !== null ? 'black' : "transparent";//tinycolor.complement(majorColor);//tinycolor.lighten(majorColor, amount = 10);
 	return {stroke:minorColor, strokeWidth:1,fill:majorColor}
 }
-
