@@ -46,6 +46,32 @@ exports.Rules = function(game) { // rules constructor
 	this.settlementBuildIsLegal = settlementBuildIsLegal;
 }
 
+/*
+	Idé på regel-beskrivning (som är lite det jag funderade på hur man ska
+	beskriva regler mer generellt):
+
+	Just nu är allt här gigantiska if-härken som är näst inpå oläsliga, men
+	det som egentligen beskrivs är ett dependency-träd. Alltså borde det
+	gå att beskriva olika regler som sub-dependencies, som i sin tur
+	består av sub-dependencies
+
+	Eftersom javascript har funktioner som första ordningens typ så blir
+	det här ASCOOLT!!!! Man kan därför beskriva alla regler som ett träd
+	där varje regel består av ett logiskt uttryck av andra sub-regler.
+	Trädet sträcker sig ner till löven, som är de enda man behöver implementera
+	Resten beskrivs som kombinationer av andra!
+
+	Exempel:
+	roadBuildIsLegal: hashInStash && !roadExists && roundPermitsBuild
+	roundPermitsBuild (ej löv): isFirstRound || isStartupPhase || hasConnecting
+
+	osv, osv...
+
+	Speccar man löven så kan man beskriva alla andra regler som träd
+	som ska evalueras. Det blir helt jävla otroligt, och jätteenkelt
+	att modifiera regler/lägga på nya specialregler
+*/
+
 function roadBuildIsLegal (roadCoordinates, playerId) {
 	var isLegal = false;
 	if(hasInStash(playerId, buildingTypes.road)) {
@@ -53,7 +79,7 @@ function roadBuildIsLegal (roadCoordinates, playerId) {
 			if(isFirstRound(playerId)){
 				isLegal = true;
 			} else if(isStartupPhase(playerId)){
-				if(hasConnecting(playerId, roadCoordinates, buildingTypes.road) || 
+				if(hasConnecting(playerId, roadCoordinates, buildingTypes.road) ||
 					hasConnecting(playerId, roadCoordinates, buildingTypes.settlement))
 					isLegal = true;
 			} else if(hasConnecting(playerId, roadCoordinates, buildingTypes.road)){
@@ -71,6 +97,7 @@ function roadBuildIsLegal (roadCoordinates, playerId) {
 function settlementBuildIsLegal (settlementCoords, playerId) {
 	var isLegal = false;
 	var isCity = false;
+
 	if(!settlementExists(settlementCoords)){
 		if(hasInStash(playerId, buildingTypes.settlement)){
 			if(!settlementInProximity(settlementCoords)){
