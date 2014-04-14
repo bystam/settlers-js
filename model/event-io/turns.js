@@ -18,12 +18,12 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 	var game = games[room];
 
 	socket.on('turn-ended', function(data) {
+		console.log("TURN END");
 		game.lastDiceRoll = diceRoll();
 		game.queue.changeTurn();
 		var currentPlayer = { currentPlayer: game.queue.getCurrentPlayer() };
 		io.sockets.in(room).emit('new-turn', currentPlayer);
 	});
-
 	socket.on('draw-resources', function(data) {
 		var diceSum = game.lastDiceRoll.sum();
 		var hexesWithDiceSum = game.board.getHexesWithToken(diceSum);

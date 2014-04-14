@@ -1,6 +1,9 @@
 var socket, boardCanvas, game, localPlayerId;
 
-var serverCommands = {canBuildRoad:"buildRoad", canBuildCity:"buildSettlement"};
+var serverCommands = {
+	canBuildRoad:"buildRoad", canBuildCity:"buildSettlement", 
+	endTurn:"turn-ended", newTurn:"new-turn", drawResource:"draw-resources",
+	gainResources:"gain-resources"};
 function populateGameWithLogic(game) {
 	game.addPlayer = function(playerId) {
 		game.players.push(playerId);
@@ -41,7 +44,7 @@ function createEmptyBoard(game){
 	game.players.forEach(function(playerId){
 		initializeNewPlayer(boardCanvas, playerId, game);
 	});
-
+	createNewTurnButton(socket, boardCanvas, boardWidthInPixels/2);
 	setServerResponseHandlers (socket);
 	// createDice()
 }
@@ -55,5 +58,25 @@ function setServerResponseHandlers (socket){
 		if(data.allowed)
 			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, boardCanvas, data.isCity);
 	});
+	socket.on(serverCommands.newTurn, function(data){
+		console.log("GOT NEW TURN");
+		socket.emit(serverCommands.drawResource, {});
+	})
 
+}
+
+function createNewTurnButton(socket, canvas, middleX){
+	var buttonWidth = 100;
+	var button = canvas.rect(middleX-(buttonWidth-40), 20, buttonWidth, 50);
+	var filter = canvas.filter(Snap.filter.blur(2,2));
+	button.attr({
+		stroke:'black',
+		strokeWidth:4,
+		fill:'green',
+		filter:filter
+	});
+	button.click(function(){
+		console.log("ending turn...");
+		socket.emit(serverCommands.endTurn, {});
+	});
 }

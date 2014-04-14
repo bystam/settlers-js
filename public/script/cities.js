@@ -19,8 +19,10 @@ function createCityShapesForHex(canvas, map, hexagon){
 		var cityCoords =
 		getCoordsForCity(
 			corners[i],
-			[map[neighbours[1].row][neighbours[1].column],
-			map[neighbours[2].row][neighbours[2].column]]);
+			[
+				map[neighbours[1].row][neighbours[1].column],
+				map[neighbours[2].row][neighbours[2].column]
+			]);
 		createCityShape(canvas, neighbours, cityCoords);
 	}
 }
