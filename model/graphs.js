@@ -45,31 +45,29 @@ function getOrCreateRoad (hexCoords, n1, roadLookup, map) {
 
   var roadKey = [hexCoords, n1];
   var road;
-  if (road = roadLookup.get(roadKey)) { // road already exists
-    // TODO do we need code here?
-  } else { // create new road piece
-    road = {};
-    road.key = roadKey;
-    road.occupyingPlayerId = null;
-    road.buildings = [];
-    roadLookup.put(roadKey, road);
-  }
+  if (road = roadLookup.get(roadKey))
+    return road;
+
+  road = {};
+  road.key = roadKey;
+  road.occupyingPlayerId = null;
+  road.buildings = [];
+  roadLookup.put(roadKey, road);
   return road;
 }
 
 function getOrCreateBuilding (hexCoords, n1, n2, buildingLookup) {
   var buildingKey = [hexCoords, n1, n2];
   var building;
-  if (building = buildingLookup.get(buildingKey)) { // building already exists
-    // TODO do we need code here?
-  } else { // create new building
-    building = {};
-    building.key = buildingKey;
-    building.occupyingPlayerId = null;
-    building.type = null; // settlement, city
-    building.roads = []; // TODO
-    buildingLookup.put(buildingKey, building);
-  }
+  if (building = buildingLookup.get(buildingKey))
+    return building;
+
+  building = {};
+  building.key = buildingKey;
+  building.occupyingPlayerId = null;
+  building.type = null; // settlement, city
+  building.roads = [];
+  buildingLookup.put(buildingKey, building);
   return building;
 }
 
