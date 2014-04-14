@@ -18,23 +18,28 @@ exports.setupBuildingEvents = function(socket, room, playerId){
 	socket.on("buildRoad", function(coords){
 		var buildIsLegal = rules.roadBuildIsLegal(coords, playerId);
 		if (buildIsLegal)
-			placeRoad (coords, playerId);
+			placeRoad (coords, playerId, game);
 		io.sockets.in(room).emit("buildRoad", {playerId:playerId, coords:coords, allowed:buildIsLegal});
 	});
 
 	socket.on("buildSettlement", function(coords){
 		var build = rules.settlementBuildIsLegal(coords, playerId);
 		if(build.legal)
-			placeSettlement(coords, playerId)
+			placeBuilding(coords, playerId, game)
 		io.sockets.in(room).emit("buildSettlement", {playerId:playerId, coords:coords, allowed:build.legal, isCity:build.city});
 	});
 }
 
 
-function placeRoad(coords, playerId){
-	// TODO should be in board? or maybe not
+function placeRoad(coords, playerId, game){
+	var roadLocation = game.board.getRoad(coords);
+	roadLocation.occupyingPlayerId = playerId;
 }
 
-function placeSettlement(coords, playerId){
-
+function placeBuilding(coords, playerId, game){
+	var buildingLocation = game.board.getBuilding(coords);
+	if (buildingLocation.type === 'settlement')
+		return building.type = 'city'
+	buildingLocation.type = 'settlement';
+	buildingLocation.occupyingPlayerId = playerId;
 }

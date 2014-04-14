@@ -1,6 +1,6 @@
 // http://boardgamegeek.com/thread/324667/the-counts-components-settlers-of-catan-4th-editio
 
-var graphCreator = require('./graph-creator');
+var graphs = require('./graphs');
 
 /*
 List of pieces:
@@ -31,7 +31,7 @@ exports.Board = function() { // constructor
 
 var generateRandomMap = function () {
 	this.map = getRandomMapFromStructure(defaultMap);
-	graphCreator.populateWithGraph(this);
+	graphs.populateWithGraph(this);
 }
 
 function getRandomMapFromStructure (mapStructure) {
