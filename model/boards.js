@@ -1,5 +1,6 @@
 // http://boardgamegeek.com/thread/324667/the-counts-components-settlers-of-catan-4th-editio
 
+var graphCreator = require('./graph-creator');
 
 /*
 List of pieces:
@@ -29,15 +30,15 @@ exports.Board = function() { // constructor
 }
 
 var generateRandomMap = function () {
-	var map = getRandomMapFromStructure(defaultMap);
-	this.map = map.map;
+	this.map = getRandomMapFromStructure(defaultMap);
+	graphCreator.populateWithGraph(this);
 }
 
 function getRandomMapFromStructure (mapStructure) {
 	var landHexes = getLandHexes(mapStructure);
 	var map = createMapFromHexesAndStructure(landHexes, mapStructure);
 	setHexNeighbors(map);
-	return { map: map };
+	return map;
 }
 
 function getLandHexes (mapStructure) {
@@ -73,25 +74,33 @@ function createMapFromHexesAndStructure (landHexes, mapStructure) {
 				map[row].push(null);
 		}
 	}
+
 	return map;
 }
 
 function setHexNeighbors (map) {
 	forEachHex (map, function(hex, row, col) {
-		if (hex.type !== 'ocean')
-			setNeighbors(hex, row, col, map)
+		setNeighbors(hex, row, col, map)
 	});
 }
 
-function setNeighbors(hex, row, col) {
+function setNeighbors(hex, row, col, map) {
+	var hexExists = function(coords) {
+		return map[coords.row] && map[coords.row][coords.col];
+	}
 	// neighbor order determined by snap.svg corner point ordering
-	var neighbors = [];
-	neighbors.push ({ row: row-1, col: col+1 }); // north east
-	neighbors.push ({ row: row+1, col: col+1 }); // south east
-	neighbors.push ({ row: row+2, col: col }); // south
-	neighbors.push ({ row: row+1, col: col-1 }); // south west
-	neighbors.push ({ row: row-1, col: col-1 }); // south east
-	neighbors.push ({ row: row-2, col: col }); // north
+	var ne = { row: row-1, col: col+1 };
+	var se = { row: row+1, col: col+1 };
+	var s = { row: row+2, col: col };
+	var sw = { row: row+1, col: col-1 };
+	var nw = { row: row-1, col: col-1 };
+	var n = { row: row-2, col: col };
+	var neighbors = [ne, se, s, sw, nw, n];
+
+	for (var i = 0; i < neighbors.length; i++)
+		if (!hexExists(neighbors[i]))
+			neighbors[i] = null;
+
 	hex.neighbors = neighbors;
 }
 

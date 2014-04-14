@@ -12,7 +12,7 @@ var boards = require('./boards.js'),
 
 exports.Game = function(room) { // constructor
 	this.room = room;
-	
+
 	initPlayers(this);
 	initBoard(this);
 	initRules(this);
