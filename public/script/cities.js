@@ -79,7 +79,6 @@ function canPlaceCity(key){
 	return true;
 }
 
-//TODO separate between settlement and city lacement
 function placeCityWithAnimation (coords, playerId, canvas, isCity){
 	var city = cityLocations[coords];
 	if(isCity){
@@ -87,7 +86,7 @@ function placeCityWithAnimation (coords, playerId, canvas, isCity){
 		city.unhover();
 	}
 	var stashCity = isCity ? stashObjects[playerId].cities.shift() : stashObjects[playerId].settlements.shift();
-	stashCity.animate({cx:city.attr("cx"), cy:city.attr("cy")}, 3000, mina.easin, function(){
+	stashCity.animate({cx:city.attr("cx"), cy:city.attr("cy")}, 1000, mina.bounce, function(){
 		placeCity(coords, playerId);
 		stashCity.remove();
 	});

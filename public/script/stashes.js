@@ -223,12 +223,3 @@ function getCardShape (canvas, coords, playerId, isLocalPlayer, cardType){
 	///////
 	return resource;
 }
-
-function addToStash (playerId, type){
-
-}
-
-function getFromStash(playerId, type){
-
-}
-
