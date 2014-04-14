@@ -20,8 +20,9 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 	socket.on('turn-ended', function(data) {
 		game.lastDiceRoll = diceRoll();
 		game.queue.changeTurn();
-		var currentPlayer = { currentPlayer: game.queue.getCurrentPlayer() };
-		io.sockets.in(room).emit('new-turn', currentPlayer);
+		var nextTurnData = { dices: game.lastDiceRoll,
+												 currentPlayer: game.queue.getCurrentPlayer() };
+		io.sockets.in(room).emit('new-turn', nextTurnData);
 	});
 
 	socket.on('draw-resources', function(data) {
