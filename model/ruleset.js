@@ -70,6 +70,13 @@ exports.Rules = function(game) { // rules constructor
 	Speccar man löven så kan man beskriva alla andra regler som träd
 	som ska evalueras. Det blir helt jävla otroligt, och jätteenkelt
 	att modifiera regler/lägga på nya specialregler
+
+	Varje funktion kan ha samma "interface" (tar playerId, gamestate samt
+	event input). På så sätt kan man skriva en träd-evaluator av regler
+
+	Träd > statiska if-satser
+
+	BYSTAM OUT
 */
 
 function roadBuildIsLegal (roadCoordinates, playerId) {
