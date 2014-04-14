@@ -6,12 +6,12 @@ var possibleBuildingColors = ['green', 'red', 'blue', 'yellow'];
 var stashObjects = {};
 var buildingColors = {};
 
-function initializeNewPlayer(canvas, playerId, game){
+function initializeNewPlayer(canvas, playerId, stash){
 	if(stashObjects[playerId] !== undefined)
 		return;
 	var isLocalPlayer = playerId === localPlayerId;
 	initializeStash(playerId, isLocalPlayer);
-	drawStashForPlayer (canvas, game.stashes[playerId], playerId, isLocalPlayer);
+	drawStashForPlayer (canvas, stash, playerId, isLocalPlayer);
 }
 
 function initializeStash (playerId, isLocalPlayer){

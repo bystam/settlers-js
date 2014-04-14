@@ -3,8 +3,7 @@ var socket, boardCanvas, game, localPlayerId;
 var serverCommands = {
 	canBuildRoad:"build-road", canBuildSettlement:"build-settlement", canBuildCity:"build-city",
 	endTurn:"turn-ended", newTurn:"new-turn", drawResource:"draw-resources",
-	gainResources:"gain-resources", gainStash:"gain-stash",
-	gainHiddenStash:"gain-hidden-stash", gainHiddenResources:"gain-hidden-resources"};
+	gainResources:"gain-resources", gainHiddenResources:"gain-hidden-resources"};
 
 function populateGameWithLogic(game) {
 	game.addPlayer = function(playerId) {
@@ -27,11 +26,9 @@ $ (document).ready(function(){
 	socket.on("room-404", function(data){
 		// alert("THIS FUCKING ROOM DOESNT EXIST!!!")
 	})
-	socket.on("new-player-joined", function(playerId){
-		$("body").append("<p>Player joined: "+playerId+"</p>");
-		console.log(playerId);
-		game.addPlayer(playerId);
-		initializeNewPlayer(boardCanvas, playerId, game);
+	socket.on("new-player-joined", function(data){
+		game.addPlayer(data.playerId);
+		initializeNewPlayer(boardCanvas, data.playerId, data.stash);
 	});
 });
 
@@ -45,15 +42,15 @@ function createEmptyBoard(game){
 
 	//delete later, draw stashes when ending first turn...
 	game.players.forEach(function(playerId){
-		initializeNewPlayer(boardCanvas, playerId, game);
+		initializeNewPlayer(boardCanvas, playerId, game.stashes[playerId]);
 	});
 	///////////
 	createNewTurnButton(socket, boardCanvas, boardWidthInPixels/2);
-	setServerResponseHandlers (socket);
+	setServerResponseHandlers (socket, boardCanvas);
 	// createDice()
 }
 
-function setServerResponseHandlers (socket){
+function setServerResponseHandlers (socket, canvas){
 	socket.on(serverCommands.canBuildRoad, function(data){
 		if(data.allowed)
 			placeRoadWithAnimation(JSON.stringify(data.coords), data.playerId);
@@ -75,12 +72,6 @@ function setServerResponseHandlers (socket){
 		data.resources.forEach(function(resource){
 			stashObjects[localPlayerId].resourceCards.addCard(resource);
 		});
-	});
-	socket.on(serverCommands.gainStash, function(stash){
-		initializeNewPlayer(canvas, localPlayerId, stash);
-	});
-	socket.on(serverCommands.gainHiddenStash, function(data){
-		initializeNewPlayer(canvas, data.playerId, data);
 	});
 	socket.on(serverCommands.gainHiddenResources, function(data){
 		data.resources.forEach(function(resource){

@@ -13,7 +13,19 @@ exports.Stash = function(playerId) {
 	this.cities = 4;
 	this.settlements = 5;
 	this.roads = 15;
+	this.hiddenify = hiddenify;
 	initResources(this);
+}
+
+function hiddenify(){
+	var hiddenCopy = {
+		playerId:this.playerId, cities:this.cities,
+		settlements: this.settlements, roads:this.roads,
+		resources: []};
+	this.resources.forEach(function(resource){
+		hiddenCopy.resources.push('hidden');
+	});
+	return hiddenCopy;
 }
 
 function initResources(stash) {
