@@ -17,7 +17,17 @@ exports.Game = function(room) { // constructor
 	initPlayers(this);
 	initBoard(this);
 	initRules(this);
-	this.privateCopyForPlayer = privateCopyForPlayer;
+}
+
+exports.Game.prototype = {
+	constructor: exports.Game,
+
+	addPlayer: function(playerId) {
+		this.queue.addPlayer(playerId);
+		this.stashes[playerId] = new stashes.Stash(playerId);
+	},
+
+	privateCopyForPlayer: privateCopyForPlayer
 }
 
 function initPlayers(game) {
@@ -26,10 +36,7 @@ function initPlayers(game) {
 	game.stashes = {};
 	game.roadsForPlayer = {};
 	game.buildingsForPlayer = {};
-	game.addPlayer = function(playerId) {
-		game.queue.addPlayer(playerId);
-		game.stashes[playerId] = new stashes.Stash(playerId);
-	}
+
 }
 
 function initBoard(game) {

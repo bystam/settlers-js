@@ -13,19 +13,20 @@ exports.Stash = function(playerId) {
 	this.cities = 4;
 	this.settlements = 5;
 	this.roads = 15;
-	initResources(this);
+	this.resources = [];
 }
 
-function initResources(stash) {
-	stash.resources = [];
-	stash.addResource = function(resource) {
-		stash.resources.push(resource);
-	}
+exports.Stash.prototype = {
+	constructor: exports.Stash,
 
-	stash.removeResource = function(type) {
-		for (var i = 0; i < stash.resources.length; i++){
-			if (stash.resources[i].type === type){
-				stash.resources.splice(i, 1);
+	addResource: function(resource) {
+		this.resources.push(resource);
+	},
+
+	removeResource: function(type) {
+		for (var i = 0; i < this.resources.length; i++){
+			if (this.resources[i].type === type){
+				this.resources.splice(i, 1);
 				return;
 			}
 		}

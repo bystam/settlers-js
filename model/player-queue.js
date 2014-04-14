@@ -18,8 +18,13 @@ var setCurrentPlayer = function (player) {
 exports.Queue = function () {
 	this.players = []
 	this.currentPlayer = 0
-	this.addPlayer = addPlayer
-	this.getCurrentPlayer = getCurrentPlayer
-	this.changeTurn = changeTurn
-	this.setCurrentPlayer = setCurrentPlayer
+}
+
+exports.Queue.prototype = {
+	constructor: exports.Queue,
+
+	addPlayer: addPlayer,
+	getCurrentPlayer: getCurrentPlayer,
+	changeTurn: changeTurn,
+	setCurrentPlayer: setCurrentPlayer
 }

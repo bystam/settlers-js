@@ -74,7 +74,7 @@ function hasConnectingBuilding (game, playerId, data) {
 }
 
 function buildingNotPresent (game, playerId, data) {
-	return game.board.getRoad(data.coords).occupyingPlayerId === null;
+	return game.board.getBuilding(data.coords).occupyingPlayerId === null;
 }
 
 function hasSettlementsLeft (game, playerId, data) {
