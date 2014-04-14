@@ -27,11 +27,11 @@ exports.populateWithGraph = function(board) {
     return buildingLookup.get(coords);
   }
 
-  board.getRoadLocationsForHex = function (hex) {
+  board.getRoadsForHex = function (hex) {
     return getRoadLocationsForHex (hex, roadLookup);
   }
 
-  board.getBuildingLocationsForHex = function (hex) {
+  board.getBuildingsForHex = function (hex) {
     return getBuildingLocationsForHex (hex, buildingLookup);
   }
 }

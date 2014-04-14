@@ -5,7 +5,9 @@
 	(perhaps even resource giving based on cities?)
 */
 
-//var playerQueue = require('../logic/player-queue');
+//var playerQueue = require('./logic/player-queue');
+
+var buildingValues = {'settlement': 1, 'city': 2};
 
 var games = null;
 var io = null;
@@ -21,10 +23,13 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 		io.sockets.in(room).emit('new-turn', game);
 	});
 
-	socket.on('draw-cards', function(data) {
+	socket.on('draw-resources', function(data) {
 		var diceSum = game.lastDiceRoll.sum();
 		var hexesWithDiceSum = game.board.getHexesWithToken(diceSum);
-		// TODO filter cities for this player with adjacent target hexes
+		var resources = [];
+		hexesWithDiceSum.forEach (seekHexForResource (playerId));
+
+		socket.emit('gain-resources', { resources: resources });
 	});
 
 	socket.on('start-game', function(data) {
@@ -44,4 +49,18 @@ function diceRoll () {
 	dices.second = Math.floor(Math.random() * 6) + 1;
 	dices.sum = function () { return this.first + this.second };
 	return dices;
+}
+
+function seekHexForResource(playerId, resources) {
+	return function (hexGeneratingResource) {
+		var surroundingBuildings = board.getBuildingForHex(hexGeneratingResource);
+
+		surroundingBuildings.forEach(function (building) {
+			if (building.type === null || building.occupyingPlayerId !== playerId)
+				return;
+
+			for (var amount = 0; amount < buildingValues[building.type]; amount++)
+				resources.push(hexGeneratingResource.resource);
+		});
+	}
 }
