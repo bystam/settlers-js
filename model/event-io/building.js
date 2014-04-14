@@ -41,7 +41,7 @@ function placeRoad(coords, playerId, game){
 function placeBuilding(coords, playerId, game){
 	var buildingLocation = game.board.getBuilding(coords);
 	if (buildingLocation.type === 'settlement')
-		return building.type = 'city'
+		return buildingLocation.type = 'city'
 	buildingLocation.type = 'settlement';
 	buildingLocation.occupyingPlayerId = playerId;
 }
