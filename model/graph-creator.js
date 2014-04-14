@@ -16,8 +16,8 @@ exports.populateWithGraph = function(board) {
       var roadKey = [hexCoords, n1];
       var buildingKey = [hexCoords, n1, n2];
 
-      var road = getOrCreateRoad(roadKey);
-      var building = getOrCreateBuilding(buildingKey);
+      var road = getOrCreateRoad(roadKey, roadLookup);
+      var building = getOrCreateBuilding(buildingKey, buildingLookup);
 
       road.buildings.push(building);
       building.roads.push(road);
@@ -36,7 +36,7 @@ exports.populateWithGraph = function(board) {
   }
 }
 
-function getOrCreateRoad (roadKey) {
+function getOrCreateRoad (roadKey, roadLookup) {
   var road;
   if (road = roadLookup.get(roadKey)) { // road already exists
     // TODO do we need code here?
@@ -49,9 +49,9 @@ function getOrCreateRoad (roadKey) {
   return road;
 }
 
-function getOrCreateBuilding (buildingKey) {
+function getOrCreateBuilding (buildingKey, buildingLookup) {
   var building;
-  if (building = buildingLookup.get(roadKey)) { // building already exists
+  if (building = buildingLookup.get(buildingKey)) { // building already exists
     // TODO do we need code here?
   } else { // create new building
     building = {};
