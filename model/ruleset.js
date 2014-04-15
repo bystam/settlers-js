@@ -7,7 +7,12 @@
 */
 
 var buildingTypes = {road:"road", settlement:"settlements", city:"city"};
-var costs = {road: [0,0,0,0,0], town: [0,0,0,0,0], city: [0,0,0,0,0], developmentCard: [0,0,0,0,0]};
+var costs = {
+	road:						{ grain: 0, lumber: 1, wool: 0, ore: 0, brick: 1 },
+	settlement:			{ grain: 1, lumber: 1, wool: 1, ore: 0, brick: 1 },
+	city:						{ grain: 2, lumber: 0, wool: 0, ore: 3, brick: 0 },
+	developmentCard: { grain: 1, lumber: 0, wool: 1, ore: 1, brick: 0 }
+};
 
 exports.initialRoadPlacementRule = [roadNotPresent, 'AND',
 																		hasInitialRoadsLeft, 'AND',
