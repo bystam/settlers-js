@@ -14,34 +14,43 @@ var costs = {
 	developmentCard: { grain: 1, lumber: 0, wool: 1, ore: 1, brick: 0 }
 };
 
-exports.initialRoadPlacementRule = [roadNotPresent, 'AND',
+exports.initialRoadPlacementRule = [isMyTurn, 'AND',
+												 					 roadNotPresent, 'AND',
 																		hasInitialRoadsLeft, 'AND',
 																			[ isFirstPlacement, 'OR',
 																				roadConnectedToRoad, 'OR',
 																				roadConnectedToBuilding ]
 																		];
 
-exports.initialSettlementPlacementRule = [buildingNotPresent, 'AND',
+exports.initialSettlementPlacementRule = [isMyTurn, 'AND',
+												 								 buildingNotPresent, 'AND',
 																				  hasInitialSettlementsLeft, 'AND',
 																				  noBuildingsTooClose, 'AND',
 																				 	 [ isFirstPlacement, 'OR',
 																				 		 buildingConnectedToRoad ]
 																				  ];
 
-exports.roadBuildRule = [roadNotPresent, 'AND',
+exports.roadBuildRule = [isMyTurn, 'AND',
+												 roadNotPresent, 'AND',
 												 hasRoadsLeft, 'AND',
 												 canAffordRoad, 'AND',
 												 roadConnectedToRoad];
 
-exports.settlementBuildRule = [buildingNotPresent, 'AND',
+exports.settlementBuildRule = [isMyTurn, 'AND',
+												 			buildingNotPresent, 'AND',
 															 hasSettlementsLeft, 'AND',
 															 canAffordSettlement, 'AND',
 															 buildingConnectedToRoad, 'AND',
 															 noBuildingsTooClose]; // TODO not intercepted by enemy roads
 
-exports.citybuildRule = [settlementOwned, 'AND',
+exports.citybuildRule = [isMyTurn, 'AND',
+												 settlementOwned, 'AND',
 												 hasCitiesLeft, 'AND',
 												 canAffordCity];
+
+function isMyTurn (game, playerId, data) {
+	return game.queue.getCurrentPlayer() === playerId;
+}
 
 function isFirstPlacement (game, playerId, data) {
 	return	game.roadsForPlayer[playerId].length === 0 &&

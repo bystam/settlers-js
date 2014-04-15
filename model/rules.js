@@ -42,17 +42,25 @@ function evaluateRule (node, game, playerId, data) {
   var disjunctionGroups = getDisjunctionGroups(node);
 
   var orResult = false;
-  disjunctionGroups.forEach(function (group) {
+  for (var i = 0; i < disjunctionGroups.length; i++) {
+    var group = disjunctionGroups[i];
     var andResult = true;
-    group.forEach(function(statement) {
-      if (typeof statement === 'object') {
-        andResult = andResult && evaluateRule (statement, game, playerId, data);
-      } else if (typeof statement === 'function') {
-        andResult = andResult && statement (game, playerId, data);
+    for (var k = 0; k < group.length; k++) {
+      var element = group[k];
+      if (typeof element === 'object') {
+        andResult = andResult &&
+                    evaluateRule (element, game, playerId, data);
+      } else if (typeof element === 'function') {
+        andResult = andResult &&
+                    element (game, playerId, data);
       }
-    });
+      if (!andResult) // quick bailout
+        break;
+    }
     orResult = orResult || andResult;
-  });
+    if (orResult) // quick bailout
+      return true;
+  }
 
   return orResult;
 }
