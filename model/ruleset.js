@@ -1,4 +1,11 @@
 
+/*
+	This serves only as an actual set of rules and their basic functions.
+
+	Complex rules are defined as node in a tree, where the leaves are
+	the basic functions.
+*/
+
 var buildingTypes = {road:"road", settlement:"settlements", city:"city"};
 var costs = {road:[0,0,0,0,0], town:[0,0,0,0,0], city:[0,0,0,0,0], developmentCard:[0,0,0,0,0]}
 

@@ -1,4 +1,7 @@
-
+/*
+  This is the usage interface of rules, which external modules can use
+  to query for validness of moves.
+*/
 var ruleset = require('./ruleset');
 
 exports.Rules = function(game) { // rules constructor
