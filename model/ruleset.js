@@ -39,8 +39,8 @@ exports.citybuildRule = [settlementOwned, 'AND',
 												 canAffordCity];
 
 function isFirstPlacement (game, playerId, data) {
-	return game.roadsForPlayer[playerId].length === 0 &&
-				 game.buildingsForPlayer[playerId].length === 0;
+	return	game.roadsForPlayer[playerId].length === 0 &&
+					game.buildingsForPlayer[playerId].length === 0;
 }
 
 function roadNotPresent (game, playerId, data) {
