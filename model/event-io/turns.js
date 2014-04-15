@@ -35,8 +35,12 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 	socket.on('draw-resources', function(data) {
 		var diceSum = game.lastDiceRoll.sum();
 		var hexesWithDiceSum = game.board.getHexesWithToken(diceSum);
+
 		var resources = [];
 		hexesWithDiceSum.forEach (seekHexForResource (playerId, game.board, resources));
+		resources.forEach (function (resource) {
+			game.stashes[playerId].addResource (resource);
+		});
 
 		socket.emit('gain-resources', { resources: resources });
 		var hidden = []; // TODO

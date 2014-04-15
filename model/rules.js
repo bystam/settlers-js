@@ -6,6 +6,7 @@ var ruleset = require('./ruleset');
 
 exports.Rules = function(game) { // rules constructor
   this.game = game;
+  this.costs = ruleset.costs;
 };
 
 exports.Rules.prototype = {
@@ -36,7 +37,6 @@ exports.Rules.prototype = {
     return evaluateRule (ruleset.initialSettlementPlacementRule, this.game, playerId, data);
   }
 };
-
 
 function evaluateRule (node, game, playerId, data) {
   var disjunctionGroups = getDisjunctionGroups(node);

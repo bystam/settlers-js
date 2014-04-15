@@ -14,6 +14,7 @@ exports.Stash = function(playerId) {
 	this.settlements = 5;
 	this.roads = 15;
 	this.resources = [];
+	this.resourcesDict = { grain: 0, lumber: 0, wool: 0, ore: 0, brick: 0 };
 }
 
 exports.Stash.prototype = {
@@ -21,22 +22,41 @@ exports.Stash.prototype = {
 
 	addResource: function(resource) {
 		this.resources.push(resource);
+		this.resourcesDict[resource]++;
 	},
 
-	removeResource: function(type) {
+	removeResource: function(resource) {
+		console.log('balle');
+		this.resourcesDict[resource]--;
 		for (var i = 0; i < this.resources.length; i++){
-			if (this.resources[i].type === type){
+			if (this.resources[i].type === resource){
 				this.resources.splice(i, 1);
 				return;
 			}
 		}
 	},
 
+	canAfford: canAfford,
+
+	payCost: payCost,
+
 	hiddenify: hiddenify
 }
 
+function canAfford (costs) {
+	for (type in this.resourcesDict)
+		if (this.resourcesDict[type] < costs[type])
+			return false;
+	return true;
+}
 
-function hiddenify(){
+function payCost (costs) {
+	for (type in this.resourcesDict)
+		for (var i = 0; i < costs[type]; i++)
+			this.removeResource (type);
+}
+
+function hiddenify () {
 	var hiddenCopy = {
 		playerId: this.playerId,
 		cities: this.cities,
@@ -49,3 +69,4 @@ function hiddenify(){
 	});
 	return hiddenCopy;
 }
+

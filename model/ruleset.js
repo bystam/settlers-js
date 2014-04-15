@@ -8,11 +8,14 @@
 
 var buildingTypes = {road:"road", settlement:"settlements", city:"city"};
 var costs = {
-	road:						{ grain: 0, lumber: 1, wool: 0, ore: 0, brick: 1 },
-	settlement:			{ grain: 1, lumber: 1, wool: 1, ore: 0, brick: 1 },
-	city:						{ grain: 2, lumber: 0, wool: 0, ore: 3, brick: 0 },
-	developmentCard: { grain: 1, lumber: 0, wool: 1, ore: 1, brick: 0 }
+	road:							{ grain: 0, lumber: 1, wool: 0, ore: 0, brick: 1 },
+	settlement:				{ grain: 1, lumber: 1, wool: 1, ore: 0, brick: 1 },
+	city:							{ grain: 2, lumber: 0, wool: 0, ore: 3, brick: 0 },
+	developmentCard: 	{ grain: 1, lumber: 0, wool: 1, ore: 1, brick: 0 },
+	free: 						{ grain: 0, lumber: 0, wool: 0, ore: 0, brick: 0 }
 };
+
+exports.costs = costs;
 
 exports.initialRoadPlacementRule = [isMyTurn, 'AND',
 												 					 roadNotPresent, 'AND',
@@ -23,8 +26,8 @@ exports.initialRoadPlacementRule = [isMyTurn, 'AND',
 																		];
 
 exports.initialSettlementPlacementRule = [isMyTurn, 'AND',
-												 								 buildingNotPresent, 'AND',
-																				  hasInitialSettlementsLeft, 'AND',
+												 									buildingNotPresent, 'AND',
+																					hasInitialSettlementsLeft, 'AND',
 																				  noBuildingsTooClose, 'AND',
 																				 	 [ isFirstPlacement, 'OR',
 																				 		 buildingConnectedToRoad ]
@@ -90,7 +93,7 @@ function buildingConnectedToRoad (game, playerId, data) {
 }
 
 function canAffordRoad (game, playerId, data) {
-	return true; // TODO
+	return game.stashes[playerId].canAfford (costs.road);
 }
 
 
@@ -133,7 +136,7 @@ function noBuildingsTooClose (game, playerId, data) {
 }
 
 function canAffordSettlement (game, playerId, data) {
-	return true; // TODO
+	return game.stashes[playerId].canAfford (costs.settlement);
 }
 
 function settlementOwned (game, playerId, data) {
@@ -147,5 +150,5 @@ function hasCitiesLeft (game, playerId, data) {
 }
 
 function canAffordCity (game, playerId, data) {
-	return true; // TODO
+	return game.stashes[playerId].canAfford (costs.city);
 }
