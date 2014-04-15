@@ -8,7 +8,7 @@
 
 var boards = require('./boards.js'),
 		stashes = require('./stash.js'),
-		ruleset = require('./ruleset.js'),
+		rules = require('./rules.js'),
 		playerQueue = require('./player-queue');
 
 exports.Game = function(room) { // constructor
@@ -45,7 +45,7 @@ function initBoard(game) {
 }
 
 function initRules(game) {
-	game.rules = new ruleset.Rules(game);
+	game.rules = new rules.Rules(game);
 }
 
 function privateCopyForPlayer(playerId) {
