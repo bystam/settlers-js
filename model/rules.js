@@ -6,7 +6,7 @@ var ruleset = require('./ruleset');
 
 exports.Rules = function(game) { // rules constructor
   this.game = game;
-}
+};
 
 exports.Rules.prototype = {
   constructor: exports.Rules,
@@ -24,8 +24,18 @@ exports.Rules.prototype = {
   cityBuildIsLegal: function(coords, playerId) {
     var data = { coords: coords };
     return evaluateRule (ruleset.citybuildRule, this.game, playerId, data);
+  },
+
+  initialRoadBuildIsLegal: function(coords, playerId) {
+    var data = { coords: coords };
+    return evaluateRule (ruleset.initialRoadPlacementRule, this.game, playerId, data);
+  },
+
+  initialSettlementBuildIsLegal: function(coords, playerId) {
+    var data = { coords: coords };
+    return evaluateRule (ruleset.initialSettlementPlacementRule, this.game, playerId, data);
   }
-}
+};
 
 
 function evaluateRule (node, game, playerId, data) {
@@ -36,7 +46,7 @@ function evaluateRule (node, game, playerId, data) {
     var andResult = true;
     group.forEach(function(statement) {
       if (typeof statement === 'object') {
-        andResult = andResult && evaluateNode (statement, game, playerId, data);
+        andResult = andResult && evaluateRule (statement, game, playerId, data);
       } else if (typeof statement === 'function') {
         andResult = andResult && statement (game, playerId, data);
       }

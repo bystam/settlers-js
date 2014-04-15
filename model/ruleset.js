@@ -7,36 +7,36 @@
 */
 
 var buildingTypes = {road:"road", settlement:"settlements", city:"city"};
-var costs = {road:[0,0,0,0,0], town:[0,0,0,0,0], city:[0,0,0,0,0], developmentCard:[0,0,0,0,0]}
+var costs = {road: [0,0,0,0,0], town: [0,0,0,0,0], city: [0,0,0,0,0], developmentCard: [0,0,0,0,0]};
 
 exports.initialRoadPlacementRule = [roadNotPresent, 'AND',
 																		hasInitialRoadsLeft, 'AND',
 																			[ isFirstPlacement, 'OR',
-																				hasConnectingRoad, 'OR',
-																				hasConnectingBuilding ]
+																				roadConnectedToRoad, 'OR',
+																				roadConnectedToBuilding ]
 																		];
 
 exports.initialSettlementPlacementRule = [buildingNotPresent, 'AND',
 																				  hasInitialSettlementsLeft, 'AND',
 																				  noBuildingsTooClose, 'AND',
 																				 	 [ isFirstPlacement, 'OR',
-																				 		 hasConnectingRoad ]
+																				 		 buildingConnectedToRoad ]
 																				  ];
 
 exports.roadBuildRule = [roadNotPresent, 'AND',
 												 hasRoadsLeft, 'AND',
 												 canAffordRoad, 'AND',
-												 hasConnectingRoad];
+												 roadConnectedToRoad];
 
 exports.settlementBuildRule = [buildingNotPresent, 'AND',
 															 hasSettlementsLeft, 'AND',
 															 canAffordSettlement, 'AND',
-															 hasConnectingRoad, 'AND',
-															 noBuildingsTooClose];
+															 buildingConnectedToRoad, 'AND',
+															 noBuildingsTooClose]; // TODO not intercepted by enemy roads
 
 exports.citybuildRule = [settlementOwned, 'AND',
 												 hasCitiesLeft, 'AND',
-												 canAffordCity]
+												 canAffordCity];
 
 function isFirstPlacement (game, playerId, data) {
 	return game.roadsForPlayer[playerId].length === 0 &&
@@ -55,8 +55,24 @@ function hasInitialRoadsLeft (game, playerId, data) {
 	return game.roadsForPlayer[playerId].length < 2;
 }
 
-function hasConnectingRoad (game, playerId, data) {
-	return true; // TODO
+function roadConnectedToRoad (game, playerId, data) {
+	var adjacentBuildingKeys = game.board.getRoad(data.coords).buildings;
+	for (var i = 0; i < adjacentBuildingKeys; i++) {
+		data.coords = adjacentBuildingKeys[i];
+		if (buildingConnectedToRoad(game, playerId, data))
+			return true;
+	}
+	return false;
+}
+
+function buildingConnectedToRoad (game, playerId, data) {
+	var adjacentRoadKeys = game.board.getBuilding(data.coords).roads;
+	for (var i = 0; i < adjacentRoadKeys; i++) {
+		var adjacentRoad = game.board.getRoad(adjacentRoadKeys[i]);
+		if (adjacentRoad.occupyingPlayerId === playerId)
+			return true;
+	}
+	return false;
 }
 
 function canAffordRoad (game, playerId, data) {
@@ -64,7 +80,7 @@ function canAffordRoad (game, playerId, data) {
 }
 
 
-function hasConnectingBuilding (game, playerId, data) {
+function roadConnectedToBuilding (game, playerId, data) {
 	return true; // TODO
 }
 

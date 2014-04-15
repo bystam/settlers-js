@@ -21,24 +21,24 @@ exports.populateWithGraph = function(board) {
 
   board.getRoad = function(coords) {
     return roadLookup.get(coords);
-  }
+  };
 
   board.getBuilding = function(coords) {
     return buildingLookup.get(coords);
-  }
+  };
 
   board.getRoadsForHex = function (hex) {
     return getRoadLocationsForHex (hex, roadLookup);
-  }
+  };
 
   board.getBuildingsForHex = function (hex) {
     return getBuildingLocationsForHex (hex, buildingLookup);
-  }
+  };
 
   board.breadthFirstSearch = function (start, roadFilter, graphAction) {
     return breadthFirstSearch (start, board, roadFilter, graphAction);
-  }
-}
+  };
+};
 
 function getOrCreateRoad (hexCoords, n1, roadLookup, map) {
   var roadIsBetweenTwoOceans =
@@ -48,8 +48,8 @@ function getOrCreateRoad (hexCoords, n1, roadLookup, map) {
       return null;
 
   var roadKey = [hexCoords, n1];
-  var road;
-  if (road = roadLookup.get(roadKey))
+  var road = roadLookup.get(roadKey);
+  if (road)
     return road;
 
   road = {};
@@ -62,8 +62,8 @@ function getOrCreateRoad (hexCoords, n1, roadLookup, map) {
 
 function getOrCreateBuilding (hexCoords, n1, n2, buildingLookup) {
   var buildingKey = [hexCoords, n1, n2];
-  var building;
-  if (building = buildingLookup.get(buildingKey))
+  var building = buildingLookup.get(buildingKey);
+  if (building)
     return building;
 
   building = {};
@@ -110,16 +110,8 @@ function getRoadLocationsForHex (hex, roadLookup) {
 function breadthFirstSearch(start, board, roadFilter, graphAction) {
   var queue = [];
   var visited = new Lookup();
-  queue.push({ building: start.key, depth: 0 });
-  visited.put(start.key);
-
-  while (queue.length > 0) {
-    var node = queue.splice(0, 1)[0];
-    if (!graphAction (node))
-      return;
-
-    var roadKeys = board.getBuilding(node.building).roads;
-    roadKeys.filter(roadFilter).forEach (function (roadKey) {
+  var followRoadToBuildings = function(node) {
+    return function (roadKey) {
       var road = board.getRoad(roadKey);
 
       road.buildings.forEach(function (next) {
@@ -128,7 +120,18 @@ function breadthFirstSearch(start, board, roadFilter, graphAction) {
           queue.push({ building: next, depth: node.depth+1 });
         }
       });
-    });
+    };
+  };
+
+  queue.push({ building: start.key, depth: 0 });
+  visited.put(start.key);
+  while (queue.length > 0) {
+    var node = queue.splice(0, 1)[0];
+    if (!graphAction (node))
+      return;
+
+    var roadKeys = board.getBuilding(node.building).roads;
+    roadKeys.filter(roadFilter).forEach (followRoadToBuildings(node));
   }
 }
 
