@@ -57,8 +57,8 @@ function hasInitialRoadsLeft (game, playerId, data) {
 
 function roadConnectedToRoad (game, playerId, data) {
 	var adjacentBuildingKeys = game.board.getRoad(data.coords).buildings;
-	for (var i = 0; i < adjacentBuildingKeys; i++) {
-		data.coords = adjacentBuildingKeys[i];
+	for (var i = 0; i < adjacentBuildingKeys.length; i++) {
+		data = { coords: adjacentBuildingKeys[i] };
 		if (buildingConnectedToRoad(game, playerId, data))
 			return true;
 	}
@@ -67,7 +67,7 @@ function roadConnectedToRoad (game, playerId, data) {
 
 function buildingConnectedToRoad (game, playerId, data) {
 	var adjacentRoadKeys = game.board.getBuilding(data.coords).roads;
-	for (var i = 0; i < adjacentRoadKeys; i++) {
+	for (var i = 0; i < adjacentRoadKeys.length; i++) {
 		var adjacentRoad = game.board.getRoad(adjacentRoadKeys[i]);
 		if (adjacentRoad.occupyingPlayerId === playerId)
 			return true;
@@ -81,7 +81,10 @@ function canAffordRoad (game, playerId, data) {
 
 
 function roadConnectedToBuilding (game, playerId, data) {
-	return true; // TODO
+	var road = game.board.getRoad(data.coords);
+	var b0 = game.board.getBuilding(road.buildings[0]);
+	var b1 = game.board.getBuilding(road.buildings[1]);
+	return b0.occupyingPlayerId === playerId || b1.occupyingPlayerId === playerId;
 }
 
 function buildingNotPresent (game, playerId, data) {
