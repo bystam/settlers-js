@@ -17,7 +17,9 @@ var costs = {
 
 exports.costs = costs;
 
-exports.initialRoadPlacementRule = [isMyTurn, 'AND',
+exports.isPlayersTurn = [isPlayersTurn];
+
+exports.initialRoadPlacementRule = [isPlayersTurn, 'AND',
 												 					 roadNotPresent, 'AND',
 																		hasInitialRoadsLeft, 'AND',
 																			[ isFirstPlacement, 'OR',
@@ -25,7 +27,7 @@ exports.initialRoadPlacementRule = [isMyTurn, 'AND',
 																				roadConnectedToBuilding ]
 																		];
 
-exports.initialSettlementPlacementRule = [isMyTurn, 'AND',
+exports.initialSettlementPlacementRule = [isPlayersTurn, 'AND',
 												 									buildingNotPresent, 'AND',
 																					hasInitialSettlementsLeft, 'AND',
 																				  noBuildingsTooClose, 'AND',
@@ -33,25 +35,25 @@ exports.initialSettlementPlacementRule = [isMyTurn, 'AND',
 																				 		 buildingConnectedToRoad ]
 																				  ];
 
-exports.roadBuildRule = [isMyTurn, 'AND',
+exports.roadBuildRule = [isPlayersTurn, 'AND',
 												 roadNotPresent, 'AND',
 												 hasRoadsLeft, 'AND',
 												 canAffordRoad, 'AND',
 												 roadConnectedToRoad];
 
-exports.settlementBuildRule = [isMyTurn, 'AND',
+exports.settlementBuildRule = [isPlayersTurn, 'AND',
 												 			buildingNotPresent, 'AND',
 															 hasSettlementsLeft, 'AND',
 															 canAffordSettlement, 'AND',
 															 buildingConnectedToRoad, 'AND',
 															 noBuildingsTooClose]; // TODO not intercepted by enemy roads
 
-exports.citybuildRule = [isMyTurn, 'AND',
+exports.citybuildRule = [isPlayersTurn, 'AND',
 												 settlementOwned, 'AND',
 												 hasCitiesLeft, 'AND',
 												 canAffordCity];
 
-function isMyTurn (game, playerId, data) {
+function isPlayersTurn (game, playerId, data) {
 	return game.queue.getCurrentPlayer() === playerId;
 }
 

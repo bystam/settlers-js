@@ -17,8 +17,8 @@ exports.init = function(gamesState, socketIo) {
 exports.registerPlayerForTurns = function(socket, room, playerId) {
 	var game = games[room];
 
-	socket.on('turn-ended', function(data) {
-		if (game.queue.getCurrentPlayer() !== playerId)
+	socket.on('turn-ended', function (data) {
+		if (!game.rules.isPlayersTurn (playerId))
 			return;
 		if(game.queue.currentTurn === 1){
 			socket.emit('gain-stash', game.stashes[playerId]);

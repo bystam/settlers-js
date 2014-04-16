@@ -12,6 +12,10 @@ exports.Rules = function(game) { // rules constructor
 exports.Rules.prototype = {
   constructor: exports.Rules,
 
+  isisPlayersTurn: function (playerId) {
+    return evaluateRule (ruleset.isisPlayersTurn, this.game, playerId, null);
+  }
+
   roadBuildIsLegal: function (coords, playerId) {
     var data = { coords: coords };
     return evaluateRule (ruleset.roadBuildRule, this.game, playerId, data);
