@@ -98,7 +98,7 @@ function createNewTurnButton(socket, canvas, middleX){
 			fill:"white",
 			stroke:"black"
 		})
-		endTurnText.animate({}, 1000, mina.fadeout, function(){
+		endTurnText.animate({"opacity":0}, 1000, undefined, function(){
 			endTurnText.remove();
 		})
 		socket.emit(serverCommands.endTurn, {});
