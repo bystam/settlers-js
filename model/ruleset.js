@@ -6,7 +6,6 @@
 	the basic functions.
 */
 
-var buildingTypes = {road:"road", settlement:"settlements", city:"city"};
 var costs = {
 	road:							{ grain: 0, lumber: 1, wool: 0, ore: 0, brick: 1 },
 	settlement:				{ grain: 1, lumber: 1, wool: 1, ore: 0, brick: 1 },
