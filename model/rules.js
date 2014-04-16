@@ -12,7 +12,7 @@ exports.Rules = function(game) { // rules constructor
 exports.Rules.prototype = {
   constructor: exports.Rules,
 
-  isisPlayersTurn: function (playerId) {
+  isPlayersTurn: function (playerId) {
     return evaluateRule (ruleset.isisPlayersTurn, this.game, playerId, null);
   }
 
