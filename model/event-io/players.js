@@ -16,7 +16,10 @@ exports.registerNewPlayer = function(socket, room, playerId) {
 	game.addPlayer(playerId);
 	game.roadsForPlayer[playerId] = [];
 	game.buildingsForPlayer[playerId] = [];
+
 	var privateGameCopy = game.privateCopyForPlayer(playerId);
-	socket.emit('game-joined', {playerId:playerId, game: privateGameCopy});
+	socket.emit('game-joined', { playerId: playerId, game: privateGameCopy });
 	socket.broadcast.to(room).emit('new-player-joined', {playerId: playerId, stash: privateGameCopy.stashes[playerId]});
+
+	// TODO hantera recovery av spelare som disconnectat
 }
