@@ -98,9 +98,7 @@ function createNewTurnButton(socket, canvas, middleX){
 			fill:"white",
 			stroke:"black"
 		})
-		endTurnText.animate({"opacity":0}, 1000, undefined, function(){
-			endTurnText.remove();
-		})
+		fadeoutAndRemove(endTurnText);
 		socket.emit(serverCommands.endTurn, {});
 	});
 }

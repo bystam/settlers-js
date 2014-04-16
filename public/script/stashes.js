@@ -93,16 +93,26 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 		area.shapeGroup.add(shape);
 		areaBelow.setYPosition (coords.y + yJump);
 	}
-	area.removeCard = function(card){
+
+	area.removeCards = function(cards){
+		var toRemove = canvas.g();
+		cards.forEach(function (card){
+			toRemove.add(area.removeCard(card));
+		});
+		toRemove.animate({opacity:0}, 1000, undefined, function(){
+			toRemove.remove();
+			area.reshuffle();
+		});
+	}
+
+	area.removeCard = function(card, reshuffle){
 		for(var i=area.cards.length-1;i>=0;i--){
 			if(area.cards[i].card == card){
 				var toRemove = area.cards[i];
 				area.cards.splice(i, 1);
-				toRemove.remove();
-				break;
+				return toRemove;
 			}
 		}
-		area.reshuffle();
 	}
 	area.reshuffle = function (){
 		area.reset();
@@ -131,11 +141,13 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 }
 
 function removeResources(resources, playerId){
+	var toRemove = [];
 	for(resource in resources){
 		var amount = resources[resource];
 		for(var i=0;i<amount;i++)
-			stashObjects[playerId].resourceCards.removeCard(resource);
+			toRemove.push(""+resource);
 	}
+	stashObjects[playerId].resourceCards.removeCards(toRemove);
 }
 
 function addResources(resources, playerId){
