@@ -66,4 +66,5 @@ function registerConnection (socket, room, playerId) {
 	players.registerNewPlayer(socket, room, playerId);
 	building.setupBuildingEvents(socket, room, playerId);
 	turns.registerPlayerForTurns(socket, room, playerId);
+	trades.registerPlayerForTrades(socket, room, playerId);
 }

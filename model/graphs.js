@@ -1,6 +1,6 @@
 
 
-exports.populateWithGraph = function(board) {
+exports.setupConstructionGraph = function(board) {
   var buildingLookup = new Lookup();
   var roadLookup = new Lookup();
 
