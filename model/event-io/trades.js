@@ -9,3 +9,21 @@ exports.init = function(gamesState, socketIo) {
 	games = gamesState;
 	io = socketIo;
 }
+
+exports.registerPlayerForTrades = function (socket, room, playerId) {
+  var game = games[room];
+  var stash = game.stashes[playerId];
+
+  socket.on('stock-trade', function (data) {
+    var tradeCost = game.rules.trade (data.fromResource);
+    var gained = null;
+    var success = false;
+    if (stash.canAfford(tradeCost)) {
+      success = true;
+      stash.payCost(tradeCost);
+      gained = [data.toResource];
+    }
+
+    socket.emit('stock-trade', { success: success, cost: tradeCost, gained: gained });
+  });
+}

@@ -26,7 +26,6 @@ exports.Stash.prototype = {
 	},
 
 	removeResource: function(resource) {
-		console.log('balle');
 		this.resourcesDict[resource]--;
 		for (var i = 0; i < this.resources.length; i++){
 			if (this.resources[i].type === resource){
@@ -44,7 +43,7 @@ exports.Stash.prototype = {
 }
 
 function canAfford (costs) {
-	for (type in this.resourcesDict)
+	for (type in costs)
 		if (this.resourcesDict[type] < costs[type])
 			return false;
 	return true;

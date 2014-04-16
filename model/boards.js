@@ -31,7 +31,7 @@ exports.Board = function() { // constructor
 
 var generateRandomMap = function () {
 	this.map = getRandomMapFromStructure(defaultMap);
-	graphs.populateWithGraph(this);
+	graphs.setupConstructionGraph (this);
 }
 
 function getRandomMapFromStructure (mapStructure) {
