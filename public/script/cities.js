@@ -59,12 +59,12 @@ function createCityShape (canvas, hexes, coords){
 	});
 	city.hover(function(){
 		//only do local check on hover
-		var color = canPlaceCity(cityKey) ? "green" : "red";
+		var color = buildingColors[localPlayerId];
 		city.originalStroke = city.attr("stroke");
 		city.originalStrokeWidth = city.attr("strokeWidth");
 		city.attr({
 			stroke:color,
-			strokeWidth:4
+			strokeWidth:2
 		});
 	}, function(){
 		// hover out
@@ -87,24 +87,24 @@ function placeCityWithAnimation (coords, playerId, canvas, isCity){
 	}
 	var stashCity = isCity ? stashObjects[playerId].cities.shift() : stashObjects[playerId].settlements.shift();
 	stashCity.animate({cx:city.attr("cx"), cy:city.attr("cy")}, 1000, mina.bounce, function(){
-		placeCity(coords, playerId);
+		placeCity(coords, playerId, isCity, canvas);
 		stashCity.remove();
 	});
 }
 
-function placeCity(coords, playerId, isCity){
-	console.log(coords);
+function placeCity(coords, playerId, isCity, canvas){
 	var city = cityLocations[coords];
 	if(isCity){
-		city.unclick(null);
-		city.unhover();
+		var newShape = getCityShape(canvas, {x:city.attr("cx"), y:city.attr("cy")}, playerId);
+		city.remove();
+		cityLocations[coords] = newShape;
 	} else{
 		city.click(function(){
 			// TODO coords är en sträng här, men borde vara ett object
 			socket.emit(serverCommands.canBuildCity, JSON.parse(coords));
 		})
+		city.attr(getCityGraphics(playerId));
 	}
-	city.attr(getCityGraphics(playerId));
 }
 
 function getSettlementShape (canvas, coords, playerId){

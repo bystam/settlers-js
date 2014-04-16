@@ -11,7 +11,7 @@ function populateGameWithLogic(game) {
 	}
 }
 
-$ (document).ready(function(){
+$(document).ready(function(){
 	var roomUrl = window.location.href.split("/").pop();
 	socket = io.connect('http://localhost:5000');
 	socket.emit("room", {playerId:Math.random(), room:roomUrl})
@@ -52,34 +52,33 @@ function createEmptyBoard(game){
 
 function setServerResponseHandlers (socket, canvas){
 	socket.on(serverCommands.canBuildRoad, function(data){
-		if(data.allowed)
+		if(data.allowed){
 			placeRoadWithAnimation(JSON.stringify(data.coords), data.playerId);
+			removeResources(data.cost, data.playerId);
+		}
 	});
 	socket.on(serverCommands.canBuildSettlement, function(data){
-		if(data.allowed)
+		if(data.allowed){
 			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, boardCanvas, false);
+			removeResources(data.cost, data.playerId);
+		}
 	});
 	socket.on(serverCommands.canBuildCity, function(data){
-		if(data.allowed)
+		if(data.allowed){
 			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, boardCanvas, true);
+			removeResources(data.cost, data.playerId);
+		}
 	});
 	socket.on(serverCommands.newTurn, function(data){
 		console.log(data.dices);
 		socket.emit(serverCommands.drawResource, {});
 	});
 	socket.on(serverCommands.gainResources, function(data){
-		console.log(data);
-		data.resources.forEach(function(resource){
-			stashObjects[localPlayerId].resourceCards.addCard(resource);
-		});
+		addResources(data.resources, localPlayerId);
 	});
 	socket.on(serverCommands.gainHiddenResources, function(data){
-		data.resources.forEach(function(resource){
-			stashObjects[data.playerId].resourceCards.addCard(resource);
-		})
+		addResources(data.resources, data.playerId);
 	});
-
-
 }
 
 function createNewTurnButton(socket, canvas, middleX){
@@ -93,7 +92,15 @@ function createNewTurnButton(socket, canvas, middleX){
 		filter:filter
 	});
 	button.click(function(){
-		console.log("ending turn...");
+		var endTurnText = canvas.text(middleX-(buttonWidth-40), 100, "IT ENDS");
+		endTurnText.attr({
+			"font-size":40,
+			fill:"white",
+			stroke:"black"
+		})
+		endTurnText.animate({}, 1000, mina.fadeout, function(){
+			endTurnText.remove();
+		})
 		socket.emit(serverCommands.endTurn, {});
 	});
 }

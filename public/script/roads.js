@@ -50,8 +50,7 @@ function createRoadShape (canvas, hexes, coords){
 
 	road.hover(function(){
 		//Do client-side check here, only validate when actually clicking
-		var color = canPlaceRoad(roadKey) ? "green" : "red";
-		drawBorder(road, color, 2);
+		drawBorder(road, buildingColors[localPlayerId], 2);
 	}, function(){
 		// hover out
 		road.attr({

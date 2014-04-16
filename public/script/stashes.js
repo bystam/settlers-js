@@ -83,7 +83,7 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 		coords.x = area.corner.x + (area.position.column-1)*xJump;
 		coords.y = area.corner.y + area.position.row*yJump;
 		var shape = getShape(canvas, coords, stashObjectTypes.card, playerId, isLocalPlayer, card);
-		if(area.position.column % 4 == 0){
+		if(area.position.column % 6 == 0){
 			area.position.row++;
 			area.position.column = 0;
 		}
@@ -128,6 +128,20 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 
 	area.reset();
 	return area;
+}
+
+function removeResources(resources, playerId){
+	for(resource in resources){
+		var amount = resources[resource];
+		for(var i=0;i<amount;i++)
+			stashObjects[playerId].resourceCards.removeCard(resource);
+	}
+}
+
+function addResources(resources, playerId){
+	resources.forEach(function(resource){
+		stashObjects[playerId].resourceCards.addCard(resource);
+	})
 }
 
 function drawSettlementStash(canvas, amount, rect, playerId){

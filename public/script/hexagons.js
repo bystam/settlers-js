@@ -12,7 +12,21 @@ function createHexShapesFromMap(canvas, map, pixelWidth){
 
 	var xcoord = 250; 
 	var ycoord = 0;
-	
+	//draw backgrounds for hexes (sand)
+	for(var row = 0;row<map.length;row++){
+		for(var column=0;column<gridWidth;column++){
+			var hexagon = map[row][column];
+				if(hexagon !== null && hexagon.type !== 'ocean')
+					createHexBackground(canvas, xcoord, ycoord, hexRadius);
+			xcoord += xJump;
+		}
+		xcoord = 250;
+		ycoord += yJump;
+	}
+
+	var xcoord = 250; 
+	var ycoord = 0;
+	//draw actual hexes
 	for(var row = 0;row<map.length;row++){
 		for(var column=0;column<gridWidth;column++){
 			var hexagon = map[row][column];
@@ -52,15 +66,6 @@ function createHexShape (canvas, x, y, color, radius){
 	var isOcean = color === colors['ocean'];
 	var filter = canvas.filter(Snap.filter.sepia(0.4));
 	var border = isOcean ? 0 : 0;
-	if(!isOcean){
-		var hexShapeBackground = canvas.hex(radius+9, a = 0, roundness = 0, originCenter = false, x-9, y-9);
-		var backgroundFilter = canvas.filter(Snap.filter.blur(8,8));
-		hexShapeBackground.attr({
-			fill:"#EDC9AF",
-			filter: backgroundFilter
-		});
-
-	}
 	var hexShape = canvas.hex(radius, a = 0, roundness = 0, originCenter = false, x, y);
 	hexShape.attr({
 		fill:color,
@@ -70,6 +75,16 @@ function createHexShape (canvas, x, y, color, radius){
 	});
 	
 	return hexShape;
+}
+
+function createHexBackground(canvas, x, y, radius){
+	var size = 15;
+	var hexShapeBackground = canvas.hex(radius+size, a = 0, roundness = 0, originCenter = false, x-size, y-size);
+	var backgroundFilter = canvas.filter(Snap.filter.blur(20,20));
+	hexShapeBackground.attr({
+		fill:"#EDC9AF",
+		filter: backgroundFilter
+	});
 }
 
 function getHexCorners (hex){
