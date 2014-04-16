@@ -37,8 +37,9 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 		var hexesWithDiceSum = game.board.getHexesWithToken(diceSum);
 
 		var resources = [];
-		var hidden = []; // TODO
 		hexesWithDiceSum.forEach (seekHexForResource (playerId, game.board, resources));
+		
+		var hidden = [];
 		resources.forEach (function (resource) {
 			game.stashes[playerId].addResource (resource);
 			hidden.push('hidden');
