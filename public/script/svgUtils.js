@@ -14,8 +14,6 @@ function drawBorder (element, color, width){
 }
 
 function fadeoutAndRemove(element){
-	console.log("fading out:")
-	console.log(element);
 	element.animate({opacity:0}, 1000, undefined, function(){
 		element.remove();
 	});

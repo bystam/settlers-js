@@ -1,7 +1,7 @@
 
 //For the time being only fitted to 4 players, this is 'easily' expanded by adding coordinates and colors
 var stashObjectTypes = {road:"road", settlement:"settlement", city:"city", resource:"resource", card:"card" };
-var stashCoordinates = [{x:950,y:100}, {x:950, y:400}, {x:950, y:700}];
+var stashCoordinates = [{x:950,y:50}, {x:950, y:250}, {x:950, y:500}];
 var possibleBuildingColors = ['green', 'red', 'blue', 'yellow']; 
 var stashObjects = {};
 var buildingColors = {};
@@ -36,45 +36,32 @@ function drawStashForPlayer(canvas, stash, playerId, isLocalPlayer){
 	drawCityStash(canvas, stash.cities, rect, playerId);
 
 	//Initialize card areas
-	stashObjects[playerId].developmentCards = 
-		getCardArea(
-			canvas, 
-			stashObjects[playerId].corner.x, 
-			rect.y + pileHeight + spaceBetweenPiles+140, 
-			pileWidth, playerId, isLocalPlayer, {setYPosition:function(){}});
-
+	if(isLocalPlayer){
+		stashObjects[playerId].developmentCards = 
+			getCardArea(
+				canvas, 
+				stashObjects[playerId].corner.x, 
+				rect.y + pileHeight + spaceBetweenPiles+50, 
+				pileWidth, playerId, isLocalPlayer, {setYPosition:function(){}});
+	} else{
+		stashObjects[playerId].developmentCards = {setYPosition:function(){}};
+	}
 	stashObjects[playerId].resourceCards = 
 		getCardArea(
 			canvas, 
 			stashObjects[playerId].corner.x, 
 			rect.y + pileHeight + spaceBetweenPiles+40, 
 			pileWidth, playerId, isLocalPlayer, stashObjects[playerId].developmentCards);
-	cards = isLocalPlayer ? ['development', 'development'] : ['hidden', 'hidden'];
-	cards.forEach(function(card){
-		stashObjects[playerId].developmentCards.addCard(card);
-	});
-	///////////
-
 }
 
 function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlayer, areaBelow){
 	var area = {cards:[], shapeGroup:canvas.g(), corner:{x:cornerX, y:cornerY}, startCorner:{x:cornerX, y:cornerY}};
-	//remove all of this eventually
-	// area.developmentCardArea = canvas.rect(cornerX, cornerY + 200, 100, 100);
-	// area.developmentCardArea.click(function(){
-	// 	var isDevArea = areaBelow.maxRows === undefined ? true : false;
-	// 	if(isDevArea)
-	// 		area.addCard ('development');
-	// 	else
-	// 		area.addCard('hill');
-	// })
-	// area.developmentCardArea.attr({stroke:"blue", fill:"transparent"});
-	///////////
 	area.maxRows = isLocalPlayer ? 7 : 1;
+	area.maxColumns = 5;
 	var cardHeight = cardWidth * (4/3);
 	coords = {width:cardWidth, height:cardHeight};
 	var xJump = cardWidth - 5;
-	var yJump = cardHeight + 30;
+	var yJump = isLocalPlayer ? cardHeight + 20 : cardHeight + 5;
 
 	area.addCard = function(card){
 		if(area.position.row >= area.maxRows){
@@ -83,7 +70,7 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 		coords.x = area.corner.x + (area.position.column-1)*xJump;
 		coords.y = area.corner.y + area.position.row*yJump;
 		var shape = getShape(canvas, coords, stashObjectTypes.card, playerId, isLocalPlayer, card);
-		if(area.position.column % 6 == 0){
+		if(area.position.column % area.maxColumns == 0){
 			area.position.row++;
 			area.position.column = 0;
 		}
@@ -126,7 +113,7 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 	area.reset = function (){
 		area.position = {row:0, column:1};
 		area.corner = {x:area.startCorner.x, y:area.startCorner.y};
-		areaBelow.setYPosition(cornerY+100);
+		areaBelow.setYPosition(cornerY);
 		area.shapeGroup.remove();
 		area.shapeGroup = canvas.g();
 	}

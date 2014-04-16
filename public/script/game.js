@@ -96,7 +96,8 @@ function createNewTurnButton(socket, canvas, middleX){
 		endTurnText.attr({
 			"font-size":40,
 			fill:"white",
-			stroke:"black"
+			stroke:"black",
+			strokeWidth:2
 		})
 		fadeoutAndRemove(endTurnText);
 		socket.emit(serverCommands.endTurn, {});
