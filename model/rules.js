@@ -13,31 +13,31 @@ exports.Rules.prototype = {
   constructor: exports.Rules,
 
   isPlayersTurn: function (playerId) {
-    return evaluateRule (ruleset.isisPlayersTurn, this.game, playerId, null);
-  }
+    return evaluateRule (ruleset.isPlayersTurn, this.game, playerId, null);
+  },
 
-  roadBuildIsLegal: function (coords, playerId) {
-    var data = { coords: coords };
+  roadBuildIsLegal: function (roadCoords, playerId) {
+    var data = { roadCoords: roadCoords };
     return evaluateRule (ruleset.roadBuildRule, this.game, playerId, data);
   },
 
-  settlementBuildIsLegal: function (coords, playerId) {
-    var data = { coords: coords };
+  settlementBuildIsLegal: function (buildingCoords, playerId) {
+    var data = { buildingCoords: buildingCoords };
     return evaluateRule (ruleset.settlementBuildRule, this.game, playerId, data);
   },
 
-  cityBuildIsLegal: function(coords, playerId) {
-    var data = { coords: coords };
+  cityBuildIsLegal: function(buildingCoords, playerId) {
+    var data = { buildingCoords: buildingCoords };
     return evaluateRule (ruleset.citybuildRule, this.game, playerId, data);
   },
 
-  initialRoadBuildIsLegal: function(coords, playerId) {
-    var data = { coords: coords };
+  initialRoadBuildIsLegal: function(roadCoords, playerId) {
+    var data = { roadCoords: roadCoords };
     return evaluateRule (ruleset.initialRoadPlacementRule, this.game, playerId, data);
   },
 
-  initialSettlementBuildIsLegal: function(coords, playerId) {
-    var data = { coords: coords };
+  initialSettlementBuildIsLegal: function(buildingCoords, playerId) {
+    var data = { buildingCoords: buildingCoords };
     return evaluateRule (ruleset.initialSettlementPlacementRule, this.game, playerId, data);
   }
 };

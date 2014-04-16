@@ -63,7 +63,7 @@ function isFirstPlacement (game, playerId, data) {
 }
 
 function roadNotPresent (game, playerId, data) {
-	return game.board.getRoad(data.coords).occupyingPlayerId === null;
+	return game.board.getRoad(data.roadCoords).occupyingPlayerId === null;
 }
 
 function hasRoadsLeft (game, playerId, data) {
@@ -75,9 +75,9 @@ function hasInitialRoadsLeft (game, playerId, data) {
 }
 
 function roadConnectedToRoad (game, playerId, data) {
-	var adjacentBuildingKeys = game.board.getRoad(data.coords).buildings;
+	var adjacentBuildingKeys = game.board.getRoad(data.roadCoords).buildings;
 	for (var i = 0; i < adjacentBuildingKeys.length; i++) {
-		data = { coords: adjacentBuildingKeys[i] };
+		data = { buildingCoords: adjacentBuildingKeys[i] };
 		if (buildingConnectedToRoad(game, playerId, data))
 			return true;
 	}
@@ -85,7 +85,7 @@ function roadConnectedToRoad (game, playerId, data) {
 }
 
 function buildingConnectedToRoad (game, playerId, data) {
-	var adjacentRoadKeys = game.board.getBuilding(data.coords).roads;
+	var adjacentRoadKeys = game.board.getBuilding(data.buildingCoords).roads;
 	for (var i = 0; i < adjacentRoadKeys.length; i++) {
 		var adjacentRoad = game.board.getRoad(adjacentRoadKeys[i]);
 		if (adjacentRoad.occupyingPlayerId === playerId)
@@ -100,14 +100,14 @@ function canAffordRoad (game, playerId, data) {
 
 
 function roadConnectedToBuilding (game, playerId, data) {
-	var road = game.board.getRoad(data.coords);
+	var road = game.board.getRoad(data.roadCoords);
 	var b0 = game.board.getBuilding(road.buildings[0]);
 	var b1 = game.board.getBuilding(road.buildings[1]);
 	return b0.occupyingPlayerId === playerId || b1.occupyingPlayerId === playerId;
 }
 
 function buildingNotPresent (game, playerId, data) {
-	return game.board.getBuilding(data.coords).occupyingPlayerId === null;
+	return game.board.getBuilding(data.buildingCoords).occupyingPlayerId === null;
 }
 
 function hasSettlementsLeft (game, playerId, data) {
@@ -120,7 +120,7 @@ function hasInitialSettlementsLeft (game, playerId, data) {
 
 function noBuildingsTooClose (game, playerId, data) {
 	var allRoadsFilter = function (road) { return true; };
-	var start = game.board.getBuilding(data.coords);
+	var start = game.board.getBuilding(data.buildingCoords);
 	var tooClose = false;
 	var checkIfABuildingIsOneRoadAway = function(node) {
 		if (node.depth > 1)
@@ -142,7 +142,7 @@ function canAffordSettlement (game, playerId, data) {
 }
 
 function settlementOwned (game, playerId, data) {
-	var building = game.board.getBuilding(data.coords);
+	var building = game.board.getBuilding(data.buildingCoords);
 	return building.type === 'settlement' && building.occupyingPlayerId === playerId;
 }
 
