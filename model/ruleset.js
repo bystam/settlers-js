@@ -123,9 +123,10 @@ function hasInitialSettlementsLeft (game, playerId, data) {
 }
 
 function noBuildingsTooClose (game, playerId, data) {
-	var allRoadsFilter = function (road) { return true; };
 	var start = game.board.getBuilding(data.buildingCoords);
 	var tooClose = false;
+
+	var allRoadsFilter = function (road) { return true; };
 	var checkIfABuildingIsOneRoadAway = function(node) {
 		if (node.depth > 1)
 			return false; // stop searching

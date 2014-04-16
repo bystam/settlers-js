@@ -27,7 +27,8 @@ exports.Game.prototype = {
 		this.stashes[playerId] = new stashes.Stash(playerId);
 	},
 
-	privateCopyForPlayer: privateCopyForPlayer
+	privateCopyForPlayer: privateCopyForPlayer,
+	diceRoll: diceRoll
 }
 
 function initPlayers(game) {
@@ -48,16 +49,15 @@ function initRules(game) {
 	game.rules = new rules.Rules(game);
 }
 
+function diceRoll () {
+	var dices = {};
+	dices.first = Math.floor(Math.random() * 6) + 1;
+	dices.second = Math.floor(Math.random() * 6) + 1;
+	dices.sum = function () { return this.first + this.second };
+	this.lastDiceRoll = dices;
+}
+
 function privateCopyForPlayer(playerId) {
-	/*
-	1. public board
-	2. amount of enemy cards
-	3. hidden resources
-	4. hidden cards
-	5. public cards
-	6. achievements
-	7. amount of building left
-	*/
 	var copy = {};
 	copy.room = this.room;
 	copy.board = this.board;
@@ -78,11 +78,3 @@ function hiddenify(stashes, playerId){
 	return hiddenifiedStash;
 }
 
-function clone(obj) {
-    if (null == obj || "object" != typeof obj) return obj;
-    var copy = obj.constructor();
-    for (var attr in obj) {
-        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-    }
-    return copy;
-}

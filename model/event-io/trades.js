@@ -18,6 +18,7 @@ exports.registerPlayerForTrades = function (socket, room, playerId) {
     var tradeCost = game.rules.trade (data.fromResource);
     var gained = null;
     var success = false;
+
     if (stash.canAfford(tradeCost)) {
       success = true;
       stash.payCost(tradeCost);

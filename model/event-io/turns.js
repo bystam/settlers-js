@@ -17,22 +17,35 @@ exports.init = function(gamesState, socketIo) {
 exports.registerPlayerForTurns = function(socket, room, playerId) {
 	var game = games[room];
 
-	socket.on('turn-ended', function (data) {
+	socket.on('turn-ended', turnEnded (socket, playerId, game));
+
+	socket.on('draw-resources', drawResources (socket, playerId, game));
+
+	socket.on('start-game', function(data) {
+		if (!gameIsFull(room))
+			return io.sockets.in(room).emit('need-more-players', {} );
+	});
+}
+
+function turnEnded (socket, playerId, game) {
+	return function () {
 		if (!game.rules.isPlayersTurn (playerId))
 			return;
 		if(game.queue.currentTurn === 1){
 			socket.emit('gain-stash', game.stashes[playerId]);
-			socket.broadcast.to(room).emit('gain-hidden-stash', game.stashes[playerId].hiddenify());
+			socket.broadcast.to(game.room).emit('gain-hidden-stash', game.stashes[playerId].hiddenify());
 		}
 
-		game.lastDiceRoll = diceRoll();
 		game.queue.changeTurn();
+		game.diceRoll();
 		var nextTurnData = { dices: game.lastDiceRoll,
 												 currentPlayer: game.queue.getCurrentPlayer() };
-		io.sockets.in(room).emit('new-turn', nextTurnData);
-	});
+		io.sockets.in(game.room).emit('new-turn', nextTurnData);
+	};
+}
 
-	socket.on('draw-resources', function(data) {
+function drawResources (socket, playerId, game) {
+	return function () {
 		var diceSum = game.lastDiceRoll.sum();
 		var hexesWithDiceSum = game.board.getHexesWithToken(diceSum);
 
@@ -46,26 +59,12 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 		});
 
 		socket.emit('gain-resources', { resources: resources });
-		socket.broadcast.to(room).emit('gain-hidden', { player: playerId, hidden: hidden });
-	});
-
-	socket.on('start-game', function(data) {
-		if (!gameIsFull(room))
-			return io.sockets.in(room).emit('need-more-players', {} );
-		
-	});
+		socket.broadcast.to(game.room).emit('gain-hidden', { player: playerId, hidden: hidden });
+	};
 }
 
 function gameIsFull (room) {
 	return games[room].players.length === 4;
-}
-
-function diceRoll () {
-	var dices = {};
-	dices.first = Math.floor(Math.random() * 6) + 1;
-	dices.second = Math.floor(Math.random() * 6) + 1;
-	dices.sum = function () { return this.first + this.second };
-	return dices;
 }
 
 function seekHexForResource(playerId, board, resources) {
