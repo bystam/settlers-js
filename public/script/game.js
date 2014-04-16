@@ -3,7 +3,7 @@ var socket, boardCanvas, game, localPlayerId;
 var serverCommands = {
 	canBuildRoad:"build-road", canBuildSettlement:"build-settlement", canBuildCity:"build-city",
 	endTurn:"turn-ended", newTurn:"new-turn", drawResource:"draw-resources",
-	gainResources:"gain-resources", gainHiddenResources:"gain-hidden-resources"};
+	gainResources:"gain-resources", gainHiddenResources:"gain-hidden"};
 
 function populateGameWithLogic(game) {
 	game.addPlayer = function(playerId) {
@@ -77,7 +77,9 @@ function setServerResponseHandlers (socket, canvas){
 		addResources(data.resources, localPlayerId);
 	});
 	socket.on(serverCommands.gainHiddenResources, function(data){
-		addResources(data.resources, data.playerId);
+		console.log("hidden");
+		console.log(data);
+		addResources(data.hidden, data.player);
 	});
 }
 

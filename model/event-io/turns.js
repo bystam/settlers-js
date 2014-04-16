@@ -37,13 +37,14 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 		var hexesWithDiceSum = game.board.getHexesWithToken(diceSum);
 
 		var resources = [];
+		var hidden = []; // TODO
 		hexesWithDiceSum.forEach (seekHexForResource (playerId, game.board, resources));
 		resources.forEach (function (resource) {
 			game.stashes[playerId].addResource (resource);
+			hidden.push('hidden');
 		});
 
 		socket.emit('gain-resources', { resources: resources });
-		var hidden = []; // TODO
 		socket.broadcast.to(room).emit('gain-hidden', { player: playerId, hidden: hidden });
 	});
 
