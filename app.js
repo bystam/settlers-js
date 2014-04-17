@@ -1,7 +1,7 @@
 var express = require('express')
 	app = express(),
 	server = require('http').createServer(app),
-	rooms = require('./model/rooms');
+	rooms = require('./backend/rooms');
 
 // express app configuring
 app.set('views', __dirname + '/views');
