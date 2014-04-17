@@ -30,7 +30,7 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 function turnEnded (socket, playerId, game) {
 	return function () {
 		if (!game.rules.endTurnAllowed (playerId))
-			return; // TODO feedback about active action chains?
+			return socket.emit('turn-ended', { success: false, error: 'active action chains' });
 
 		if(game.queue.currentTurn === 1){
 			socket.emit('gain-stash', game.stashes[playerId]);
