@@ -36,6 +36,8 @@ exports.Board.prototype = {
 	getNonBlockedHexesWithToken: getNonBlockedHexesWithToken,
 
 	forEachHex: function (action) {
+		if (!this.map)
+			throw "must call generateRandomMap before looping hexes"
 		this.map.forEachHex (action);
 	}
 };
