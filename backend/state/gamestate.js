@@ -9,7 +9,7 @@
 var boards = require('./boards.js'),
 		stashes = require('./stash.js'),
 		playerQueue = require('./player-queue'),
-		chains = require('./action-chains'),
+		chains = require('./active-actions'),
 		rules = require('../rules/rules.js');
 
 exports.Game = function(room) { // constructor
