@@ -5,7 +5,7 @@
 	(perhaps even resource giving based on cities?)
 */
 
-var buildingValues = {'settlement': 1, 'city': 2};
+var buildingValues = {'settlement': 1, 'city': 2}; // TODO put somewhere else?
 
 var games = null;
 var io = null;

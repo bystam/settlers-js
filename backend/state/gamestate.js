@@ -8,8 +8,8 @@
 
 var boards = require('./boards.js'),
 		stashes = require('./stash.js'),
-		rules = require('./rules.js'),
-		playerQueue = require('./player-queue');
+		playerQueue = require('./player-queue'),
+		rules = require('../rules/rules.js');
 
 exports.Game = function(room) { // constructor
 	this.room = room;

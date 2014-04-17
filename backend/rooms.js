@@ -9,7 +9,7 @@
 
 var io = require('socket.io'),
 	sessions = require('./sessions'),
-	gamestate = require('./gamestate'),
+	gamestate = require('./state/gamestate'),
 	building = require('./event-io/building'),
 	players = require('./event-io/players'),
 	trades = require('./event-io/trades'),
