@@ -27,11 +27,8 @@ function validateAndPlaceKnight (hexCoords, game) {
     if (!game.rules.isValidKnightPlacement (hexCoords))
       return { valid: false };
 
-    game.resourse.token.blocked = false;
-
     var hex = game.board.map[hexCoords.row][hexCoords.col];
-    hex.token.blocked = true;
-    currentlyBlockedHex = hex;
+    game.board.resourceBlockedHex = hex;
 
     var affectedBuildings = game.board.getBuildingsForHex (hex);
     var targetPlayersForSteal = affectedBuildings.map(toPlayerId).filter(nonNullUnique);
