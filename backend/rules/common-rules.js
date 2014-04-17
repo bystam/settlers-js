@@ -4,6 +4,12 @@
 
 exports.isPlayersTurn = [isPlayersTurn];
 
+exports.endTurnAllowed = [isPlayersTurn, 'AND', noActiveActons];
+
 function isPlayersTurn (game, playerId, data) {
   return game.queue.getCurrentPlayer() === playerId;
+}
+
+function noActiveActons (game, playerId, data) {
+  return game.activeActions[playerId].isEmpty();
 }

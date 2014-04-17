@@ -22,6 +22,10 @@ exports.Rules.prototype = {
     return evaluateRule (common.isPlayersTurn, this.game, playerId, null);
   },
 
+  endTurnAllowed: function (playerId) {
+    return evaluateRule (common.endTurnAllowed, this.game, playerId, null);
+  },
+
   roadBuildIsLegal: function (roadCoords, playerId) {
     var data = { roadCoords: roadCoords };
     return evaluateRule (building.roadBuildRule, this.game, playerId, data);

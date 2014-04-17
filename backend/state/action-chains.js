@@ -25,7 +25,7 @@ ActionSet.prototype = {
     return this.data[action] ? true : false;
   },
 
-  isEmpty: function (action) {
+  isEmpty: function () {
     return Object.keys (this.data).length === 0;
   }
 };

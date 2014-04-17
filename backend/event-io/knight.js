@@ -12,17 +12,17 @@ exports.init = function(gamesState, socketIo) {
 
 exports.registerPlayerForKnightActions = function (socket, room, playerId) {
   var game = games[room];
-  var knightOngoing = false;
 
   socket.on ('place-knight', function (hexCoords) {
-    knightOngoing = true;
+    game.activeActions[playerId].add('knight');
+
     var knightPlacementResult = validateAndPlaceKnight (hexCoords, game);
     socket.emit('place-knight', knightPlacementResult); // TODO choose-target instead?
   });
 
   socket.on ('steal-resource', function (targetPlayer) {
 
-    knightOngoing = false;
+    game.activeActions[playerId].remove('knight');
   });
 };
 
