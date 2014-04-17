@@ -24,14 +24,20 @@ var WATER = 2;
 var DEAD_SPACE = 0;
 
 exports.Board = function() { // constructor
-	this.generateRandomMap = generateRandomMap; // initial state creating function
-	this.getHexesWithToken = getHexesWithToken;
-	this.forEachHex = forEachHex;
 }
 
-var generateRandomMap = function () {
+exports.Board.prototype = {
+	constructor: exports.Board,
+
+	generateRandomMap: generateRandomMap,
+	getNonBlockedHexesWithToken: getNonBlockedHexesWithToken,
+	forEachHex: forEachHex
+};
+
+function generateRandomMap () {
 	this.map = getRandomMapFromStructure(defaultMap);
 	graphs.setupConstructionGraph (this);
+	this.resourceBlockedHex = getDesertHex (this.map);
 }
 
 function getRandomMapFromStructure (mapStructure) {
@@ -112,31 +118,10 @@ function setNeighbors(hex, map) {
 	hex.neighbors = neighbors;
 }
 
-function getTokens() { // TODO make generic
-	var tokens = [];
-	for (var i = 2; i <= 12; i++) {
-		if (i === 7)
-			continue;
-		if (i > 2 && i < 12)
-			tokens.push({value: i, blocked = false });
-		tokens.push({value: i, blocked = false });
-	}
-	return tokens;
-}
-
-function placeTokensOnHexes(tokens, hexes) {
-	for (var i = 0; i < hexes.length; i++) {
-		if (hexes[i].type === 'desert')
-			hexes[i].token = null;
-		else
-			hexes[i].token = tokens.pop();
-	}
-}
-
 function getNonBlockedHexesWithToken (tokenValue) {
 	var hexes = [];
 	forEachHex (this.map, function(hex) {
-		if (hex.token && !hex.token.blocked && hex.token.value === tokenValue)
+		if (hex.token && hex.token.value === tokenValue && hex !== this.resourceBlockedHex)
 			hexes.push (hex);
 	});
 	return hexes;
@@ -187,3 +172,33 @@ var defaultMap = {
 		[_, _, _, w, _, _, _]
 	]
 };
+
+function getTokens() { // TODO make generic
+	var tokens = [];
+	for (var i = 2; i <= 12; i++) {
+		if (i === 7)
+			continue;
+		if (i > 2 && i < 12)
+			tokens.push({ value: i });
+		tokens.push({ value: i });
+	}
+	return tokens;
+}
+
+function placeTokensOnHexes(tokens, hexes) {
+	for (var i = 0; i < hexes.length; i++) {
+		if (hexes[i].type === 'desert')
+			hexes[i].token = { value: null };
+		else
+			hexes[i].token = tokens.pop();
+	}
+}
+
+function getDesertHex (map) {
+	var desert = null;
+	forEachHex (map, function (hex) {
+		if (hex.type === 'desert')
+			return desert = hex;
+	});
+	return desert;
+}

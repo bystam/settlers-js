@@ -8,28 +8,26 @@ var io = null;
 exports.init = function(gamesState, socketIo) {
   games = gamesState;
   io = socketIo;
-}
+};
 
 exports.registerPlayerForKnightActions = function (socket, room, playerId) {
   var game = games[room];
-  var currentlyBlockedHex = null;
 
   socket.on ('place-knight', function (hexCoords) {
     var knightPlacementResult = validateAndPlaceKnight (hexCoords, game);
-    socket.emit('place-knight', knightPlacementResult);
+    socket.emit('place-knight', knightPlacementResult); // TODO choose-target instead?
   });
 
   socket.on ('steal-resource', function (targetPlayer) {
 
   });
-}
+};
 
 function validateAndPlaceKnight (hexCoords, game) {
     if (!game.rules.isValidKnightPlacement (hexCoords))
       return { valid: false };
 
-    if (currentlyBlockedHex)
-      currentlyBlockedHex.token.blocked = false;
+    game.resourse.token.blocked = false;
 
     var hex = game.board.map[hexCoords.row][hexCoords.col];
     hex.token.blocked = true;

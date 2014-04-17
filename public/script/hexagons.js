@@ -33,7 +33,7 @@ function createHexShapesFromMap(canvas, map, pixelWidth){
 			if(hexagon !== null){
 				var color = colors[hexagon.type];
 				hexagon.shape = createHexShape(canvas, xcoord, ycoord, color, hexRadius);
-				if(hexagon.token !== undefined && hexagon.token !== null)
+				if(hexagon.token !== undefined && hexagon.token.value !== null)
 					drawNumberOnHex (canvas, xcoord+hexRadius, ycoord + hexRadius, hexagon.token.value);
 				hexagon.row = row;
 				hexagon.column = column;
