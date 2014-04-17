@@ -50,7 +50,7 @@ function addPlayer (playerId) {
 	this.queue.addPlayer(playerId);
 
 	this.stashes[playerId] = new stashes.Stash(playerId);
-	this.activeActions[playerId] = new chains.ActionSet();
+	this.activeActions[playerId] = new chains.ActiveActions();
 
 	this.roadsForPlayer[playerId] = [];
 	this.buildingsForPlayer[playerId] = [];

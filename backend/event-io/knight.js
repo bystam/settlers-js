@@ -14,7 +14,7 @@ exports.registerPlayerForKnightActions = function (socket, room, playerId) {
   var game = games[room];
 
   socket.on ('place-knight', function (hexCoords) {
-    game.activeActions[playerId].add('knight');
+    game.activeActions[playerId].begin('knight');
 
     var knightPlacementResult = validateAndPlaceKnight (hexCoords, game);
     socket.emit('place-knight', knightPlacementResult); // TODO choose-target instead?
@@ -22,7 +22,7 @@ exports.registerPlayerForKnightActions = function (socket, room, playerId) {
 
   socket.on ('steal-resource', function (targetPlayer) {
 
-    game.activeActions[playerId].remove('knight');
+    game.activeActions[playerId].end('knight');
   });
 };
 

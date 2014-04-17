@@ -1,23 +1,23 @@
 
 
-exports.ActionSet = ActionSet;
+exports.ActiveActions = ActiveActions;
 
 // basically used as a set of strings
 
-function ActionSet () {
+function ActiveActions () {
   this.data = {};
 }
 
-ActionSet.prototype = {
-  constructor: ActionSet,
+ActiveActions.prototype = {
+  constructor: ActiveActions,
 
-  add: function (action) {
+  begin: function (action) {
     if (typeof action !== 'string')
       throw "action type must be a string"
     this.data[action] = true;
   },
 
-  remove: function (action) {
+  end: function (action) {
     delete this.data[action];
   },
 
