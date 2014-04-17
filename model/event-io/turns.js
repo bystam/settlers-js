@@ -47,7 +47,7 @@ function turnEnded (socket, playerId, game) {
 function drawResources (socket, playerId, game) {
 	return function () {
 		var diceSum = game.lastDiceRoll.sum();
-		var hexesWithDiceSum = game.board.getHexesWithToken(diceSum);
+		var hexesWithDiceSum = game.board.getNonBlockedHexesWithToken (diceSum);
 
 		var resources = [];
 		hexesWithDiceSum.forEach (seekHexForResource (playerId, game.board, resources));

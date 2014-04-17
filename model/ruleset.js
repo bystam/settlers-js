@@ -57,6 +57,8 @@ exports.citybuildRule = [isPlayersTurn, 'AND',
 												 hasCitiesLeft, 'AND',
 												 canAffordCity];
 
+exports.isValidKnightPlacement = [isPlayersTurn, 'AND', landHexExists];
+
 function isPlayersTurn (game, playerId, data) {
 	return game.queue.getCurrentPlayer() === playerId;
 }
@@ -158,4 +160,9 @@ function hasCitiesLeft (game, playerId, data) {
 
 function canAffordCity (game, playerId, data) {
 	return game.stashes[playerId].canAfford (costs.city);
+}
+
+function landHexExists (game, playerId, data) {
+	var hexCoords = data.hexCoords;
+	return game.board.map[hexCoords.row][hexCoords.col] ? true : false;
 }

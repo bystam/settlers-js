@@ -39,6 +39,11 @@ exports.Rules.prototype = {
   initialSettlementBuildIsLegal: function(buildingCoords, playerId) {
     var data = { buildingCoords: buildingCoords };
     return evaluateRule (ruleset.initialSettlementPlacementRule, this.game, playerId, data);
+  },
+
+  isValidKnightPlacement: function (hexCoords) {
+    var data = { hexCoords: hexCoords };
+    return evaluateRule (ruleset.isValidKnightPlacement, this.game, playerId, data);
   }
 };
 

@@ -118,8 +118,8 @@ function getTokens() { // TODO make generic
 		if (i === 7)
 			continue;
 		if (i > 2 && i < 12)
-			tokens.push({value: i});
-		tokens.push({value: i})
+			tokens.push({value: i, blocked = false });
+		tokens.push({value: i, blocked = false });
 	}
 	return tokens;
 }
@@ -133,10 +133,10 @@ function placeTokensOnHexes(tokens, hexes) {
 	}
 }
 
-function getHexesWithToken (tokenValue) {
+function getNonBlockedHexesWithToken (tokenValue) {
 	var hexes = [];
 	forEachHex (this.map, function(hex) {
-		if (hex.token && hex.token.value === tokenValue)
+		if (hex.token && !hex.token.blocked && hex.token.value === tokenValue)
 			hexes.push (hex);
 	});
 	return hexes;
