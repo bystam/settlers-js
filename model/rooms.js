@@ -13,6 +13,7 @@ var io = require('socket.io'),
 	building = require('./event-io/building'),
 	players = require('./event-io/players'),
 	trades = require('./event-io/trades'),
+	knight = require('./event-io/knight'),
 	turns = require('./event-io/turns'),
 	games = {};
 
@@ -24,6 +25,7 @@ exports.init = function(server) {
 	building.init(games, io);
 	players.init(games, io);
 	trades.init(games, io);
+	knight.init(games, io);
 	turns.init(games, io);
 
 }
@@ -67,4 +69,5 @@ function registerConnection (socket, room, playerId) {
 	building.setupBuildingEvents(socket, room, playerId);
 	turns.registerPlayerForTurns(socket, room, playerId);
 	trades.registerPlayerForTrades(socket, room, playerId);
+	knight.registerPlayerForKnightActions(socket, room, playerId);
 }
