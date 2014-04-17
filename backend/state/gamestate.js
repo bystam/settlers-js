@@ -9,35 +9,36 @@
 var boards = require('./boards.js'),
 		stashes = require('./stash.js'),
 		playerQueue = require('./player-queue'),
+		chains = require('./action-chains'),
 		rules = require('../rules/rules.js');
 
 exports.Game = function(room) { // constructor
 	this.room = room;
 
+	this.rules = new rules.Rules(this);
 	initPlayers(this);
 	initBoard(this);
-	initRules(this);
 }
 
 exports.Game.prototype = {
 	constructor: exports.Game,
 
-	addPlayer: function(playerId) {
-		this.queue.addPlayer(playerId);
-		this.stashes[playerId] = new stashes.Stash(playerId);
-	},
+	addPlayer: addPlayer,
 
 	privateCopyForPlayer: privateCopyForPlayer,
+
 	diceRoll: diceRoll
 }
 
 function initPlayers(game) {
 	game.queue = new playerQueue.Queue();
 	game.players = game.queue.players;
+
 	game.stashes = {};
+	game.activeActions = {};
+
 	game.roadsForPlayer = {};
 	game.buildingsForPlayer = {};
-
 }
 
 function initBoard(game) {
@@ -45,8 +46,14 @@ function initBoard(game) {
 	game.board.generateRandomMap();
 }
 
-function initRules(game) {
-	game.rules = new rules.Rules(game);
+function addPlayer (playerId) {
+	this.queue.addPlayer(playerId);
+
+	this.stashes[playerId] = new stashes.Stash(playerId);
+	this.activeActions[playerId] = new chains.ActionSet();
+
+	this.roadsForPlayer[playerId] = [];
+	this.buildingsForPlayer[playerId] = [];
 }
 
 function diceRoll () {
