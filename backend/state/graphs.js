@@ -4,7 +4,7 @@ exports.setupConstructionGraph = function(board) {
   var buildingLookup = new Lookup();
   var roadLookup = new Lookup();
 
-  board.forEachHex(board.map, function (hex, row, col) {
+  board.forEachHex(function (hex, row, col) {
     forEachExistingNeighborTriplet (hex, function(hexCoords, n1, n2) {
       var road = getOrCreateRoad(hexCoords, n1, roadLookup, board.map);
       var building = getOrCreateBuilding(hexCoords, n1, n2, buildingLookup);
