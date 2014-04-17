@@ -11,7 +11,7 @@ function createHexShapesFromMap(canvas, map, pixelWidth){
 	var xJump = hexRadius*2 - xMargin;
 
 	var xcoord = 250; 
-	var ycoord = 0;
+	var ycoord = 50;
 	//draw backgrounds for hexes (sand)
 	for(var row = 0;row<map.length;row++){
 		for(var column=0;column<gridWidth;column++){
@@ -25,7 +25,7 @@ function createHexShapesFromMap(canvas, map, pixelWidth){
 	}
 
 	var xcoord = 250; 
-	var ycoord = 0;
+	var ycoord = 50;
 	//draw actual hexes
 	for(var row = 0;row<map.length;row++){
 		for(var column=0;column<gridWidth;column++){

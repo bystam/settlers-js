@@ -70,38 +70,15 @@ function setServerResponseHandlers (socket, canvas){
 		}
 	});
 	socket.on(serverCommands.newTurn, function(data){
-		console.log(data.dices);
+		displayNewTurn(canvas, data.dices, data.currentPlayer);
 		socket.emit(serverCommands.drawResource, {});
 	});
 	socket.on(serverCommands.gainResources, function(data){
 		addResources(data.resources, localPlayerId);
 	});
 	socket.on(serverCommands.gainHiddenResources, function(data){
-		console.log("hidden");
-		console.log(data);
 		addResources(data.hidden, data.player);
 	});
 }
 
-function createNewTurnButton(socket, canvas, middleX){
-	var buttonWidth = 100;
-	var button = canvas.rect(middleX-(buttonWidth-40), 20, buttonWidth, 50);
-	var filter = canvas.filter(Snap.filter.blur(2,2));
-	button.attr({
-		stroke:'black',
-		strokeWidth:4,
-		fill:'green',
-		filter:filter
-	});
-	button.click(function(){
-		var endTurnText = canvas.text(middleX-(buttonWidth-40), 100, "IT ENDS");
-		endTurnText.attr({
-			"font-size":40,
-			fill:"white",
-			stroke:"black",
-			strokeWidth:2
-		})
-		fadeoutAndRemove(endTurnText);
-		socket.emit(serverCommands.endTurn, {});
-	});
-}
+
