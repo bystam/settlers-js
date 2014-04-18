@@ -1,37 +1,44 @@
 
-function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlayer, areaBelow){
+function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlayer, areaBelow, maxRows, maxColumns){
 	var area = {cards:[], shapeGroup:canvas.g(), corner:{x:cornerX, y:cornerY}, startCorner:{x:cornerX, y:cornerY}};
-	area.maxRows = isLocalPlayer ? 3 : 1;
-	area.maxColumns = 8;
+	if(!areaBelow)
+		areaBelow = {setYPosition:function(){}};
+	area.maxRows = isLocalPlayer ? maxRows : 1;
+	area.maxColumns = maxColumns;
 	var cardHeight = cardWidth * (4/3);
 	coords = {width:cardWidth, height:cardHeight};
 	var xJump = cardWidth - 15;
 	var yJump = isLocalPlayer ? cardHeight + 20 : cardHeight + 5;
 
-	area.addCard = function(card){
+	area.addCard = function(card, clickFunction){
 		if(area.position.row >= area.maxRows){
 			return;
 		}
 		coords.x = area.corner.x + (area.position.column-1)*xJump;
 		coords.y = area.corner.y + area.position.row*yJump;
-		var shape = getShape(canvas, coords, stashObjectTypes.card, playerId, isLocalPlayer, card);
+		var shape = getShape(
+			canvas, coords, stashObjectTypes.card, 
+			playerId, isLocalPlayer, {cardType:card, clickFunction:clickFunction});
 		if(area.position.column % area.maxColumns == 0){
 			area.position.row++;
 			area.position.column = 0;
 		}
 		area.position.column++;
 		shape.card = card;
+		shape.clickFunction = clickFunction;
 		area.cards.push(shape);
 		area.shapeGroup.add(shape);
 		areaBelow.setYPosition (coords.y + yJump);
+		return shape;
 	}
 
-	area.removeCards = function(cards){
+	area.removeCards = function(cards, animate){
 		var toRemove = canvas.g();
 		cards.forEach(function (card){
 			toRemove.add(area.removeCard(card));
 		});
-		toRemove.animate({opacity:0}, 1000, undefined, function(){
+		var time = animate ? 500 : 0;
+		toRemove.animate({opacity:0}, time, undefined, function(){
 			toRemove.remove();
 			area.reshuffle();
 		});
@@ -51,7 +58,7 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 		var cardsCopy = area.cards;
 		area.cards = [];
 		cardsCopy.forEach(function(card){
-			area.addCard(card.card);
+			area.addCard(card.card, card.clickFunction);
 		});
 	}
 
@@ -73,11 +80,10 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 }
 
 
-function getCardShape (canvas, coords, playerId, isLocalPlayer, cardType){
-	var filter = canvas.filter(Snap.filter.sepia(0.5));
-	// var filter = canvas.filter(Snap.filter.blur(1,1));
 
-	var imageUrl = '../img/'+cardType+'.png';
+function getCardShape (canvas, coords, playerId, isLocalPlayer, params){
+	var filter = canvas.filter(Snap.filter.sepia(0.5));
+	var imageUrl = '../img/'+params.cardType+'.png';
 	var image = canvas.image(imageUrl,coords.x, coords.y, coords.width, coords.height);
 	image.attr({
 		filter:filter
@@ -88,10 +94,14 @@ function getCardShape (canvas, coords, playerId, isLocalPlayer, cardType){
 		strokeWidth:2,
 		stroke:buildingColors[playerId]
 	});
-	var resource = canvas.g(image, border);
+	var card = canvas.g(image, border);
+	card.image = image;
+	card.border = border;
+	card.type = params.cardType;
+	card.playerId = playerId;
 	//make card larger on mouse hover
 	if(isLocalPlayer){
-		resource.hover(function (){
+		card.hover(function (){
 			image.attr({
 				width:coords.width*(3/2),
 				height:coords.height*(6/5)
@@ -100,8 +110,8 @@ function getCardShape (canvas, coords, playerId, isLocalPlayer, cardType){
 				width:coords.width*(3/2),
 				height:coords.height*(6/5)
 			});
-			resource.parentGroup = resource.parent();
-			resource.parent().after(resource);
+			card.parentGroup = card.parent();
+			card.parent().after(card);
 		}, function (){
 			image.attr({
 				width:coords.width,
@@ -111,13 +121,12 @@ function getCardShape (canvas, coords, playerId, isLocalPlayer, cardType){
 				width:coords.width,
 				height:coords.height
 			});
-			resource.parentGroup.append(resource);
+			card.parentGroup.append(card);
 		})
 	}
-	//TODO: remove this
-	resource.click(function(){
-		stashObjects[playerId].resourceCards.removeCard(cardType);
-	})
+	card.click(function(){
+		params.clickFunction(card);
+	});
 	///////
-	return resource;
+	return card;
 }

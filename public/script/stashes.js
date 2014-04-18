@@ -42,19 +42,18 @@ function drawStashForPlayer(canvas, stash, playerId, isLocalPlayer){
 				canvas, 
 				stashObjects[playerId].corner.x-60, 
 				rect.y + pileHeight + spaceBetweenPiles+50, 
-				pileWidth, playerId, isLocalPlayer, {setYPosition:function(){}});
-	} else{
-		stashObjects[playerId].developmentCards = {setYPosition:function(){}};
+				pileWidth, playerId, isLocalPlayer, undefined,
+				1, 8);
 	}
 	stashObjects[playerId].resourceCards = 
 		getCardArea(
 			canvas, 
 			stashObjects[playerId].corner.x-60, 
 			rect.y + pileHeight + spaceBetweenPiles+40, 
-			pileWidth, playerId, isLocalPlayer, stashObjects[playerId].developmentCards);
+			pileWidth, playerId, isLocalPlayer, 
+			stashObjects[playerId].developmentCards,
+			3,8);
 }
-
-
 
 function removeResources(resources, playerId){
 	var toRemove = [];
@@ -63,12 +62,12 @@ function removeResources(resources, playerId){
 		for(var i=0;i<amount;i++)
 			toRemove.push(""+resource);
 	}
-	stashObjects[playerId].resourceCards.removeCards(toRemove);
+	stashObjects[playerId].resourceCards.removeCards(toRemove, true);
 }
 
 function addResources(resources, playerId){
 	resources.forEach(function(resource){
-		stashObjects[playerId].resourceCards.addCard(resource);
+		stashObjects[playerId].resourceCards.addCard(resource, function(card){addToTrade(card)});
 	});
 }
 

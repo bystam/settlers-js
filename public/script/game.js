@@ -47,6 +47,7 @@ function createEmptyBoard(game){
 	///////////
 	createNewTurnButton(socket, boardCanvas, boardWidthInPixels/2);
 	setServerResponseHandlers (socket, boardCanvas);
+	drawTradePanel(boardCanvas);
 	// createDice()
 }
 
@@ -71,7 +72,7 @@ function setServerResponseHandlers (socket, canvas){
 	});
 	socket.on(serverCommands.newTurn, function(data){
 		displayNewTurn(canvas, data.dices, data.currentPlayer);
-		socket.emit(serverCommands.drawResource, {});
+		socket.emit(serverCommands.drawResource, {}); //maybe save this call for after dices are rolled
 	});
 	socket.on(serverCommands.gainResources, function(data){
 		addResources(data.resources, localPlayerId);

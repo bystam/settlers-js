@@ -35,7 +35,6 @@ function displayNewTurn (canvas, dices, currentPlayer){
 	var color = buildingColors[currentPlayer];
 	if(!end){
 		var overlay = canvas.circle(newTurnButton.x + (newTurnButton.width/2), newTurnButton.y+(newTurnButton.height/2), newTurnButton.width);
-		
 		end = canvas.g(overlay);
 		end.attr({
 			fill:color,
@@ -43,10 +42,6 @@ function displayNewTurn (canvas, dices, currentPlayer){
 		});
 		canvas.prepend(end);
 	}
-	// end.attr({opacity: 0.7, fill: color});
 	end.animate({opacity:0.3, fill: color}, 2000, undefined, function(){
-		// end.remove();
 	});
-
-	// fadeoutAndRemove();
 }
