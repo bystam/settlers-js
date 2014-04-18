@@ -9,7 +9,7 @@ function drawTradePanel (canvas){
 	var left = getCardArea(
 		canvas, 370, 20, 50, 
 		localPlayerId, true, undefined,
-		1, 4);
+		1, 5);
 	tradePanel.left = left;
 	tradePanel.stashCardsForTrade = [];
 }
@@ -17,25 +17,15 @@ function drawTradePanel (canvas){
 function addToTrade(resource){
 	if(tradePanel.left.cards.length > 3)
 		return;
-	console.log(tradePanel.left.cards.length);
-	var tempResource = tradePanel.left.addCard(resource.type, function(){removeFromTrade(resource)});
-	tradePanel.stashCardsForTrade.push(resource);
 	console.log("adding to trade");
-	resource.border.attr({
-		stroke:'black',
-	});
-	resource.unclick(null);
+	var tempResource = tradePanel.left.createCardOfType(resource.cardType, function(){removeFromTrade(resource)});
+	stashObjects[resource.playerId].resourceCards.removeCards([resource.cardType], false);
+	tradePanel.stashCardsForTrade.push(resource);
 }
 
 function removeFromTrade(resource){
-	tradePanel.left.removeCards([resource.type], false);
-	resource.unclick(null);
-	resource.click(function(){
-		addToTrade(resource);
-	});
-	resource.border.attr({
-		stroke:buildingColors[resource.playerId]
-	});
+	tradePanel.left.removeCards([resource.cardType], false);
+	addResources([resource.cardType], resource.playerId);
 }
 
 function displayTrade(from, to){

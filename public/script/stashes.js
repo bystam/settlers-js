@@ -62,12 +62,12 @@ function removeResources(resources, playerId){
 		for(var i=0;i<amount;i++)
 			toRemove.push(""+resource);
 	}
-	stashObjects[playerId].resourceCards.removeCards(toRemove, true);
+	stashObjects[playerId].resourceCards.removeCards(toRemove, false);
 }
 
 function addResources(resources, playerId){
 	resources.forEach(function(resource){
-		stashObjects[playerId].resourceCards.addCard(resource, function(card){addToTrade(card)});
+		stashObjects[playerId].resourceCards.createCardOfType (resource);
 	});
 }
 
