@@ -54,6 +54,11 @@ exports.Rules.prototype = {
   isValidKnightPlacement: function (hexCoords) {
     var data = { hexCoords: hexCoords };
     return evaluateRule (buff.isValidKnightPlacement, this.game, playerId, data);
+  },
+
+  canKnightStealFromPlayer: function (targetPlayer) {
+    var data = { targetPlayer: targetPlayer };
+    return evaluateRule (buff.canKnightStealFromPlayer, this.game, playerId, data);
   }
 };
 
