@@ -15,7 +15,7 @@ exports.registerPlayerForTrades = function (socket, room, playerId) {
   var stash = game.stashes[playerId];
 
   socket.on('stock-trade', function (data) {
-    var tradeCost = game.rules.trade (data.fromResource);
+    var tradeCost = game.rules.costs.trade (data.fromResource);
     var gained = null;
     var success = false;
 
@@ -24,7 +24,6 @@ exports.registerPlayerForTrades = function (socket, room, playerId) {
       stash.payCost(tradeCost);
       gained = [data.toResource];
     }
-
     socket.emit('stock-trade', { success: success, cost: tradeCost, gained: gained });
   });
 }

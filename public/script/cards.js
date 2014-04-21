@@ -77,6 +77,11 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 	}
 	area.reshuffle = function (){
 		area.reset();
+		area.cards.sort(function(a, b){
+		    if(a.cardType < b.cardType) return -1;
+		    if(a.cardType > b.cardType) return 1;
+		    return 0;
+		});
 		area.cards.forEach(function(card){
 			card.border.animate({x:cardRect.x, y:cardRect.y}, 500, mina.easein, function(){});
 			card.image.animate({x:cardRect.x, y:cardRect.y}, 500, mina.easein, function(){});			
@@ -97,7 +102,6 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 			area.reshuffle();
 		}
 	}
-
 	area.reset();
 	return area;
 }
