@@ -75,13 +75,13 @@ function privateCopyForPlayer(playerId) {
 
 function hiddenify(stashes, playerId){
 	var hiddenifiedStash = {};
-	for(playerId in stashes){
+	for (playerId in stashes) {
 		var stash = stashes[playerId];
-		if(stash.playerId !== playerId)
+
+		if (stash.playerId !== playerId)
 			hiddenifiedStash[playerId] = stash.hiddenify();
 		else
 			hiddenifiedStash[playerId] = stash;
 	}
 	return hiddenifiedStash;
 }
-

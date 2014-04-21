@@ -10,11 +10,8 @@ exports.init = function(gamesState, socketIo) {
   io = socketIo;
 };
 
-var sockets = {};
-
 exports.registerPlayerForKnightActions = function (socket, room, playerId) {
   var game = games[room];
-  sockets[playerId] = socket;
 
   socket.on ('place-knight', function (hexCoords) {
     var knightPlacementResult = validateAndPlaceKnight (hexCoords, game);
@@ -25,12 +22,21 @@ exports.registerPlayerForKnightActions = function (socket, room, playerId) {
     var resourceStealResult = validateAndStealResource (playerId, targetPlayer, game);
 
     if (resourceStealResult.valid) {
-      socket.emit ('steal-resource', resourceStealResult);
-      sockets[targetPlayer].emit('steal-resource', resourceStealResult);
+      /*
+        Antingen broadcast till alla from/to så får from och to
+        ladda om sin stash (lite småfult kanske?)
+
+        eller så sparar vi sockets (lite fult?) och
+        skickar riktade med revealing resources och sedan
+        en hidden broadcast... fult det med...
+      */
+      io.sockets.in(room).emit('steal-resource', resourceStealResult);
     } else {
       socket.emit ('steal-resource', resourceStealResult);
     }
   });
+
+  socket.
 };
 
 function validateAndPlaceKnight (hexCoords, game) {
@@ -63,5 +69,5 @@ function validateAndStealResource (playerId, targetPlayer, game) {
     game.stashes[playerId].addResource (stolen);
 
     game.activeActions[playerId].end('knight');
-    return { valid: true, from: targetPlayer, to: playerId, resource: stolen };
+    return { valid: true, from: targetPlayer, to: playerId };
 }
