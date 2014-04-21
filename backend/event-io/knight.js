@@ -35,8 +35,6 @@ exports.registerPlayerForKnightActions = function (socket, room, playerId) {
       socket.emit ('steal-resource', resourceStealResult);
     }
   });
-
-  socket.
 };
 
 function validateAndPlaceKnight (hexCoords, game) {
