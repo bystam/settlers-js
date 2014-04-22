@@ -7,7 +7,7 @@ var common = require('./common-rules');
 
 var isPlayersTurn = common.isPlayersTurn;
 
-exports.isValidKnightPlacement = [isPlayersTurn, 'AND', landHexExists];
+exports.isValidKnightPlacement = [isPlayersTurn, 'AND', landHexExists, 'AND', diceSumIsSeven];
 exports.canKnightStealFromPlayer = [knightActionIsActive, 'AND', targetHasResources];
 
 function landHexExists (game, playerId, data) {
@@ -23,4 +23,8 @@ function targetHasResources (game, playerId, data) {
 
 function knightActionIsActive (game, playerId, data) {
   return game.activeActions[playerId].contains('knight');
+}
+
+function diceSumIsSeven (game, playerId, data) {
+  return game.dices.sum() === 7;
 }
