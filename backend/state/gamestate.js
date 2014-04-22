@@ -36,6 +36,7 @@ exports.Game.prototype = {
 function initPlayers(game) {
 	game.queue = new playerQueue.Queue();
 	game.players = game.queue.players;
+	game.queue.startGame();
 
 	game.stashes = {};
 	game.activeActions = {};

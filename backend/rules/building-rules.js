@@ -33,7 +33,7 @@ exports.roadBuildRule = [isPlayersTurn, 'AND',
                          roadConnectedToRoad];
 
 exports.settlementBuildRule = [isPlayersTurn, 'AND',
-                              buildingNotPresent, 'AND',
+                               buildingNotPresent, 'AND',
                                hasSettlementsLeft, 'AND',
                                canAffordSettlement, 'AND',
                                buildingConnectedToRoad, 'AND',
