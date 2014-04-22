@@ -51,6 +51,10 @@ exports.Rules.prototype = {
     return evaluateRule (building.initialSettlementPlacementRule, this.game, playerId, data);
   },
 
+  hasInitialPlacementLeft: function(playerId) {
+    return evaluateRule(building.hasInitialPlacementLeft, this.game, playerId, null);
+  },
+
   isValidKnightPlacement: function (hexCoords) {
     var data = { hexCoords: hexCoords };
     return evaluateRule (buff.isValidKnightPlacement, this.game, playerId, data);

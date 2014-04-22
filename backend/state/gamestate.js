@@ -27,7 +27,9 @@ exports.Game.prototype = {
 
 	privateCopyForPlayer: privateCopyForPlayer,
 
-	diceRoll: diceRoll
+	diceRoll: diceRoll,
+
+	isPrePhase: function () { return this.queue.currentTurn === 1 }
 }
 
 function initPlayers(game) {

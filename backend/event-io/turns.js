@@ -23,7 +23,11 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 
 	socket.on('start-game', function(data) {
 		if (!gameIsFull(room))
-			return io.sockets.in(room).emit('need-more-players', {} );
+			return io.sockets.in(room).emit('start-game', { enoughPlayers: false } );
+
+		game.players.forEach (function (playerId) {
+			game.activeActions[playerId].begin('initial-placement');
+		});
 	});
 }
 

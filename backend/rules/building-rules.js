@@ -5,6 +5,9 @@
 var common = require('./common-rules'),
     costs = require('./costs').costs;
 
+var INITIAL_ROADS = 2;
+var INITIAL_SETTLEMENTS = 1;
+
 var isPlayersTurn = common.isPlayersTurn;
 
 exports.initialRoadPlacementRule = [isPlayersTurn, 'AND',
@@ -41,6 +44,8 @@ exports.citybuildRule = [isPlayersTurn, 'AND',
                          hasCitiesLeft, 'AND',
                          canAffordCity];
 
+exports.hasInitialPlacementLeft = [hasInitialRoadsLeft, 'OR', hasInitialSettlementsLeft];
+
 function isPlayersTurn (game, playerId, data) {
   return game.queue.getCurrentPlayer() === playerId;
 }
@@ -59,7 +64,7 @@ function hasRoadsLeft (game, playerId, data) {
 }
 
 function hasInitialRoadsLeft (game, playerId, data) {
-  return game.roadsForPlayer[playerId].length < 2;
+  return game.roadsForPlayer[playerId].length < INITIAL_ROADS;
 }
 
 function roadConnectedToRoad (game, playerId, data) {
@@ -103,7 +108,7 @@ function hasSettlementsLeft (game, playerId, data) {
 }
 
 function hasInitialSettlementsLeft (game, playerId, data) {
-  return game.buildingsForPlayer[playerId].length < 1;
+  return game.buildingsForPlayer[playerId].length < INITIAL_SETTLEMENTS;
 }
 
 function noBuildingsTooClose (game, playerId, data) {
