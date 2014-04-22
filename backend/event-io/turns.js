@@ -21,14 +21,22 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 
 	socket.on('draw-resources', drawResources (socket, playerId, game));
 
-	socket.on('start-game', function(data) {
+	socket.on('start-game', startGame (socket, playerId, game));
+}
+
+function startGame (socket, playerId, game) {
+	return function () {
 		if (!gameIsFull(room))
 			return io.sockets.in(room).emit('start-game', { enoughPlayers: false } );
 
+		game.queue.startGame ();
 		game.players.forEach (function (playerId) {
 			game.activeActions[playerId].begin('initial-placement');
 		});
-	});
+
+		var startData = { currentPlayer: game.queue.getCurrentPlayer() };
+		io.sockets.in(game.room).emit('new-turn', startData);
+	}
 }
 
 function turnEnded (socket, playerId, game) {

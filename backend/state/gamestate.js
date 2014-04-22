@@ -29,6 +29,7 @@ exports.Game.prototype = {
 
 	diceRoll: diceRoll,
 
+	isStarted : function () { return this.queue.currentTurn > 0 },
 	isPrePhase: function () { return this.queue.currentTurn === 1 }
 }
 
