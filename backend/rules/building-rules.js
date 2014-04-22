@@ -8,7 +8,7 @@ var common = require('./common-rules'),
 var INITIAL_ROADS = 2;
 var INITIAL_SETTLEMENTS = 1;
 
-var isPlayersTurn = common.isPlayersTurn;
+var isPlayersTurn = common.playersTurnRule;
 
 exports.initialRoadPlacementRule = [isPlayersTurn, 'AND',
                                    roadNotPresent, 'AND',
@@ -44,7 +44,7 @@ exports.citybuildRule = [isPlayersTurn, 'AND',
                          hasCitiesLeft, 'AND',
                          canAffordCity];
 
-exports.hasInitialPlacementLeft = [hasInitialRoadsLeft, 'OR', hasInitialSettlementsLeft];
+exports.initialPlacementLeftRule = [hasInitialRoadsLeft, 'OR', hasInitialSettlementsLeft];
 
 function isPlayersTurn (game, playerId, data) {
   return game.queue.getCurrentPlayer() === playerId;

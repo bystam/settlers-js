@@ -5,10 +5,10 @@
 
 var common = require('./common-rules');
 
-var isPlayersTurn = common.isPlayersTurn;
+var isPlayersTurn = common.playersTurnRule;
 
-exports.isValidKnightPlacement = [isPlayersTurn, 'AND', landHexExists, 'AND', diceSumIsSeven];
-exports.canKnightStealFromPlayer = [knightActionIsActive, 'AND', targetHasResources];
+exports.validKnightPlacementRule = [isPlayersTurn, 'AND', landHexExists, 'AND', diceSumIsSeven];
+exports.knightStealFromPlayerRule = [knightActionIsActive, 'AND', targetHasResources];
 
 function landHexExists (game, playerId, data) {
   var hexCoords = data.hexCoords;
