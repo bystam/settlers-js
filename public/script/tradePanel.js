@@ -49,6 +49,7 @@ function drawPostTradeButtons(x, y){
 
 	var playerTradeIconUrl = getImageUrl('bystam');
 	var playerTradeButton = canvas.image(playerTradeIconUrl, x+75, y, 70, 70);
+	// Super important code below DO NOT TOUCH
 	setSepia(playerTradeButton, 1.0);
 	var fiddy = true;
 	playerTradeButton.dblclick(function(){
@@ -60,7 +61,21 @@ function drawPostTradeButtons(x, y){
 		movementX *= getRandomInt(0,100);
 		var movementY = fiddy ? -1 : 1;
 		movementY *= getRandomInt(0,100);
-		playerTradeButton.animate({x:(x+75+movementX), y:y+movementY}, 4000, mina.elastic, function(){});
+		playerTradeButton.animate({x:(x+75+movementX), y:y+movementY}, 3000, mina.elastic, function(){
+			var bubble = canvas.rect ((x+55+movementX)-80, y+movementY-60, 270, 50, 50, 50);
+			drawFill(bubble, 'white');
+			var swx = x+55+movementX+50;
+			var swy = y+movementY-12;
+			var wedge = canvas.polyline([swx, swy, swx+10, swy+10, swx+20, swy, swx, swy]);
+			drawFill(wedge, 'white');
+			var text = canvas.text((x+55+movementX)-60, y+movementY-25, "SUCH ANIMATE");
+			text.attr({fontSize:30});
+			var grp = canvas.g(bubble, wedge, text);
+			grp.attr({transform:playerTradeButton.attr('transform')});
+			grp.animate({opacity:0}, 3000, mina.linear, function(){
+				grp.remove();
+			})
+		});
 		fiddy = !fiddy;
 		postPlayerTrade();
 	});
