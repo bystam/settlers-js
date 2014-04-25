@@ -29,24 +29,6 @@ removeCard(type){
 */
 
 
-function CardBox(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRows, maxColumns){
-	this.cards = [];
-	this.corner = {x:cornerX, y:cornerY};
-	this.startCorner:{x:cornerX, y:cornerY};
-	var area = {cards:[], shapeGroup:canvas.g(), corner:{x:cornerX, y:cornerY}, startCorner:{x:cornerX, y:cornerY}};
-	if(!areaBelow)
-		areaBelow = {setYPosition:function(){}};
-	area.maxRows = isLocalPlayer ? maxRows : 1;
-	area.maxColumns = maxColumns;
-	var cardWidth = 50;
-	var cardHeight = cardWidth * (4/3);
-	var dimensions = {width:cardWidth, height:cardHeight};
-	var xJump = cardWidth - 15;
-	var yJump = isLocalPlayer ? cardHeight + 20 : cardHeight + 5;
-}
-
-
-
 function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRows, maxColumns){
 	var area = {cards:[], shapeGroup:canvas.g(), corner:{x:cornerX, y:cornerY}, startCorner:{x:cornerX, y:cornerY}};
 	if(!areaBelow)
@@ -72,12 +54,11 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 		var shape = getShape(
 			dimensions, stashObjectTypes.card, 
 			playerId, isLocalPlayer, {cardType:type, clickFunction:clickFunction});
-		shape.clickFunction = clickFunction;
 		area.addCard(shape);
 		return shape;
 	}
 
-	area.getCurrentdimensions = function (){
+	area.updateDimensions = function (){
 		dimensions.x = area.corner.x + (area.position.column-1)*xJump;
 		dimensions.y = area.corner.y + area.position.row*yJump;
 		areaBelow.setYPosition (dimensions.y + yJump);
@@ -89,27 +70,26 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 			area.position.column = 0;
 		}
 		area.position.column++;
-		area.getCurrentdimensions();
+		area.updateDimensions();
 	}
 
 	area.removeCards = function(cards, animate){
 		var toRemove = canvas.g();
 		var removingFromTradePanel = false;
+		var nonExistent = [];
 		cards.forEach(function (card){
 			var cardToRemove = area.removeCard(card);
-			if(!cardToRemove){
-				cardToRemove = tradePanel.left.removeCard(card);
-				removingFromTradePanel = true;
-			}
-			toRemove.add(cardToRemove);
+			if(cardToRemove)
+				toRemove.add(cardToRemove);
+			else
+				nonExistent.push(card);
 		});
 		var time = animate ? 500 : 0;
 		toRemove.animate({opacity:0}, time, undefined, function(){
 			toRemove.remove();
 			area.reshuffle();
-			if(removingFromTradePanel)
-				tradePanel.left.reshuffle();
 		});
+		return nonExistent;
 	}
 
 	area.removeCard = function(card, reshuffle){
@@ -123,11 +103,6 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 	}
 	area.reshuffle = function (){
 		area.reset();
-		area.cards.sort(function(a, b){
-		    if(a.cardType < b.cardType) return -1;
-		    if(a.cardType > b.cardType) return 1;
-		    return 0;
-		});
 		area.cards.forEach(function(card){
 			card.border.animate({x:dimensions.x, y:dimensions.y}, 500, mina.easein, function(){});
 			card.image.animate({x:dimensions.x, y:dimensions.y}, 500, mina.easein, function(){});			
@@ -138,7 +113,7 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 	area.reset = function (){
 		area.position = {row:0, column:1};
 		area.corner = {x:area.startCorner.x, y:area.startCorner.y};
-		area.getCurrentdimensions();
+		area.updateDimensions();
 		areaBelow.setYPosition(cornerY);
 	}
 

@@ -55,19 +55,19 @@ function setServerResponseHandlers (socket){
 	socket.on(serverCommands.canBuildRoad, function(data){
 		if(data.allowed){
 			placeRoadWithAnimation(JSON.stringify(data.coords), data.playerId);
-			removeResources(data.cost, data.playerId);
+			payResources(data.cost, data.playerId);
 		}
 	});
 	socket.on(serverCommands.canBuildSettlement, function(data){
 		if(data.allowed){
 			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, false);
-			removeResources(data.cost, data.playerId);
+			payResources(data.cost, data.playerId);
 		}
 	});
 	socket.on(serverCommands.canBuildCity, function(data){
 		if(data.allowed){
 			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, true);
-			removeResources(data.cost, data.playerId);
+			payResources(data.cost, data.playerId);
 		}
 	});
 	socket.on(serverCommands.newTurn, function(data){
@@ -81,11 +81,11 @@ function setServerResponseHandlers (socket){
 		addResources(data.hidden, data.player);
 	});
 	socket.on(serverCommands.stockTrade, function(data){
+		console.log('recieving...');
 		console.log(data);
 		if(!data.success)
 			return;
-		removeResources(data.cost, localPlayerId);
-		addResources(data.gained, localPlayerId);
+		performTrade(data);
 	});
 }
 

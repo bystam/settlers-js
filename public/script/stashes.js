@@ -53,22 +53,6 @@ function drawStashForPlayer(stash, playerId, isLocalPlayer){
 			3,8);
 }
 
-function removeResources(resources, playerId){
-	var toRemove = [];
-	for(resource in resources){
-		var amount = resources[resource];
-		for(var i=0;i<amount;i++)
-			toRemove.push(""+resource);
-	}
-	stashObjects[playerId].resourceCards.removeCards(toRemove, false);
-}
-
-function addResources(resources, playerId){
-	resources.forEach(function(resource){
-		stashObjects[playerId].resourceCards.createCardOfType (resource);
-	});
-}
-
 function drawSettlementStash(amount, rect, playerId){
 	for(var i=0;i<amount;i++){
 		var coords = {x:getRandomInt(rect.x, rect.x+rect.width),y:getRandomInt(rect.y, rect.y+rect.height)};

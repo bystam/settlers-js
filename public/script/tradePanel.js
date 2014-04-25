@@ -6,10 +6,9 @@ function drawTradePanel (){
 		stroke:'black',
 		strokeWidth:3
 	});
-	var left = getCardArea(
+	tradePanel.left = getCardArea(
 		370, 20, localPlayerId, true, undefined,
 		1, 6);
-	tradePanel.left = left;
 	var resourceTypes = ['grain', 'wool', 'ore', 'brick', 'lumber'];
 	tradePanel.currentTrade = {resourceTypes:[], borders:[]};
 	drawPanelButtons(325, 8, resourceTypes);
@@ -24,7 +23,9 @@ function drawPostTradeButtons(x, y){
 	
 	stockTradeButton.enableTrade = function(){
 		drawFill(stockTradeButton, 'green');
+		stockTradeButton.unclick(null);
 		stockTradeButton.click(function(){
+			// stackTrace();
 			tradeWithStock();
 			stockTradeButton.animate({"x":x+3, "y":y+3}, 70, undefined, function(){
 				stockTradeButton.animate({"x":x, "y":y}, 70, undefined, function(){});
@@ -44,6 +45,19 @@ function drawPostTradeButtons(x, y){
 	});
 }
 
+function updateTradeButtons (){
+	if(tradePanel.left.cards.length < 1){
+		tradePanel.stockTradeButton.disableTrade();
+		return;
+	}
+
+	var resourceType = tradePanel.left.cards[0].cardType;
+	if(canStockTrade(resourceType))
+		tradePanel.stockTradeButton.enableTrade();
+	else
+		tradePanel.stockTradeButton.disableTrade();
+}
+
 function drawPanelButtons(x, y, types){
 	var rect = {x:x,y:y, width:18, height:18};
 	for (var i = types.length - 1; i >= 0; i--) {
@@ -58,12 +72,21 @@ function postPlayerTrade(){
 }
 
 function tradeWithStock(){
-	socket.emit(serverCommands.stockTrade, 
+	var data = 
 		{
 			fromResource:tradePanel.left.cards[0].cardType, 
 			toResource:tradePanel.currentTrade.resourceTypes[0]
-		});
+		}
+	console.log('sending...');
+	console.log(data);
+	socket.emit(serverCommands.stockTrade, data);
 	clearTrade();
+}
+
+function performTrade (data){
+	tradeAwayResources(data.cost);
+	addResources(data.gained, localPlayerId);
+	updateTradeButtons();
 }
 
 //todo
@@ -95,15 +118,14 @@ function addToTrade(resource){
 	if(tradeContainsOther(resource))
 		return;
 	var tempResource = tradePanel.left.createCardOfType(resource.cardType, function(){removeFromTrade(resource)});
-	stashObjects[resource.playerId].resourceCards.removeCards([resource.cardType], false);
-	if(canStockTrade(resource))
-		tradePanel.stockTradeButton.enableTrade();
+	payResourcesList([resource.cardType], localPlayerId);
+	updateTradeButtons();
 }
 
 function canStockTrade(resource){
 	var counter = 0;
 	for (var i = tradePanel.left.cards.length - 1; i >= 0; i--) {
-		if(tradePanel.left.cards[i].cardType === resource.cardType)
+		if(tradePanel.left.cards[i].cardType === resource)
 			counter++;
 	};
 	return counter > 2;
@@ -120,8 +142,7 @@ function tradeContainsOther(resource){
 function removeFromTrade(resource){
 	tradePanel.left.removeCards([resource.cardType], false);
 	addResources([resource.cardType], resource.playerId);
-	if(!canStockTrade(resource))
-		tradePanel.stockTradeButton.disableTrade();
+	updateTradeButtons();
 }
 
 function displayTrade(from, to){
