@@ -9,7 +9,7 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 	area.maxRows = isLocalPlayer ? maxRows : 1;
 	area.maxColumns = maxColumns;
 	var cardHeight = cardWidth * (4/3);
-	var cardRect = {width:cardWidth, height:cardHeight};
+	var dimensions = {width:cardWidth, height:cardHeight};
 	var xJump = cardWidth - 15;
 	var yJump = isLocalPlayer ? cardHeight + 20 : cardHeight + 5;
 
@@ -24,17 +24,17 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 
 	area.createCardOfType = function(type, clickFunction){
 		var shape = getShape(
-			canvas, cardRect, stashObjectTypes.card, 
+			canvas, dimensions, stashObjectTypes.card, 
 			playerId, isLocalPlayer, {cardType:type, clickFunction:clickFunction});
 		shape.clickFunction = clickFunction;
 		area.addCard(shape);
 		return shape;
 	}
 
-	area.getCurrentCardRect = function (){
-		cardRect.x = area.corner.x + (area.position.column-1)*xJump;
-		cardRect.y = area.corner.y + area.position.row*yJump;
-		areaBelow.setYPosition (cardRect.y + yJump);
+	area.getCurrentdimensions = function (){
+		dimensions.x = area.corner.x + (area.position.column-1)*xJump;
+		dimensions.y = area.corner.y + area.position.row*yJump;
+		areaBelow.setYPosition (dimensions.y + yJump);
 	}
 
 	area.updatePosition = function(){
@@ -43,7 +43,7 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 			area.position.column = 0;
 		}
 		area.position.column++;
-		area.getCurrentCardRect();
+		area.getCurrentdimensions();
 	}
 
 	area.removeCards = function(cards, animate){
@@ -83,8 +83,8 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 		    return 0;
 		});
 		area.cards.forEach(function(card){
-			card.border.animate({x:cardRect.x, y:cardRect.y}, 500, mina.easein, function(){});
-			card.image.animate({x:cardRect.x, y:cardRect.y}, 500, mina.easein, function(){});			
+			card.border.animate({x:dimensions.x, y:dimensions.y}, 500, mina.easein, function(){});
+			card.image.animate({x:dimensions.x, y:dimensions.y}, 500, mina.easein, function(){});			
 			area.updatePosition();
 		});
 	}
@@ -92,7 +92,7 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 	area.reset = function (){
 		area.position = {row:0, column:1};
 		area.corner = {x:area.startCorner.x, y:area.startCorner.y};
-		area.getCurrentCardRect();
+		area.getCurrentdimensions();
 		areaBelow.setYPosition(cornerY);
 	}
 
@@ -108,47 +108,25 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 
 
 
-function getCardShape (canvas, cardRect, playerId, isLocalPlayer, params){
-	var filter = canvas.filter(Snap.filter.sepia(0.5));
-	var imageUrl = '../img/'+params.cardType+'.png';
-	var image = canvas.image(imageUrl,cardRect.x, cardRect.y, cardRect.width, cardRect.height);
-	image.attr({
-		filter:filter
-	})
-	var border = canvas.rect(cardRect.x, cardRect.y, cardRect.width, cardRect.height, 10, 10);
-	border.attr({
-		fill:'transparent',
-		strokeWidth:2,
-		stroke:buildingColors[playerId]
-	});
+function getCardShape (canvas, dimensions, playerId, isLocalPlayer, params){
+	var imageUrl = getImageUrl(params.cardType);
+	var image = canvas.image(imageUrl,dimensions.x, dimensions.y, dimensions.width, dimensions.height);
+	setSepia(canvas, image, 0.5);
+	
+	var border = canvas.rect(dimensions.x, dimensions.y, dimensions.width, dimensions.height, 10, 10);
+	drawBorder(border, buildingColors[playerId], 2);
+	drawFill(border, 'transparent');
+
 	var card = canvas.g(image, border);
 	card.image = image;
 	card.border = border;
 	card.cardType = params.cardType;
 	card.playerId = playerId;
-	//make card larger on mouse hover
 	if(isLocalPlayer){
 		card.hover(function (){
-			image.attr({
-				width:cardRect.width*(3/2),
-				height:cardRect.height*(6/5)
-			});
-			border.attr({
-				width:cardRect.width*(3/2),
-				height:cardRect.height*(6/5)
-			});
-			card.parentGroup = card.parent();
-			card.parent().after(card);
+			enlargeCard(card, dimensions);
 		}, function (){
-			image.attr({
-				width:cardRect.width,
-				height:cardRect.height
-			});
-			border.attr({
-				width:cardRect.width,
-				height:cardRect.height
-			});
-			card.parentGroup.append(card);
+			shrinkCard(card, dimensions);
 		})
 	}
 	if(!params.clickFunction)
@@ -156,6 +134,5 @@ function getCardShape (canvas, cardRect, playerId, isLocalPlayer, params){
 	card.click(function(){
 		params.clickFunction(card);
 	});
-	///////
 	return card;
 }

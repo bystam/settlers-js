@@ -24,9 +24,7 @@ function drawPostTradeButtons(canvas, x, y){
 	stockTradeButton.attr({fill:'red', strokeWidth:2, stroke:'black'});
 	
 	stockTradeButton.enableTrade = function(){
-		stockTradeButton.attr({
-			fill:'green'
-		});
+		drawFill(stockTradeButton, 'green');
 		stockTradeButton.click(function(){
 			tradeWithStock();
 			stockTradeButton.animate({"x":x+3, "y":y+3}, 70, undefined, function(){
@@ -35,9 +33,7 @@ function drawPostTradeButtons(canvas, x, y){
 		});
 	}
 	stockTradeButton.disableTrade = function(){
-		stockTradeButton.attr({
-			fill:'red'
-		});
+		drawFill(stockTradeButton, 'red');
 		stockTradeButton.unclick(null);
 	}
 	tradePanel.stockTradeButton = stockTradeButton;

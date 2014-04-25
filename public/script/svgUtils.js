@@ -13,9 +13,20 @@ function drawBorder (element, color, width){
 	});
 }
 
+function getImageUrl(type){
+	return '../img/'+type+'.png';
+}
+
 function fadeoutAndRemove(element){
 	element.animate({opacity:0}, 2000, undefined, function(){
 		element.remove();
+	});
+}
+
+function setSepia(canvas, element, amount){
+	var filter = canvas.filter(Snap.filter.sepia(amount));
+	element.attr({
+		filter:filter
 	});
 }
 
@@ -35,22 +46,28 @@ function getCornerClosestTo(corner, candidates){
 	return closest.coord;
 }
 
-function getExamplePattern(board, player){
-	if(player === null){
-		var patternPath = board.path("M28,66L0,50L0,16L28,0L56,16L56,50L28,66L28,100");
-		patternPath.attr({
-			stroke:"#fff629",
-			strokeWidth:2,
-			fill:"none"
-		});
-		var patternPath2 = board.path("M28,0L28,34L0,50L0,84L28,100L56,84L56,50L28,34");
-		patternPath2.attr({
-			stroke:"#ffe503",
-			strokeWidth:2,
-			fill:"none"
-		});
-		var patternGroup = board.g(patternPath, patternPath2);
-		var pattern = patternGroup.pattern(0,0,56, 100);
-		return pattern;
-	}
+function enlargeCard(card, dimensions){
+	card.image.attr({
+		width: dimensions.width*(3/2),
+		height: dimensions.height*(6/5)
+	});
+	card.border.attr({
+		width: dimensions.width*(3/2),
+		height: dimensions.height*(6/5)
+	});
+	card.parentGroup = card.parent();
+	card.parent().after(card);
 }
+
+function shrinkCard(card, dimensions){
+	card.image.attr({
+		width: dimensions.width,
+		height: dimensions.height
+	});
+	card.border.attr({
+		width: dimensions.width,
+		height: dimensions.height
+	});
+	card.parentGroup.append(card);
+}
+
