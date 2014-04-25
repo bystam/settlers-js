@@ -103,7 +103,7 @@ function drawPanelButtons(types){
 }
 //todo later...
 function postPlayerTrade(){
-	clearSelectedTradeResources();
+	// clearSelectedTradeResources();
 }
 
 function tradeWithStock(){
