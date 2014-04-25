@@ -16,33 +16,61 @@ function drawTradePanel (){
 }
 
 function drawPostTradeButtons(x, y){
-	// var stockTradeButtonShadow = canvas.rect(x, y+6, 70, 20);
-	// stockTradeButtonShadow.attr({fill:'pink', strokeWidth:2, stroke:'black'});
-	var stockTradeButton = canvas.rect(x, y, 70, 20);
-	stockTradeButton.attr({fill:'red', strokeWidth:2, stroke:'black'});
+	var chestUrl = getImageUrl('treasure');
+	var stockTradeButton = canvas.image(chestUrl, x, y, 70, 70);
+	setSepia(stockTradeButton, 1.0);
 	
 	stockTradeButton.enableTrade = function(){
-		drawFill(stockTradeButton, 'green');
-		stockTradeButton.unclick(null);
-		stockTradeButton.click(function(){
-			// stackTrace();
-			tradeWithStock();
-			stockTradeButton.animate({"x":x+3, "y":y+3}, 70, undefined, function(){
-				stockTradeButton.animate({"x":x, "y":y}, 70, undefined, function(){});
-			});
+		setSepia(stockTradeButton, 0.0);
+		removeMouseHandlers(stockTradeButton);
+		//havent decided what feels best, regular clickhandler or responsive?
+		stockTradeButton.mousedown(function(){
+			stockTradeButton.animate({"x":x+3, "y":y+3}, 70, undefined, function(){});
 		});
+		stockTradeButton.mouseup(function(){
+			tradeWithStock();
+			stockTradeButton.animate({"x":x, "y":y}, 70, undefined, function(){});
+		});
+		stockTradeButton.mouseout(function(){
+			stockTradeButton.animate({"x":x, "y":y}, 70, undefined, function(){});
+		})
+		// stockTradeButton.click(function(){
+		// 	tradeWithStock();
+		// 	stockTradeButton.animate({"x":x+3, "y":y+3}, 70, undefined, function(){
+		// 		stockTradeButton.animate({"x":x, "y":y}, 70, undefined, function(){});
+		// 	});
+		// });
 	}
 	stockTradeButton.disableTrade = function(){
-		drawFill(stockTradeButton, 'red');
-		stockTradeButton.unclick(null);
+		setSepia(stockTradeButton, 1.0);
+		removeMouseHandlers(stockTradeButton);
 	}
 	tradePanel.stockTradeButton = stockTradeButton;
 
-	var playerTradeButton = canvas.rect(x+75, y, 70, 20);
-	playerTradeButton.attr({fill:'transparent', strokeWidth:2, stroke:'black'});
-	playerTradeButton.click(function(){
+	var playerTradeIconUrl = getImageUrl('bystam');
+	var playerTradeButton = canvas.image(playerTradeIconUrl, x+75, y, 70, 70);
+	setSepia(playerTradeButton, 1.0);
+	var fiddy = true;
+	playerTradeButton.dblclick(function(){
+		if(fiddy)
+			setSepia(playerTradeButton, 0.0);
+		else
+			setSepia(playerTradeButton, 1.0);
+		var movementX = fiddy ? -1 : 1;
+		movementX *= getRandomInt(0,100);
+		var movementY = fiddy ? -1 : 1;
+		movementY *= getRandomInt(0,100);
+		playerTradeButton.animate({x:(x+75+movementX), y:y+movementY}, 4000, mina.elastic, function(){});
+		fiddy = !fiddy;
 		postPlayerTrade();
 	});
+	playerTradeButton.drag();
+}
+
+function removeMouseHandlers(button){
+	button.unclick(null);
+	button.unmousedown(null);
+	button.unmouseup(null);
 }
 
 function updateTradeButtons (){
@@ -60,8 +88,9 @@ function updateTradeButtons (){
 }
 
 function drawPanelButtons(types){
-	var originX = 350 - 35 -10;
-	var rect = {x:originX, y:5, width:35, height:45};
+	var buttonWidth = 60;
+	var originX = 350 - buttonWidth -10;
+	var rect = {x:originX, y:5, width:buttonWidth, height:60};
 	for (var i = 1; i <= types.length; i++) {
 		var type = types[i-1];
 		drawResourceButton(type, rect);
@@ -110,7 +139,7 @@ function drawResourceButton(type, resourceRect){
 		if(tradePanel.currentTrade.resourceTypes.length > 0)
 			clearSelectedTradeResources();
 		tradePanel.currentTrade.resourceTypes.push(type);
-		var border = canvas.rect(rect.x, rect.y, rect.width, rect.height,2,2);
+		var border = canvas.rect(rect.x, rect.y, rect.width, rect.height,6,6);
 		drawBorder(border, 'black', 2);
 		drawFill(border, 'transparent');
 		tradePanel.currentTrade.borders.push(border);
