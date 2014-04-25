@@ -11,7 +11,7 @@ function drawTradePanel (){
 		1, 6);
 	var resourceTypes = ['grain', 'wool', 'ore', 'brick', 'lumber'];
 	tradePanel.currentTrade = {resourceTypes:[], borders:[]};
-	drawPanelButtons(325, 8, resourceTypes);
+	drawPanelButtons(resourceTypes);
 	drawPostTradeButtons(350, 110);
 }
 
@@ -59,12 +59,17 @@ function updateTradeButtons (){
 		tradePanel.stockTradeButton.disableTrade();
 }
 
-function drawPanelButtons(x, y, types){
-	var rect = {x:x,y:y, width:18, height:18};
-	for (var i = types.length - 1; i >= 0; i--) {
-		var type = types[i];
+function drawPanelButtons(types){
+	var originX = 350 - 35 -10;
+	var rect = {x:originX, y:5, width:35, height:45};
+	for (var i = 1; i <= types.length; i++) {
+		var type = types[i-1];
 		drawResourceButton(type, rect);
-		rect.y = rect.y + rect.height + 4;
+		rect.x = rect.x - rect.width - 4;
+		if(i % 3 === 0){
+			rect.y = rect.y + rect.height + 4;
+			rect.x = originX;
+		}
 	};
 }
 //todo later...

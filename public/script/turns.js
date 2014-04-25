@@ -1,5 +1,4 @@
-var newTurnButton;
-var end;
+var newTurnButton, coloredUnderlay, dices;
 function createNewTurnButton(socket, middleX){
 	var buttonWidth = 100;
 	var buttonX = 60;
@@ -24,24 +23,85 @@ function createNewTurnButton(socket, middleX){
 			newTurnButton.animate({"x":buttonX, "y":buttonY}, 70, undefined, function(){});
 		});
 	});
-
-	
 }
 
-function displayNewTurn (dices, currentPlayer){
+function displayNewTurn (diceToDisplay, currentPlayer){
 	var boardWidth = parseInt(canvas.attr("width").substring(0, canvas.attr("width").length - 2));
 	var boardHeight = parseInt(canvas.attr("height").substring(0, canvas.attr("height").length - 2));
 	
 	var color = buildingColors[currentPlayer];
-	if(!end){
-		var overlay = canvas.circle(newTurnButton.x + (newTurnButton.width/2), newTurnButton.y+(newTurnButton.height/2), newTurnButton.width);
-		end = canvas.g(overlay);
-		end.attr({
+	if(!coloredUnderlay){
+		coloredUnderlay = canvas.circle(newTurnButton.x + (newTurnButton.width/2), newTurnButton.y+(newTurnButton.height/2), newTurnButton.width);
+		coloredUnderlay.attr({
 			fill:color,
 			opacity:0.3,
 		});
-		canvas.prepend(end);
+		canvas.prepend(coloredUnderlay);
 	}
-	end.animate({opacity:0.3, fill: color}, 2000, undefined, function(){
+	dices.setDice(diceToDisplay.first, diceToDisplay.second);
+	coloredUnderlay.animate({opacity:0.3, fill: color}, 2000, undefined, function(){
 	});
 }
+
+function drawDices(){
+	var dicePositions = {one:230, two:290}
+	dices = 
+	{
+		one:getDiceShape(dicePositions.one, 0), 
+		two:getDiceShape(dicePositions.two, 0)
+	};
+	dices.setDice = function(first, second){
+		dices.one.remove();
+		dices.two.remove();
+		dices.one = getDiceShape(dicePositions.one, first);
+		dices.two = getDiceShape(dicePositions.two, second);
+	}
+}
+
+function getDiceShape(x, number){
+	var wat = canvas.rect(x, 620, 50, 50, 5, 5);
+	drawFill(wat, 'white');
+	var dots = getDots(x, 620, 50, number);
+	return canvas.g(wat, dots);
+	// var dice = canvas.text(x, 650, ""+number);
+	// dice.attr({
+	// 	fontSize:'40'
+	// });
+	// return dice;
+}
+
+
+
+function getDots(x,y,width, number){
+	var radius = 6;
+	var xMargin = 8;
+	var yMargin = 8;
+	var dots = {
+		nw:function(){ return getDot(x+xMargin, y+yMargin, radius)},
+		sw:function(){ return getDot(x+xMargin, y-yMargin+width, radius)},
+		ne:function(){ return getDot(x-xMargin+width, y+yMargin, radius)},
+		se:function(){ return getDot(x-xMargin+width, y-yMargin+width, radius)},
+		w:function(){ return getDot(x+xMargin, y+(width/2), radius)},
+		e:function(){ return getDot(x-xMargin+width, y+(width/2), radius)},
+		mid:function(){ return getDot(x+(width/2), y+(width/2), radius)},
+	}
+	switch(number){
+		case 0: return canvas.g();
+		case 1: return canvas.g(dots.mid());
+		case 2: return canvas.g(dots.sw(), dots.ne());
+		case 3: return canvas.g(dots.nw(), dots.mid(), dots.se());
+		case 4: return canvas.g(dots.nw(), dots.sw(), dots.ne(), dots.se());
+		case 5: return canvas.g(dots.nw(), dots.sw(), dots.ne(), dots.se(), dots.mid());
+		case 6: return canvas.g(dots.nw(), dots.sw(), dots.ne(), dots.se(), dots.w(), dots.e());
+	}
+}
+
+function getDot(x, y, radius){
+	var dot = canvas.circle(x, y, radius);
+	var gradient = canvas.gradient("r(0.5, 0.5, 0.5)#fff-#000");
+	drawFill(dot, gradient);
+	return dot;
+}
+
+
+

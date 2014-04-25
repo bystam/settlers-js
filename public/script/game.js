@@ -48,7 +48,7 @@ function createEmptyBoard(game){
 	createNewTurnButton(socket, boardWidthInPixels/2);
 	setServerResponseHandlers (socket);
 	drawTradePanel();
-	// createDice()
+	drawDices();
 }
 
 function setServerResponseHandlers (socket){

@@ -24,12 +24,14 @@ function initializeStash (playerId, isLocalPlayer){
 
 function drawStashForPlayer(stash, playerId, isLocalPlayer){
 	//set distances and sizes of stash objects
-	var spaceBetweenPiles = isLocalPlayer ? 50 : 20;
+	var spaceBetweenPiles = isLocalPlayer ? 20 : 20;
 	var pileHeight = isLocalPlayer ? 50 : 20;
 	var pileWidth = isLocalPlayer ? 50 : 50;
 
 	var rect = {x:stashObjects[playerId].corner.x, y:stashObjects[playerId].corner.y, width: pileWidth, height:pileHeight};
 	drawRoadStash(stash.roads, rect, playerId);
+	pileWidth = 20;
+	rect.width = pileWidth;
 	rect.x = rect.x + pileWidth + spaceBetweenPiles;
 	drawSettlementStash(stash.settlements, rect, playerId);
 	rect.x = rect.x + pileWidth + spaceBetweenPiles;
