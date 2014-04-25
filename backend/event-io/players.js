@@ -22,4 +22,7 @@ exports.registerNewPlayer = function(socket, room, playerId) {
 	socket.broadcast.to(room).emit('new-player-joined', {playerId: playerId, stash: privateGameCopy.stashes[playerId]});
 
 	// TODO hantera recovery av spelare som disconnectat
+	socket.on('reload-stash', function () {
+		socket.emit('reload-stash', game.stashes[playerId]);
+	});
 }

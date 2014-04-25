@@ -19,11 +19,11 @@ exports.Rules.prototype = {
   constructor: exports.Rules,
 
   isPlayersTurn: function (playerId) {
-    return evaluateRule (common.isPlayersTurn, this.game, playerId, null);
+    return evaluateRule (common.playersTurnRule, this.game, playerId, null);
   },
 
   endTurnAllowed: function (playerId) {
-    return evaluateRule (common.endTurnAllowed, this.game, playerId, null);
+    return evaluateRule (common.endTurnAllowedRule, this.game, playerId, null);
   },
 
   roadBuildIsLegal: function (roadCoords, playerId) {
@@ -51,9 +51,18 @@ exports.Rules.prototype = {
     return evaluateRule (building.initialSettlementPlacementRule, this.game, playerId, data);
   },
 
+  hasInitialPlacementLeft: function(playerId) {
+    return evaluateRule(building.initialPlacementLeftRule, this.game, playerId, null);
+  },
+
   isValidKnightPlacement: function (hexCoords) {
     var data = { hexCoords: hexCoords };
-    return evaluateRule (buff.isValidKnightPlacement, this.game, playerId, data);
+    return evaluateRule (buff.validKnightPlacementRule, this.game, playerId, data);
+  },
+
+  canKnightStealFromPlayer: function (targetPlayer) {
+    var data = { targetPlayer: targetPlayer };
+    return evaluateRule (buff.knightStealFromPlayerRule, this.game, playerId, data);
   }
 };
 

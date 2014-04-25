@@ -32,16 +32,22 @@ exports.setupBuildingEvents = function(socket, room, playerId){
 
 function handleRoadBuilding (roadCoords, playerId, game) {
 	var rules = game.rules;
-	var buildIsLegal = rules.roadBuildIsLegal(roadCoords, playerId);
 	var cost = rules.costs.road;
-	if (game.queue.currentTurn === 1) {
+
+	var buildIsLegal = false;
+	if (game.isPrePhase ()) {
 		buildIsLegal = rules.initialRoadBuildIsLegal(roadCoords, playerId);
 		cost = rules.costs.free;
+	} else {
+		buildIsLegal = rules.roadBuildIsLegal(roadCoords, playerId);
 	}
 
 	if (buildIsLegal) {
 		placeRoad (roadCoords, playerId, game);
 		game.stashes[playerId].payCost (cost);
+
+		if (game.isPrePhase () && !rules.hasInitialPlacementLeft (playerId))
+			game.activeActions[playerId].end ('initial-placement');
 	}
 	return {playerId: playerId, coords: roadCoords,
 					allowed: buildIsLegal, cost: cost};
@@ -55,16 +61,22 @@ function placeRoad (coords, playerId, game){
 
 function handleSettlementBuilding (buildingCoords, playerId, game) {
 	var rules = game.rules;
-	var buildIsLegal = rules.settlementBuildIsLegal(buildingCoords, playerId);
 	var cost = rules.costs.settlement;
-	if (game.queue.currentTurn === 1) {
+
+	var buildIsLegal = false;
+	if (game.isPrePhase ()) {
 		buildIsLegal = rules.initialSettlementBuildIsLegal(buildingCoords, playerId);
 		cost = rules.costs.free;
+	} else {
+		buildIsLegal = rules.settlementBuildIsLegal(buildingCoords, playerId);
 	}
 
-	if(buildIsLegal) {
+	if (buildIsLegal) {
 		placeSettlement (buildingCoords, playerId, game);
 		game.stashes[playerId].payCost (cost);
+
+		if (game.isPrePhase () && !rules.hasInitialPlacementLeft (playerId))
+			game.activeActions[playerId].end ('initial-placement');
 	}
 	return {playerId:playerId, coords: buildingCoords,
 					allowed: buildIsLegal, cost: cost};
@@ -79,9 +91,10 @@ function placeSettlement (coords, playerId, game){
 
 function handleCityBuilding (buildingCoords, playerId, game) {
 	var rules = game.rules;
-	var buildIsLegal = rules.cityBuildIsLegal(buildingCoords, playerId);
 	var cost = rules.costs.city;
-	if (game.queue.currentTurn === 1) {
+
+	var buildIsLegal = rules.cityBuildIsLegal(buildingCoords, playerId);
+	if (game.isPrePhase ()) {
 		buildIsLegal = false; // TODO let it be separate rule chain? 
 	}
 

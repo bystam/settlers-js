@@ -27,12 +27,16 @@ exports.Game.prototype = {
 
 	privateCopyForPlayer: privateCopyForPlayer,
 
-	diceRoll: diceRoll
+	diceRoll: diceRoll,
+
+	isStarted : function () { return this.queue.currentTurn > 0 },
+	isPrePhase: function () { return this.queue.currentTurn === 1 }
 }
 
 function initPlayers(game) {
 	game.queue = new playerQueue.Queue();
 	game.players = game.queue.players;
+	game.queue.startGame(); // TODO remove when start game implemented
 
 	game.stashes = {};
 	game.activeActions = {};
@@ -75,13 +79,13 @@ function privateCopyForPlayer(playerId) {
 
 function hiddenify(stashes, playerId){
 	var hiddenifiedStash = {};
-	for(playerId in stashes){
+	for (playerId in stashes) {
 		var stash = stashes[playerId];
-		if(stash.playerId !== playerId)
+
+		if (stash.playerId !== playerId)
 			hiddenifiedStash[playerId] = stash.hiddenify();
 		else
 			hiddenifiedStash[playerId] = stash;
 	}
 	return hiddenifiedStash;
 }
-

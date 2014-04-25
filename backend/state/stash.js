@@ -39,6 +39,8 @@ exports.Stash.prototype = {
 
 	payCost: payCost,
 
+	stealRandom: stealRandom,
+
 	hiddenify: hiddenify
 }
 
@@ -53,6 +55,12 @@ function payCost (costs) {
 	for (type in this.resourcesDict)
 		for (var i = 0; i < costs[type]; i++)
 			this.removeResource (type);
+}
+
+function stealRandom () {
+	var resource = resources[Math.floor (Math.random () * resources.length)];
+	this.removeResource (resource);
+	return resource;
 }
 
 function hiddenify () {

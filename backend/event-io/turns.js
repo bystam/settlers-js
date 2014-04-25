@@ -21,10 +21,22 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 
 	socket.on('draw-resources', drawResources (socket, playerId, game));
 
-	socket.on('start-game', function(data) {
+	socket.on('start-game', startGame (socket, playerId, game));
+}
+
+function startGame (socket, playerId, game) {
+	return function () {
 		if (!gameIsFull(room))
-			return io.sockets.in(room).emit('need-more-players', {} );
-	});
+			return io.sockets.in(room).emit('start-game', { enoughPlayers: false } );
+
+		game.queue.startGame ();
+		game.players.forEach (function (playerId) {
+			game.activeActions[playerId].begin('initial-placement');
+		});
+
+		var startData = { currentPlayer: game.queue.getCurrentPlayer() };
+		io.sockets.in(game.room).emit('new-turn', startData);
+	}
 }
 
 function turnEnded (socket, playerId, game) {
@@ -32,13 +44,13 @@ function turnEnded (socket, playerId, game) {
 		if (!game.rules.endTurnAllowed (playerId))
 			return socket.emit('turn-ended', { success: false, error: 'active action chains' });
 
-		if(game.queue.currentTurn === 1){
+		if (game.isPrePhase ()) {
 			socket.emit('gain-stash', game.stashes[playerId]);
 			socket.broadcast.to(game.room).emit('gain-hidden-stash', game.stashes[playerId].hiddenify());
 		}
 
 		game.queue.changeTurn();
-		game.diceRoll();
+		game.diceRoll(); // TODO dice === 7 ?
 		var nextTurnData = { dices: game.lastDiceRoll,
 												 currentPlayer: game.queue.getCurrentPlayer() };
 		io.sockets.in(game.room).emit('new-turn', nextTurnData);

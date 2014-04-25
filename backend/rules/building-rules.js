@@ -5,7 +5,10 @@
 var common = require('./common-rules'),
     costs = require('./costs').costs;
 
-var isPlayersTurn = common.isPlayersTurn;
+var INITIAL_ROADS = 2;
+var INITIAL_SETTLEMENTS = 1;
+
+var isPlayersTurn = common.playersTurnRule;
 
 exports.initialRoadPlacementRule = [isPlayersTurn, 'AND',
                                    roadNotPresent, 'AND',
@@ -30,7 +33,7 @@ exports.roadBuildRule = [isPlayersTurn, 'AND',
                          roadConnectedToRoad];
 
 exports.settlementBuildRule = [isPlayersTurn, 'AND',
-                              buildingNotPresent, 'AND',
+                               buildingNotPresent, 'AND',
                                hasSettlementsLeft, 'AND',
                                canAffordSettlement, 'AND',
                                buildingConnectedToRoad, 'AND',
@@ -40,6 +43,8 @@ exports.citybuildRule = [isPlayersTurn, 'AND',
                          settlementOwned, 'AND',
                          hasCitiesLeft, 'AND',
                          canAffordCity];
+
+exports.initialPlacementLeftRule = [hasInitialRoadsLeft, 'OR', hasInitialSettlementsLeft];
 
 function isPlayersTurn (game, playerId, data) {
   return game.queue.getCurrentPlayer() === playerId;
@@ -59,7 +64,7 @@ function hasRoadsLeft (game, playerId, data) {
 }
 
 function hasInitialRoadsLeft (game, playerId, data) {
-  return game.roadsForPlayer[playerId].length < 2;
+  return game.roadsForPlayer[playerId].length < INITIAL_ROADS;
 }
 
 function roadConnectedToRoad (game, playerId, data) {
@@ -103,7 +108,7 @@ function hasSettlementsLeft (game, playerId, data) {
 }
 
 function hasInitialSettlementsLeft (game, playerId, data) {
-  return game.buildingsForPlayer[playerId].length < 1;
+  return game.buildingsForPlayer[playerId].length < INITIAL_SETTLEMENTS;
 }
 
 function noBuildingsTooClose (game, playerId, data) {

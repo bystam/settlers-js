@@ -22,6 +22,7 @@ exports.registerPlayerForTrades = function (socket, room, playerId) {
     if (stash.canAfford(tradeCost)) {
       success = true;
       stash.payCost(tradeCost);
+      stash.addResource(data.toResource);
       gained = [data.toResource];
     }
     socket.emit('stock-trade', { success: success, cost: tradeCost, gained: gained });

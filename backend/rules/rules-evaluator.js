@@ -8,8 +8,10 @@ function evaluateRule (node, game, playerId, data) {
   for (var i = 0; i < disjunctionGroups.length; i++) {
     var group = disjunctionGroups[i];
     var andResult = true;
+
     for (var k = 0; k < group.length; k++) {
       var element = group[k];
+
       if (typeof element === 'object') {
         andResult = andResult &&
                     evaluateRule (element, game, playerId, data);
@@ -31,6 +33,7 @@ function evaluateRule (node, game, playerId, data) {
 function getDisjunctionGroups(node) {
   var disjunctionGroups = [];
   var currentGroup = [];
+
   node.forEach(function (element, i) {
     if (element === 'OR') {
       disjunctionGroups.push(currentGroup);
