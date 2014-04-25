@@ -73,7 +73,7 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 		area.updateDimensions();
 	}
 
-	area.removeCards = function(cards, animate){
+	area.removeCards = function(cards, callback){
 		var toRemove = canvas.g();
 		var removingFromTradePanel = false;
 		var nonExistent = [];
@@ -84,12 +84,9 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 			else
 				nonExistent.push(card);
 		});
-		var time = animate ? 500 : 0;
-		toRemove.animate({opacity:0}, time, undefined, function(){
-			toRemove.remove();
-			area.reshuffle();
-		});
-		return nonExistent;
+		toRemove.remove();
+		area.reshuffle();
+		callback(nonExistent);
 	}
 
 	area.removeCard = function(card, reshuffle){

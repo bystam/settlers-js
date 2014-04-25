@@ -52,7 +52,8 @@ function updateTradeButtons (){
 	}
 
 	var resourceType = tradePanel.left.cards[0].cardType;
-	if(canStockTrade(resourceType))
+	if(canStockTrade(resourceType) && 
+		tradePanel.currentTrade.resourceTypes.length > 0)
 		tradePanel.stockTradeButton.enableTrade();
 	else
 		tradePanel.stockTradeButton.disableTrade();
@@ -68,7 +69,7 @@ function drawPanelButtons(x, y, types){
 }
 //todo later...
 function postPlayerTrade(){
-	clearTrade();
+	clearSelectedTradeResources();
 }
 
 function tradeWithStock(){
@@ -77,10 +78,8 @@ function tradeWithStock(){
 			fromResource:tradePanel.left.cards[0].cardType, 
 			toResource:tradePanel.currentTrade.resourceTypes[0]
 		}
-	console.log('sending...');
-	console.log(data);
 	socket.emit(serverCommands.stockTrade, data);
-	clearTrade();
+	clearSelectedTradeResources();
 }
 
 function performTrade (data){
@@ -90,7 +89,7 @@ function performTrade (data){
 }
 
 //todo
-function clearTrade(){
+function clearSelectedTradeResources(){
 	tradePanel.currentTrade.resourceTypes = [];
 	tradePanel.currentTrade.borders.forEach(function(border){
 		border.remove();
@@ -104,11 +103,13 @@ function drawResourceButton(type, resourceRect){
 	var image = canvas.image(imageUrl,rect.x, rect.y, rect.width, rect.height);
 	image.click(function(){
 		if(tradePanel.currentTrade.resourceTypes.length > 0)
-			return;
+			clearSelectedTradeResources();
 		tradePanel.currentTrade.resourceTypes.push(type);
 		var border = canvas.rect(rect.x, rect.y, rect.width, rect.height,2,2);
-		border.attr({fill:'transparent', strokeWidth:2, stroke:'black'});
+		drawBorder(border, 'black', 2);
+		drawFill(border, 'transparent');
 		tradePanel.currentTrade.borders.push(border);
+		updateTradeButtons();
 	});
 }
 
@@ -140,7 +141,7 @@ function tradeContainsOther(resource){
 }
 
 function removeFromTrade(resource){
-	tradePanel.left.removeCards([resource.cardType], false);
+	tradePanel.left.removeCards([resource.cardType], function(){});
 	addResources([resource.cardType], resource.playerId);
 	updateTradeButtons();
 }

@@ -10,9 +10,10 @@ function payResources(resources, playerId){
 }
 
 function payResourcesList(toRemove, playerId){
-	unremoved = stashObjects[playerId].resourceCards.removeCards(toRemove, false);
-	if(unremoved.length > 0)
-		tradePanel.left.removeCards(unremoved);
+	unremoved = stashObjects[playerId].resourceCards.removeCards(toRemove, function(unremoved){
+		if(unremoved.length > 0)
+			tradePanel.left.removeCards(unremoved);
+	});
 }
 
 function addResources(resources, playerId){
@@ -28,5 +29,5 @@ function tradeAwayResources(resources){
 		for(var i=0;i<amount;i++)
 			toRemove.push(""+resource);
 	}
-	tradePanel.left.removeCards(toRemove);
+	tradePanel.left.removeCards(toRemove, function(){});
 }

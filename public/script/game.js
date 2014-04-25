@@ -81,8 +81,6 @@ function setServerResponseHandlers (socket){
 		addResources(data.hidden, data.player);
 	});
 	socket.on(serverCommands.stockTrade, function(data){
-		console.log('recieving...');
-		console.log(data);
 		if(!data.success)
 			return;
 		performTrade(data);
