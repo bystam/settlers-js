@@ -1,21 +1,21 @@
 var roadLocations = {};
-function createRoadShapesFromMap (canvas, map){
+function createRoadShapesFromMap (map){
 	for(var row = 0;row<map.length;row++){
 		for(var column=0;column<map[0].length;column++){
 			var hexagon = map[row][column];
 			if(hexagon !== null && hexagon.type !== 'ocean')
-				createRoadShapesForHex (canvas, map, hexagon);
+				createRoadShapesForHex (map, hexagon);
 		}
 	}
 }
 
-function createRoadShapesForHex(canvas, map, hexagon){
+function createRoadShapesForHex(map, hexagon){
 	var corners = getHexCorners(hexagon.shape);
 	var neighbourList = getNeighbourListForHex(map, hexagon);
 	for(var i=0;i<6;i++){
 		var neighbour = neighbourList[i];
 		var roadCoords = getRoadCoords(hexagon, map[neighbour.row][neighbour.column], corners[i+1], corners[(i+2)%6]);
-		createRoadShape(canvas, [neighbour, hexagon], roadCoords);
+		createRoadShape([neighbour, hexagon], roadCoords);
 	}
 }
 
@@ -26,7 +26,7 @@ function getRoadCoords (from, to, firstCorner, secondCorner){
 	return [firstCorner, toFirst, toSecond, secondCorner];
 }
 
-function createRoadShape (canvas, hexes, coords){
+function createRoadShape (hexes, coords){
 	hexes.sort(function(a,b){	//ascending
 		if(a.row === b.row)
 			return a.column - b.column;
@@ -85,12 +85,6 @@ function getPositionOfRoadShape (road){
 	var roadXY = road.attr("d").split("L")[0];
 	roadXY = roadXY.substr(1, roadXY.length).split(",");
 	return {x:parseFloat(roadXY[0]), y:parseFloat(roadXY[1])};
-}
-
-function getRoadShape (canvas, coords, playerId, path){
-	var shape = canvas.circle(coords.x, coords.y, radius);
-	shape.attr(getCityGraphics(playerId));
-	return shape;
 }
 
 function placeRoad (coords, playerId){

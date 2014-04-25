@@ -1,4 +1,4 @@
-var socket, boardCanvas, game, localPlayerId;
+var socket, canvas, game, localPlayerId;
 
 var serverCommands = {
 	canBuildRoad:"build-road", canBuildSettlement:"build-settlement", canBuildCity:"build-city",
@@ -28,30 +28,30 @@ $(document).ready(function(){
 	})
 	socket.on("new-player-joined", function(data){
 		game.addPlayer(data.playerId);
-		initializeNewPlayer(boardCanvas, data.playerId, data.stash);
+		initializeNewPlayer(data.playerId, data.stash);
 	});
 });
 
 function createEmptyBoard(game){
-	boardCanvas = Snap("#board");
-	var boardWidthInPixels = boardCanvas.attr("width");
+	canvas = Snap("#board");
+	var boardWidthInPixels = canvas.attr("width");
 	var boardWidthInPixels = parseInt(boardWidthInPixels.substring(0, boardWidthInPixels.length - 2));
-	createHexShapesFromMap(boardCanvas, game.board.map, boardWidthInPixels);
-	createRoadShapesFromMap(boardCanvas, game.board.map);
-	createCityShapesFromMap(boardCanvas, game.board.map);
+	createHexShapesFromMap(game.board.map, boardWidthInPixels);
+	createRoadShapesFromMap(game.board.map);
+	createCityShapesFromMap(game.board.map);
 
 	//delete later, draw stashes when ending first turn...
 	game.players.forEach(function(playerId){
-		initializeNewPlayer(boardCanvas, playerId, game.stashes[playerId]);
+		initializeNewPlayer(playerId, game.stashes[playerId]);
 	});
 	///////////
-	createNewTurnButton(socket, boardCanvas, boardWidthInPixels/2);
-	setServerResponseHandlers (socket, boardCanvas);
-	drawTradePanel(boardCanvas);
+	createNewTurnButton(socket, boardWidthInPixels/2);
+	setServerResponseHandlers (socket);
+	drawTradePanel();
 	// createDice()
 }
 
-function setServerResponseHandlers (socket, canvas){
+function setServerResponseHandlers (socket){
 	socket.on(serverCommands.canBuildRoad, function(data){
 		if(data.allowed){
 			placeRoadWithAnimation(JSON.stringify(data.coords), data.playerId);
@@ -60,18 +60,18 @@ function setServerResponseHandlers (socket, canvas){
 	});
 	socket.on(serverCommands.canBuildSettlement, function(data){
 		if(data.allowed){
-			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, boardCanvas, false);
+			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, false);
 			removeResources(data.cost, data.playerId);
 		}
 	});
 	socket.on(serverCommands.canBuildCity, function(data){
 		if(data.allowed){
-			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, boardCanvas, true);
+			placeCityWithAnimation(JSON.stringify(data.coords), data.playerId, true);
 			removeResources(data.cost, data.playerId);
 		}
 	});
 	socket.on(serverCommands.newTurn, function(data){
-		displayNewTurn(canvas, data.dices, data.currentPlayer);
+		displayNewTurn(data.dices, data.currentPlayer);
 		socket.emit(serverCommands.drawResource, {}); //maybe save this call for after dices are rolled
 	});
 	socket.on(serverCommands.gainResources, function(data){

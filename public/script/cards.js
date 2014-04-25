@@ -2,12 +2,58 @@
 /*works for now, but could use refactoring.
 
 */
-function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlayer, areaBelow, maxRows, maxColumns){
+
+/*
+How things *should* work:
+
+Stash - responsible for creating new cards and keeping track
+of total inventory. Needs to know which cards are up for trade.
+
+methods:
+CreateCard(type)
+payCards(type[])
+tradeAwayCards(type[])
+
+CardBox - responsible for updating position of cards inside it
+3 cardboxes - tradePanel, resource cards and dev cards
+
+methods:
+addCard(shape){
+	shape.attr(x,y) (kanske animera...)
+}
+removeCard(type){
+	ta bort firsta besta av samma typ
+}
+
+
+*/
+
+
+function CardBox(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRows, maxColumns){
+	this.cards = [];
+	this.corner = {x:cornerX, y:cornerY};
+	this.startCorner:{x:cornerX, y:cornerY};
 	var area = {cards:[], shapeGroup:canvas.g(), corner:{x:cornerX, y:cornerY}, startCorner:{x:cornerX, y:cornerY}};
 	if(!areaBelow)
 		areaBelow = {setYPosition:function(){}};
 	area.maxRows = isLocalPlayer ? maxRows : 1;
 	area.maxColumns = maxColumns;
+	var cardWidth = 50;
+	var cardHeight = cardWidth * (4/3);
+	var dimensions = {width:cardWidth, height:cardHeight};
+	var xJump = cardWidth - 15;
+	var yJump = isLocalPlayer ? cardHeight + 20 : cardHeight + 5;
+}
+
+
+
+function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRows, maxColumns){
+	var area = {cards:[], shapeGroup:canvas.g(), corner:{x:cornerX, y:cornerY}, startCorner:{x:cornerX, y:cornerY}};
+	if(!areaBelow)
+		areaBelow = {setYPosition:function(){}};
+	area.maxRows = isLocalPlayer ? maxRows : 1;
+	area.maxColumns = maxColumns;
+	var cardWidth = 50;
 	var cardHeight = cardWidth * (4/3);
 	var dimensions = {width:cardWidth, height:cardHeight};
 	var xJump = cardWidth - 15;
@@ -24,7 +70,7 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 
 	area.createCardOfType = function(type, clickFunction){
 		var shape = getShape(
-			canvas, dimensions, stashObjectTypes.card, 
+			dimensions, stashObjectTypes.card, 
 			playerId, isLocalPlayer, {cardType:type, clickFunction:clickFunction});
 		shape.clickFunction = clickFunction;
 		area.addCard(shape);
@@ -106,13 +152,11 @@ function getCardArea(canvas, cornerX, cornerY, cardWidth, playerId, isLocalPlaye
 	return area;
 }
 
-
-
-function getCardShape (canvas, dimensions, playerId, isLocalPlayer, params){
+function getCardShape (dimensions, playerId, isLocalPlayer, params){
 	var imageUrl = getImageUrl(params.cardType);
 	var image = canvas.image(imageUrl,dimensions.x, dimensions.y, dimensions.width, dimensions.height);
-	setSepia(canvas, image, 0.5);
-	
+	setSepia(image, 0.5);
+
 	var border = canvas.rect(dimensions.x, dimensions.y, dimensions.width, dimensions.height, 10, 10);
 	drawBorder(border, buildingColors[playerId], 2);
 	drawFill(border, 'transparent');

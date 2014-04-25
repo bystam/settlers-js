@@ -1,5 +1,5 @@
 var tradePanel;
-function drawTradePanel (canvas){
+function drawTradePanel (){
 	tradePanel = canvas.rect(350,5,480,100, 10, 10);
 	tradePanel.attr({
 		fill:'transparent',
@@ -7,17 +7,16 @@ function drawTradePanel (canvas){
 		strokeWidth:3
 	});
 	var left = getCardArea(
-		canvas, 370, 20, 50, 
-		localPlayerId, true, undefined,
+		370, 20, localPlayerId, true, undefined,
 		1, 6);
 	tradePanel.left = left;
 	var resourceTypes = ['grain', 'wool', 'ore', 'brick', 'lumber'];
 	tradePanel.currentTrade = {resourceTypes:[], borders:[]};
-	drawPanelButtons(canvas, 325, 8, resourceTypes);
-	drawPostTradeButtons(canvas, 350, 110);
+	drawPanelButtons(325, 8, resourceTypes);
+	drawPostTradeButtons(350, 110);
 }
 
-function drawPostTradeButtons(canvas, x, y){
+function drawPostTradeButtons(x, y){
 	// var stockTradeButtonShadow = canvas.rect(x, y+6, 70, 20);
 	// stockTradeButtonShadow.attr({fill:'pink', strokeWidth:2, stroke:'black'});
 	var stockTradeButton = canvas.rect(x, y, 70, 20);
@@ -45,11 +44,11 @@ function drawPostTradeButtons(canvas, x, y){
 	});
 }
 
-function drawPanelButtons(canvas, x, y, types){
+function drawPanelButtons(x, y, types){
 	var rect = {x:x,y:y, width:18, height:18};
 	for (var i = types.length - 1; i >= 0; i--) {
 		var type = types[i];
-		drawResourceButton(canvas, type, rect);
+		drawResourceButton(type, rect);
 		rect.y = rect.y + rect.height + 4;
 	};
 }
@@ -76,7 +75,7 @@ function clearTrade(){
 	tradePanel.currentTrade.borders = [];
 }
 
-function drawResourceButton(canvas, type, resourceRect){
+function drawResourceButton(type, resourceRect){
 	var rect = {x:resourceRect.x, y:resourceRect.y, width:resourceRect.width, height:resourceRect.height};
 	var imageUrl = '../img/'+type+'.png';
 	var image = canvas.image(imageUrl,rect.x, rect.y, rect.width, rect.height);

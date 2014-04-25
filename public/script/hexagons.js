@@ -1,6 +1,6 @@
 var colors = {'ocean':'transparent', 'field':'#FFE658', 'forest':'#126B32', 'pasture':'#6DD572', 'mountain':'#5E707A', 'hill':'#E03634', 'desert':'#D5CC6A'};
 //sepia water: #4a46dc
-function createHexShapesFromMap(canvas, map, pixelWidth){
+function createHexShapesFromMap(map, pixelWidth){
 	var gridWidth = map[0].length;
 	var hexRadius = ((pixelWidth-400) / gridWidth) / 2;
 	//we sort of control road width & height with these
@@ -17,7 +17,7 @@ function createHexShapesFromMap(canvas, map, pixelWidth){
 		for(var column=0;column<gridWidth;column++){
 			var hexagon = map[row][column];
 				if(hexagon !== null && hexagon.type !== 'ocean')
-					createHexBackground(canvas, xcoord, ycoord, hexRadius);
+					createHexBackground(xcoord, ycoord, hexRadius);
 			xcoord += xJump;
 		}
 		xcoord = 250;
@@ -32,9 +32,9 @@ function createHexShapesFromMap(canvas, map, pixelWidth){
 			var hexagon = map[row][column];
 			if(hexagon !== null){
 				var color = colors[hexagon.type];
-				hexagon.shape = createHexShape(canvas, xcoord, ycoord, color, hexRadius);
+				hexagon.shape = createHexShape(xcoord, ycoord, color, hexRadius);
 				if(hexagon.token !== undefined && hexagon.token.value !== null)
-					drawNumberOnHex (canvas, xcoord+hexRadius, ycoord + hexRadius, hexagon.token.value);
+					drawNumberOnHex (xcoord+hexRadius, ycoord + hexRadius, hexagon.token.value);
 				hexagon.row = row;
 				hexagon.column = column;
 				// debug corner indices
@@ -52,7 +52,7 @@ function createHexShapesFromMap(canvas, map, pixelWidth){
 	}
 }
 
-function drawNumberOnHex(canvas, xcoord, ycoord, value){
+function drawNumberOnHex(xcoord, ycoord, value){
 	var textXOffset = value > 9 ? 14 : 7;
 	var text = canvas.text(xcoord-textXOffset, ycoord, ""+value);//game.board.hexes[index].token.value
 	text.attr({
@@ -62,7 +62,7 @@ function drawNumberOnHex(canvas, xcoord, ycoord, value){
 	});
 }
 
-function createHexShape (canvas, x, y, color, radius){
+function createHexShape (x, y, color, radius){
 	var isOcean = color === colors['ocean'];
 	var filter = canvas.filter(Snap.filter.sepia(0.4));
 	var border = isOcean ? 0 : 0;
@@ -77,7 +77,7 @@ function createHexShape (canvas, x, y, color, radius){
 	return hexShape;
 }
 
-function createHexBackground(canvas, x, y, radius){
+function createHexBackground(x, y, radius){
 	var size = 15;
 	var hexShapeBackground = canvas.hex(radius+size, a = 0, roundness = 0, originCenter = false, x-size, y-size);
 	var backgroundFilter = canvas.filter(Snap.filter.blur(20,20));

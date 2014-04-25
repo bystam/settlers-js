@@ -1,6 +1,6 @@
 var newTurnButton;
 var end;
-function createNewTurnButton(socket, canvas, middleX){
+function createNewTurnButton(socket, middleX){
 	var buttonWidth = 100;
 	var buttonX = 60;
 	var buttonY = 600;
@@ -28,7 +28,7 @@ function createNewTurnButton(socket, canvas, middleX){
 	
 }
 
-function displayNewTurn (canvas, dices, currentPlayer){
+function displayNewTurn (dices, currentPlayer){
 	var boardWidth = parseInt(canvas.attr("width").substring(0, canvas.attr("width").length - 2));
 	var boardHeight = parseInt(canvas.attr("height").substring(0, canvas.attr("height").length - 2));
 	

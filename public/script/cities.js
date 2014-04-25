@@ -1,17 +1,15 @@
 var cityLocations = {};
-var debugC;
-function createCityShapesFromMap(canvas, map){
-	debugC = canvas;
+function createCityShapesFromMap(map){
 	for(var row = 0; row < map.length; row++){
 		for(var column=0; column < map[0].length; column++){
 			var hexagon = map[row][column];
 			if(hexagon !== null && hexagon.type !== 'ocean')
-				createCityShapesForHex (canvas, map, hexagon);
+				createCityShapesForHex (map, hexagon);
 		}
 	}
 }
 
-function createCityShapesForHex(canvas, map, hexagon){
+function createCityShapesForHex(map, hexagon){
 	var corners = getHexCorners(hexagon.shape);
 	var neighbourList = getNeighbourListForHex(map, hexagon);
 	for(var i=0;i<6;i++){
@@ -23,7 +21,7 @@ function createCityShapesForHex(canvas, map, hexagon){
 				map[neighbours[1].row][neighbours[1].column],
 				map[neighbours[2].row][neighbours[2].column]
 			]);
-		createCityShape(canvas, neighbours, cityCoords);
+		createCityShape(neighbours, cityCoords);
 	}
 }
 
@@ -38,7 +36,7 @@ function findMiddle(a, b, c){
 	return {x:(a.x+(2/3*(bcMidpoint.x-a.x))), y:(a.y+(2/3*(bcMidpoint.y-a.y)))};
 }
 
-function createCityShape (canvas, hexes, coords){
+function createCityShape (hexes, coords){
 	var radius = 7;
 	hexes.sort(function(a,b){	//ascending
 		if(a.row === b.row)
@@ -51,14 +49,14 @@ function createCityShape (canvas, hexes, coords){
 	var cityKey = JSON.stringify(cityNeighbours);
 	if(cityLocations[cityKey] !== undefined)//prevent doublettes
 		return;
-	var city = getSettlementShape(canvas, coords, null);
+	var city = getSettlementShape(coords, null);
 
 	cityLocations[cityKey] = city;
 	city.click(function(){
 		socket.emit(serverCommands.canBuildSettlement, cityNeighbours);
 	});
 	city.hover(function(){
-		//only do local check on hover
+		//TODO: This currently doesnt work properly, it is prone to get stuck
 		var color = buildingColors[localPlayerId];
 		city.originalStroke = city.attr("stroke");
 		city.originalStrokeWidth = city.attr("strokeWidth");
@@ -79,7 +77,7 @@ function canPlaceCity(key){
 	return true;
 }
 
-function placeCityWithAnimation (coords, playerId, canvas, isCity){
+function placeCityWithAnimation (coords, playerId, isCity){
 	var city = cityLocations[coords];
 	if(isCity){
 		city.unclick(null);
@@ -87,15 +85,15 @@ function placeCityWithAnimation (coords, playerId, canvas, isCity){
 	}
 	var stashCity = isCity ? stashObjects[playerId].cities.shift() : stashObjects[playerId].settlements.shift();
 	stashCity.animate({cx:city.attr("cx"), cy:city.attr("cy")}, 1000, mina.bounce, function(){
-		placeCity(coords, playerId, isCity, canvas);
+		placeCity(coords, playerId, isCity);
 		stashCity.remove();
 	});
 }
 
-function placeCity(coords, playerId, isCity, canvas){
+function placeCity(coords, playerId, isCity){
 	var city = cityLocations[coords];
 	if(isCity){
-		var newShape = getCityShape(canvas, {x:city.attr("cx"), y:city.attr("cy")}, playerId);
+		var newShape = getCityShape({x:city.attr("cx"), y:city.attr("cy")}, playerId);
 		city.remove();
 		cityLocations[coords] = newShape;
 	} else{
@@ -107,15 +105,15 @@ function placeCity(coords, playerId, isCity, canvas){
 	}
 }
 
-function getSettlementShape (canvas, coords, playerId){
-	return getIntersectionShape(canvas, coords, playerId, 10);
+function getSettlementShape (coords, playerId){
+	return getIntersectionShape(coords, playerId, 10);
 }
 
-function getCityShape (canvas, coords, playerId){
-	return getIntersectionShape(canvas, coords, playerId, 13);
+function getCityShape (coords, playerId){
+	return getIntersectionShape(coords, playerId, 13);
 }
 
-function getIntersectionShape (canvas, coords, playerId, radius){
+function getIntersectionShape (coords, playerId, radius){
 	var shape = canvas.circle(coords.x, coords.y, radius);
 	shape.attr(getCityGraphics(playerId));
 	return shape;

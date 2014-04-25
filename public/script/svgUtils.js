@@ -23,7 +23,7 @@ function fadeoutAndRemove(element){
 	});
 }
 
-function setSepia(canvas, element, amount){
+function setSepia(element, amount){
 	var filter = canvas.filter(Snap.filter.sepia(amount));
 	element.attr({
 		filter:filter
