@@ -88,7 +88,5 @@ function getShape (coords, type, playerId, isLocalPlayer, params){
 		return getSettlementShape(coords, playerId);
 	if(type === stashObjectTypes.city)
 		return getCityShape(coords, playerId);
-	if(type === stashObjectTypes.card){
-		return getCardShape(coords, playerId, isLocalPlayer, params);
 	}
 }

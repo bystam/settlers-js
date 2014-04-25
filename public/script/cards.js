@@ -1,30 +1,13 @@
 
-/*works for now, but could use refactoring.
-
-*/
-
 /*
-How things *should* work:
+Card area
+Is responsible for keeping track of and reshuffling (when neccessary) cards
+that are created inside it. Moving cards around, for example from the trade
+panel to the stash area, is done by removing the cards at the origin
+and adding them at the destination.
 
-Stash - responsible for creating new cards and keeping track
-of total inventory. Needs to know which cards are up for trade.
-
-methods:
-CreateCard(type)
-payCards(type[])
-tradeAwayCards(type[])
-
-CardBox - responsible for updating position of cards inside it
-3 cardboxes - tradePanel, resource cards and dev cards
-
-methods:
-addCard(shape){
-	shape.attr(x,y) (kanske animera...)
-}
-removeCard(type){
-	ta bort firsta besta av samma typ
-}
-
+This means that we can't control exactly which shape is moved, but also
+means we don't need to keep track of individual shapes, only their types.
 
 */
 
@@ -41,6 +24,7 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 	var xJump = cardWidth - 15;
 	var yJump = isLocalPlayer ? cardHeight + 20 : cardHeight + 5;
 
+	//Place the given shape in this areas array
 	area.addCard = function(cardShape){
 		if(area.position.row >= area.maxRows){
 			return;
@@ -49,21 +33,22 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 		area.cards.push(cardShape);
 		area.shapeGroup.add(cardShape);
 	}
-
+	//create a card of a given type, with an optional function when clicked,
+	//and add it to this area
 	area.createCardOfType = function(type, clickFunction){
-		var shape = getShape(
-			dimensions, stashObjectTypes.card, 
-			playerId, isLocalPlayer, {cardType:type, clickFunction:clickFunction});
+		var shape = getCardShape(
+			dimensions, playerId, 
+			isLocalPlayer, type, clickFunction});
 		area.addCard(shape);
 		return shape;
 	}
-
+	//Update where this area will put the next card added to it
 	area.updateDimensions = function (){
 		dimensions.x = area.corner.x + (area.position.column-1)*xJump;
 		dimensions.y = area.corner.y + area.position.row*yJump;
 		areaBelow.setYPosition (dimensions.y + yJump);
 	}
-
+	//Update which row/column this area will put the next card added to it
 	area.updatePosition = function(){
 		if(area.position.column % area.maxColumns == 0){
 			area.position.row++;
@@ -72,24 +57,27 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 		area.position.column++;
 		area.updateDimensions();
 	}
-
+	//Remove the cards, specified as card types ("names")by the cards array
+	//the callback is executed with an array containing the cards which
+	//were specified for removal, but could not be found in this area (if any)
 	area.removeCards = function(cards, callback){
 		var toRemove = canvas.g();
 		var removingFromTradePanel = false;
-		var nonExistent = [];
+		var nonexistent = [];
 		cards.forEach(function (card){
 			var cardToRemove = area.removeCard(card);
 			if(cardToRemove)
 				toRemove.add(cardToRemove);
 			else
-				nonExistent.push(card);
+				nonexistent.push(card);
 		});
 		toRemove.remove();
 		area.reshuffle();
-		callback(nonExistent);
+		callback(nonexistent);
 	}
-
-	area.removeCard = function(card, reshuffle){
+	//remove a specific card form this areas array
+	//(only for internal use)
+	area.removeCard = function(card){
 		for(var i=area.cards.length-1;i>=0;i--){
 			if(area.cards[i].cardType == card){
 				var toRemove = area.cards[i];
@@ -98,6 +86,7 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 			}
 		}
 	}
+	//reshuffle the cards in this area
 	area.reshuffle = function (){
 		area.reset();
 		area.cards.forEach(function(card){
@@ -106,7 +95,8 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 			area.updatePosition();
 		});
 	}
-
+	//reset the position of the current card pointer (where to put the next
+	//added card)
 	area.reset = function (){
 		area.position = {row:0, column:1};
 		area.corner = {x:area.startCorner.x, y:area.startCorner.y};
@@ -114,6 +104,8 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 		areaBelow.setYPosition(cornerY);
 	}
 
+	//Move the starting point of this area to the given y position
+	//Used for moving down an area below another area when it grows
 	area.setYPosition = function (yPos){
 		if(area.startCorner.y != yPos){
 			area.startCorner.y = yPos;
@@ -124,8 +116,8 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 	return area;
 }
 
-function getCardShape (dimensions, playerId, isLocalPlayer, params){
-	var imageUrl = getImageUrl(params.cardType);
+function getCardShape (dimensions, playerId, isLocalPlayer, type, clickFunction){
+	var imageUrl = getImageUrl(type);
 	var image = canvas.image(imageUrl,dimensions.x, dimensions.y, dimensions.width, dimensions.height);
 	setSepia(image, 0.5);
 
@@ -136,7 +128,7 @@ function getCardShape (dimensions, playerId, isLocalPlayer, params){
 	var card = canvas.g(image, border);
 	card.image = image;
 	card.border = border;
-	card.cardType = params.cardType;
+	card.cardType = type;
 	card.playerId = playerId;
 	if(isLocalPlayer){
 		card.hover(function (){
@@ -145,10 +137,9 @@ function getCardShape (dimensions, playerId, isLocalPlayer, params){
 			shrinkCard(card, dimensions);
 		})
 	}
-	if(!params.clickFunction)
-		params.clickFunction = function(){ addToTrade(card)};
-	card.click(function(){
-		params.clickFunction(card);
-	});
+	var click = function(){ addToTrade(card)};
+	if(clickFunction)
+		click = function(){clickFunction(card)};
+	card.click(click);
 	return card;
 }
