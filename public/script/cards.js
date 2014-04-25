@@ -38,7 +38,7 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 	area.createCardOfType = function(type, clickFunction){
 		var shape = getCardShape(
 			dimensions, playerId, 
-			isLocalPlayer, type, clickFunction});
+			isLocalPlayer, type, clickFunction);
 		area.addCard(shape);
 		return shape;
 	}
