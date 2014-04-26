@@ -81,7 +81,7 @@ function setServerResponseHandlers (socket){
 
 	socket.on(serverCommands.startGame, function(data){
 		if(!data.enoughPlayers)
-			alert("YOU WANT TO TELL THE USER THERES NOT ENOUGHT PLAYERS");
+			console.log("YOU WANT TO TELL THE USER THERE'S NOT ENOUGH PLAYERS");
 	});
 	socket.on(serverCommands.gainResources, function(data){
 		addResources(data.resources, localPlayerId);
