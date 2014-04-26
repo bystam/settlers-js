@@ -13,29 +13,26 @@ exports.Stash = function(playerId) {
 	this.cities = 4;
 	this.settlements = 5;
 	this.roads = 15;
-	this.resources = [];
-	this.resourcesDict = { grain: 0, lumber: 0, wool: 0, ore: 0, brick: 0 };
+	this.resources = {
+		grain: 0, lumber: 0, wool: 0, ore: 0, brick: 0,
+		total: function () { return this.grain + this.lumber + this.wool + this.ore + this.brick; }
+	};
 }
 
 exports.Stash.prototype = {
 	constructor: exports.Stash,
 
 	addResource: function(resource) {
-		this.resources.push(resource);
-		this.resourcesDict[resource]++;
+		this.resources[resource]++;
 	},
 
 	removeResource: function(resource) {
-		this.resourcesDict[resource]--;
-		for (var i = 0; i < this.resources.length; i++){
-			if (this.resources[i].type === resource){
-				this.resources.splice(i, 1);
-				return;
-			}
-		}
+		this.resources[resource]--;
 	},
 
 	canAfford: canAfford,
+
+	addAll: addAll,
 
 	payCost: payCost,
 
@@ -46,13 +43,19 @@ exports.Stash.prototype = {
 
 function canAfford (costs) {
 	for (type in costs)
-		if (this.resourcesDict[type] < costs[type])
+		if (this.resources[type] < costs[type])
 			return false;
 	return true;
 }
 
+function addAll (resources) {
+	for (type in this.resources)
+		for (var i = 0; i < resources[type]; i++)
+			this.addResource (type);
+}
+
 function payCost (costs) {
-	for (type in this.resourcesDict)
+	for (type in this.resources)
 		for (var i = 0; i < costs[type]; i++)
 			this.removeResource (type);
 }
@@ -69,11 +72,8 @@ function hiddenify () {
 		cities: this.cities,
 		settlements: this.settlements,
 		roads: this.roads,
-		resources: []};
+		resources: { hidden: this.resources.total() } };
 
-	this.resources.forEach(function(resource){
-		hiddenCopy.resources.push('hidden');
-	});
 	return hiddenCopy;
 }
 

@@ -23,7 +23,8 @@ exports.registerPlayerForTrades = function (socket, room, playerId) {
       success = true;
       stash.payCost(tradeCost);
       stash.addResource(data.toResource);
-      gained = [data.toResource];
+      gained = {};
+      gained[data.toResource] = 1;
     }
     socket.emit('stock-trade', { success: success, cost: tradeCost, gained: gained });
   });

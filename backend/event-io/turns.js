@@ -47,9 +47,8 @@ function turnEnded (socket, playerId, game) {
 		if (game.isPrePhase ()) {
 			var stash = game.stashes[playerId];
 			addInitialResources(playerId, stash, game);
-			console.log(stash);
-			socket.emit('gain-stash', game.stashes[playerId]);
-			socket.broadcast.to(game.room).emit('gain-hidden-stash', game.stashes[playerId].hiddenify());
+			socket.emit('gain-stash', stash);
+			socket.broadcast.to(game.room).emit('gain-hidden-stash', stash.hiddenify());
 		}
 
 		game.queue.changeTurn();
@@ -67,7 +66,6 @@ function addInitialResources(playerId, stash, game) {
 		throw "Intitial settlement amount is wrong"
 
 	var building = game.buildingsForPlayer[playerId][0];
-
 	building.forEach (function (surroundingHex) {
 		var hex = game.board.map[surroundingHex.row][surroundingHex.col];
 		if (hex.resource)
@@ -82,17 +80,17 @@ function drawResources (socket, playerId, game) {
 		var diceSum = game.lastDiceRoll.sum();
 		var hexesWithDiceSum = game.board.getNonBlockedHexesWithToken (diceSum);
 
-		var resources = [];
+		var resources = {};
 		hexesWithDiceSum.forEach (seekHexForResource (playerId, game.board, resources));
 		
-		var hidden = [];
-		resources.forEach (function (resource) {
-			game.stashes[playerId].addResource (resource);
-			hidden.push('hidden');
-		});
-
+		var stash = game.stashes[playerId];
+		stash.addAll(resources);
 		socket.emit('gain-resources', { resources: resources });
-		socket.broadcast.to(game.room).emit('gain-hidden', { player: playerId, hidden: hidden });
+
+		var total = 0;
+		for (resource in resources)
+			total += resources[resource];
+		socket.broadcast.to(game.room).emit('gain-hidden', { player: playerId, resources: { hidden: total } });
 	};
 }
 
@@ -109,8 +107,7 @@ function seekHexForResource(playerId, board, resources) {
 			if (building.type === null || building.occupyingPlayerId !== playerId)
 				return;
 
-			for (var amount = 0; amount < buildingValues[building.type]; amount++)
-				resources.push(hexGeneratingResource.resource);
+			resources[hexGeneratingResource.resource] = buildingValues[building.type];
 		});
 	}
 }
