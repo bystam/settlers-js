@@ -87,7 +87,10 @@ function drawResources (socket, playerId, game) {
 		stash.addAll(resources);
 		socket.emit('gain-resources', { resources: resources });
 
-		socket.broadcast.to(game.room).emit('gain-hidden', { player: playerId, resources: { hidden: resources.total() } });
+		var total = 0;
+		for (resource in resources)
+			total += resources[resource];
+		socket.broadcast.to(game.room).emit('gain-hidden', { player: playerId, resources: { hidden: total } });
 	};
 }
 
@@ -97,13 +100,6 @@ function enoughPlayers (room) {
 }
 
 function seekHexForResource(playerId, board, resources) {
-	resources.total = function () {
-		var total = 0;
-		for (resource in resources)
-			total += resources[resource];
-		return total;
-	}
-
 	return function (hexGeneratingResource) {
 		var surroundingBuildings = board.getBuildingsForHex(hexGeneratingResource);
 
