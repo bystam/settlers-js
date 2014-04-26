@@ -90,7 +90,7 @@ function setServerResponseHandlers (socket){
 		addResources(data.resources, localPlayerId);
 	});
 	socket.on(serverCommands.gainHiddenResources, function(data){
-		addResources(data.hidden, data.player);
+		addResources(data.resources, data.player);
 	});
 	socket.on(serverCommands.stockTrade, function(data){
 		if(!data.success)
