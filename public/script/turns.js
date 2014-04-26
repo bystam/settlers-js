@@ -42,8 +42,10 @@ function displayNewTurn (diceToDisplay, currentPlayer){
 		});
 		canvas.prepend(coloredUnderlay);
 	}
-	coloredUnderlay.animate({opacity:0.3, fill: color}, 2000, mina.linear, function(){
-	});
+	coloredUnderlay.attr({fill:color});
+	coloredUnderlay.animate({r:(newTurnButton.width*2)}, 500, mina.linear, function(){
+		coloredUnderlay.animate({r:(newTurnButton.width)}, 500, mina.linear, function(){})
+	})
 	if(diceToDisplay)
 		dices.setDice(diceToDisplay.first, diceToDisplay.second);
 }
