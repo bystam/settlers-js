@@ -26,9 +26,6 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 
 	//Place the given shape in this areas array
 	area.addCard = function(cardShape){
-		if(area.position.row >= area.maxRows){
-			return;
-		}
 		area.updatePosition();
 		area.cards.push(cardShape);
 		area.shapeGroup.add(cardShape);
@@ -36,6 +33,9 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 	//create a card of a given type, with an optional function when clicked,
 	//and add it to this area
 	area.createCardOfType = function(type, clickFunction){
+		if(area.position.row >= area.maxRows){
+			return;
+		}
 		var shape = getCardShape(
 			dimensions, playerId, 
 			isLocalPlayer, type, clickFunction);

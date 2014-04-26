@@ -43,12 +43,30 @@ function displayNewTurn (diceToDisplay, currentPlayer){
 		canvas.prepend(coloredUnderlay);
 	}
 	coloredUnderlay.attr({fill:color});
-	coloredUnderlay.animate({r:(newTurnButton.width*2)}, 500, undefined, function(){
-		coloredUnderlay.animate({r:(newTurnButton.width)}, 500, undefined, function(){})
+	coloredUnderlay.animate({r:(newTurnButton.width*2)}, 500, mina.easein, function(){
+		coloredUnderlay.animate({r:(newTurnButton.width)}, 500, mina.easein, function(){})
 	})
 	if(diceToDisplay)
-		dices.setDice(diceToDisplay.first, diceToDisplay.second);
+		rollDice(diceToDisplay);
 }
+
+function rollDice(diceToDisplay){
+	count = 0;
+	var timeout = function(){
+		setTimeout(function(){
+			if(count > 10){
+				dices.setDice(diceToDisplay.first, diceToDisplay.second);
+			} else{
+				dices.setDice(getRandomInt(1,6), getRandomInt(1,6));
+				count++;
+				timeout();
+			}
+		}, 100);
+	}
+	timeout();
+}
+
+
 
 function drawStartGameButton(){
 	var text = canvas.text(newTurnButton.x, newTurnButton.y-10, "START");
