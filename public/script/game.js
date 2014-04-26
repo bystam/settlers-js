@@ -4,7 +4,7 @@ var serverCommands = {
 	canBuildRoad:"build-road", canBuildSettlement:"build-settlement", canBuildCity:"build-city",
 	endTurn:"turn-ended", newTurn:"new-turn", drawResource:"draw-resources",
 	gainResources:"gain-resources", gainHiddenResources:"gain-hidden", stockTrade:'stock-trade',
-	startGame:"start-game"};
+	startGame:"start-game", gainStash:"gain-stash"};
 
 function populateGameWithLogic(game) {
 	game.addPlayer = function(playerId) {
@@ -82,6 +82,9 @@ function setServerResponseHandlers (socket){
 	socket.on(serverCommands.startGame, function(data){
 		if(!data.enoughPlayers)
 			console.log("YOU WANT TO TELL THE USER THERE'S NOT ENOUGH PLAYERS");
+	});
+	socket.on(serverCommands.gainStash, function(stash){
+		addResources(stash.resources, localPlayerId);
 	});
 	socket.on(serverCommands.gainResources, function(data){
 		addResources(data.resources, localPlayerId);
