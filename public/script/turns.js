@@ -42,7 +42,7 @@ function displayNewTurn (diceToDisplay, currentPlayer){
 		});
 		canvas.prepend(coloredUnderlay);
 	}
-	coloredUnderlay.animate({opacity:0.3, fill: color}, 2000, undefined, function(){
+	coloredUnderlay.animate({opacity:0.3, fill: color}, 2000, mina.linear, function(){
 	});
 	if(diceToDisplay)
 		dices.setDice(diceToDisplay.first, diceToDisplay.second);
