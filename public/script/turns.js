@@ -43,9 +43,10 @@ function displayNewTurn (diceToDisplay, currentPlayer){
 		canvas.prepend(coloredUnderlay);
 	}
 	coloredUnderlay.attr({fill:color});
-	coloredUnderlay.animate({r:(newTurnButton.width*2)}, 500, mina.easein, function(){
-		coloredUnderlay.animate({r:(newTurnButton.width)}, 500, mina.easein, function(){})
-	})
+	// keep this commented until a workaround for chrome bug is found
+	// coloredUnderlay.animate({r:(newTurnButton.width*2)}, 500, mina.easein, function(){
+	// 	coloredUnderlay.animate({r:(newTurnButton.width)}, 500, mina.easein, function(){})
+	// })
 	if(diceToDisplay)
 		rollDice(diceToDisplay);
 }
