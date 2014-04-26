@@ -36,7 +36,6 @@ exports.Game.prototype = {
 function initPlayers(game) {
 	game.queue = new playerQueue.Queue();
 	game.players = game.queue.players;
-	game.queue.startGame(); // TODO remove when start game implemented
 
 	game.stashes = {};
 	game.activeActions = {};

@@ -50,15 +50,19 @@ function turnEnded (socket, playerId, game) {
 		}
 
 		game.queue.changeTurn();
-		game.diceRoll(); // TODO dice === 7 ?
-		var nextTurnData = { dices: game.lastDiceRoll,
-												 currentPlayer: game.queue.getCurrentPlayer() };
+		var nextTurnData = { currentPlayer: game.queue.getCurrentPlayer() };
+		if (!game.isPrePhase ()) {
+			game.diceRoll(); // TODO dice === 7 ?
+			nextTurnData.dices = game.lastDiceRoll;
+		}
 		io.sockets.in(game.room).emit('new-turn', nextTurnData);
 	};
 }
 
 function drawResources (socket, playerId, game) {
 	return function () {
+		if (game.isPrePhase ())
+			return;
 		var diceSum = game.lastDiceRoll.sum();
 		var hexesWithDiceSum = game.board.getNonBlockedHexesWithToken (diceSum);
 
