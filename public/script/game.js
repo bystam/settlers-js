@@ -4,7 +4,7 @@ var serverCommands = {
 	canBuildRoad:"build-road", canBuildSettlement:"build-settlement", canBuildCity:"build-city",
 	endTurn:"turn-ended", newTurn:"new-turn", drawResource:"draw-resources",
 	gainResources:"gain-resources", gainHiddenResources:"gain-hidden", stockTrade:'stock-trade',
-	startGame:"start-game", gainStash:"gain-stash"};
+	startGame:"start-game", gainStash:"gain-stash", gainHiddenStash:'gain-hidden-stash'};
 
 function populateGameWithLogic(game) {
 	game.addPlayer = function(playerId) {
@@ -86,6 +86,10 @@ function setServerResponseHandlers (socket){
 	socket.on(serverCommands.gainStash, function(stash){
 		addResources(stash.resources, localPlayerId);
 	});
+	socket.on(serverCommands.gainHiddenStash, function(data){
+		console.log(data);
+		addResources(data.stash.resources, data.player);
+	})
 	socket.on(serverCommands.gainResources, function(data){
 		addResources(data.resources, localPlayerId);
 	});

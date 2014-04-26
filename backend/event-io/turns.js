@@ -48,7 +48,7 @@ function turnEnded (socket, playerId, game) {
 			var stash = game.stashes[playerId];
 			addInitialResources(playerId, stash, game);
 			socket.emit('gain-stash', stash);
-			socket.broadcast.to(game.room).emit('gain-hidden-stash', stash.hiddenify());
+			socket.broadcast.to(game.room).emit('gain-hidden-stash', {player:playerId, stash:stash.hiddenify()});
 		}
 
 		game.queue.changeTurn();
