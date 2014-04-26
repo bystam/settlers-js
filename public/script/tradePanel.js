@@ -191,7 +191,7 @@ function tradeContainsOther(resource){
 
 function removeFromTrade(resource){
 	tradePanel.left.removeCards([resource.cardType], function(){});
-	addResources([resource.cardType], resource.playerId);
+	addResourcesList([resource.cardType], resource.playerId);
 	updateTradeButtons();
 }
 

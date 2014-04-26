@@ -17,7 +17,16 @@ function payResourcesList(toRemove, playerId){
 }
 
 function addResources(resources, playerId){
-	resources.forEach(function(resource){
+	var toAdd = [];
+	for(resource in resources){
+		var amount = resources[resource];
+		for(var i=0;i<amount;i++)
+			toAdd.push(""+resource);
+	}
+	addResourcesList(toAdd, playerId);
+}
+function addResourcesList(toAdd, playerId){
+	toAdd.forEach(function(resource){
 		stashObjects[playerId].resourceCards.createCardOfType (resource);
 	});
 }
