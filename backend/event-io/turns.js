@@ -26,8 +26,8 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 
 function startGame (socket, playerId, game) {
 	return function () {
-		if (!gameIsFull(room))
-			return io.sockets.in(room).emit('start-game', { enoughPlayers: false } );
+		if (!gameIsFull(game.room))
+			return io.sockets.in(game.room).emit('start-game', { enoughPlayers: false } );
 
 		game.queue.startGame ();
 		game.players.forEach (function (playerId) {
