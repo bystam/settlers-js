@@ -107,7 +107,9 @@ function seekHexForResource(playerId, board, resources) {
 			if (building.type === null || building.occupyingPlayerId !== playerId)
 				return;
 
-			resources[hexGeneratingResource.resource] = buildingValues[building.type];
+			if (!resources[hexGeneratingResource.resource])
+				resources[hexGeneratingResource.resource] = 0;
+			resources[hexGeneratingResource.resource] += buildingValues[building.type];
 		});
 	}
 }
