@@ -1,9 +1,9 @@
 var newTurnButton, coloredUnderlay, dices;
 function createNewTurnButton(socket, middleX){
-	var buttonWidth = 100;
+	var buttonWidth = 150;
 	var buttonX = 60;
 	var buttonY = 600;
-	var buttonHeight = 50;
+	var buttonHeight = 100;
 	var shadow = canvas.rect(buttonX, buttonY+6, buttonWidth, buttonHeight, 10, 10);
 	shadow.attr({
 		fill:'#458B00',
@@ -18,7 +18,11 @@ function createNewTurnButton(socket, middleX){
 		fill:'#66CD00'
 	});
 	newTurnButton.click(function(){
-		socket.emit(serverCommands.endTurn, {});
+		if(gameStarted){
+			socket.emit(serverCommands.endTurn, {});
+		} else{
+			socket.emit(serverCommands.startGame, {});
+		}
 		newTurnButton.animate({"x":buttonX, "y":buttonY+3}, 70, undefined, function(){
 			newTurnButton.animate({"x":buttonX, "y":buttonY}, 70, undefined, function(){});
 		});
@@ -38,9 +42,23 @@ function displayNewTurn (diceToDisplay, currentPlayer){
 		});
 		canvas.prepend(coloredUnderlay);
 	}
-	dices.setDice(diceToDisplay.first, diceToDisplay.second);
 	coloredUnderlay.animate({opacity:0.3, fill: color}, 2000, undefined, function(){
 	});
+	if(diceToDisplay)
+		dices.setDice(diceToDisplay.first, diceToDisplay.second);
+}
+
+function drawStartGameButton(){
+	var text = canvas.text(newTurnButton.x+10, newTurnButton.y+50, "START");
+	text.attr({
+		fontSize:30
+	});
+	newTurnButton.startText = text;
+}
+
+function startGame(){
+	newTurnButton.startText.remove();
+	gameStarted = true;
 }
 
 function drawDices(){
@@ -63,14 +81,7 @@ function getDiceShape(x, number){
 	drawFill(wat, 'white');
 	var dots = getDots(x, 620, 50, number);
 	return canvas.g(wat, dots);
-	// var dice = canvas.text(x, 650, ""+number);
-	// dice.attr({
-	// 	fontSize:'40'
-	// });
-	// return dice;
 }
-
-
 
 function getDots(x,y,width, number){
 	var radius = 6;
