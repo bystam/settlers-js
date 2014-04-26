@@ -3,7 +3,7 @@
 exports.Queue = function () {
 	this.players = [];
 	this.currentPlayer = 0;
-	this.currentTurn = 1; // TODO = 0 when start game is implemented
+	this.currentTurn = 0;
 };
 
 exports.Queue.prototype = {
