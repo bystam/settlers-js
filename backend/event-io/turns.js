@@ -26,7 +26,7 @@ exports.registerPlayerForTurns = function(socket, room, playerId) {
 
 function startGame (socket, playerId, game) {
 	return function () {
-		if (!gameIsFull(game.room))
+		if (!enoughPlayers(game.room))
 			return io.sockets.in(game.room).emit('start-game', { enoughPlayers: false } );
 
 		game.queue.startGame ();
@@ -76,8 +76,9 @@ function drawResources (socket, playerId, game) {
 	};
 }
 
-function gameIsFull (room) {
-	return games[room].players.length === 4;
+function enoughPlayers (room) {
+	var amountOfPlayers = games[room].players.length;
+	return amountOfPlayers > 1 && amountOfPlayers <= 4;
 }
 
 function seekHexForResource(playerId, board, resources) {
