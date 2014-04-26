@@ -48,7 +48,7 @@ function turnEnded (socket, playerId, game) {
 			var stash = game.stashes[playerId];
 			addInitialResources(playerId, stash, game);
 			socket.emit('gain-stash', stash);
-			socket.broadcast.to(game.room).emit('gain-hidden-stash', {player:playerId, stash:stash.hiddenify()});
+			socket.broadcast.to(game.room).emit('gain-hidden-stash', { player: playerId, stash: stash.hiddenify() });
 		}
 
 		game.queue.changeTurn();
@@ -87,10 +87,7 @@ function drawResources (socket, playerId, game) {
 		stash.addAll(resources);
 		socket.emit('gain-resources', { resources: resources });
 
-		var total = 0;
-		for (resource in resources)
-			total += resources[resource];
-		socket.broadcast.to(game.room).emit('gain-hidden', { player: playerId, resources: { hidden: total } });
+		socket.broadcast.to(game.room).emit('gain-hidden', { player: playerId, resources: { hidden: resources.total() } });
 	};
 }
 
@@ -100,6 +97,13 @@ function enoughPlayers (room) {
 }
 
 function seekHexForResource(playerId, board, resources) {
+	resources.total = function () {
+		var total = 0;
+		for (resource in resources)
+			total += resources[resource];
+		return total;
+	}
+
 	return function (hexGeneratingResource) {
 		var surroundingBuildings = board.getBuildingsForHex(hexGeneratingResource);
 
