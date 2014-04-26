@@ -1,9 +1,10 @@
-var socket, canvas, game, localPlayerId;
+var socket, canvas, game, localPlayerId, gameStarted;
 
 var serverCommands = {
 	canBuildRoad:"build-road", canBuildSettlement:"build-settlement", canBuildCity:"build-city",
 	endTurn:"turn-ended", newTurn:"new-turn", drawResource:"draw-resources",
-	gainResources:"gain-resources", gainHiddenResources:"gain-hidden", stockTrade:'stock-trade'};
+	gainResources:"gain-resources", gainHiddenResources:"gain-hidden", stockTrade:'stock-trade',
+	startGame:"start-game"};
 
 function populateGameWithLogic(game) {
 	game.addPlayer = function(playerId) {
@@ -49,6 +50,7 @@ function createEmptyBoard(game){
 	setServerResponseHandlers (socket);
 	drawTradePanel();
 	drawDices();
+	drawStartGameButton();
 }
 
 function setServerResponseHandlers (socket){
@@ -71,8 +73,15 @@ function setServerResponseHandlers (socket){
 		}
 	});
 	socket.on(serverCommands.newTurn, function(data){
+		if(!gameStarted)
+			startGame();
 		displayNewTurn(data.dices, data.currentPlayer);
 		socket.emit(serverCommands.drawResource, {}); //maybe save this call for after dices are rolled
+	});
+
+	socket.on(serverCommands.startGame, function(data){
+		if(!data.enoughPlayers)
+			alert("YOU WANT TO TELL THE USER THERES NOT ENOUGHT PLAYERS");
 	});
 	socket.on(serverCommands.gainResources, function(data){
 		addResources(data.resources, localPlayerId);
