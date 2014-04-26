@@ -28,6 +28,7 @@ exports.Stash.prototype = {
 
 	removeResource: function(resource) {
 		this.resources[resource]--;
+		return resource;
 	},
 
 	canAfford: canAfford,
@@ -36,7 +37,7 @@ exports.Stash.prototype = {
 
 	payCost: payCost,
 
-	stealRandom: stealRandom,
+	stealRandomResource: stealRandomResource,
 
 	hiddenify: hiddenify
 }
@@ -49,21 +50,26 @@ function canAfford (costs) {
 }
 
 function addAll (resources) {
-	for (type in this.resources)
+	for (type in resources)
 		for (var i = 0; i < resources[type]; i++)
 			this.addResource (type);
 }
 
 function payCost (costs) {
-	for (type in this.resources)
+	for (type in costs)
 		for (var i = 0; i < costs[type]; i++)
 			this.removeResource (type);
 }
 
-function stealRandom () {
-	var resource = resources[Math.floor (Math.random () * resources.length)];
-	this.removeResource (resource);
-	return resource;
+function stealRandomResource () {
+	var randomIndex = Math.floor (Math.random () * this.resources.total());
+	console.log(randomIndex);
+	for (type in this.resources) {
+		randomIndex -= this.resources[type];
+		if (randomIndex < 0)
+			return this.removeResource(type);
+	}
+	throw "resource steal random has failed. perhaps stash is empty?";
 }
 
 function hiddenify () {

@@ -63,7 +63,7 @@ function validateAndStealResource (playerId, targetPlayer, game) {
     if (!game.rules.canKnightStealFromPlayer (targetPlayer))
       return { valid: false };
 
-    var stolen = game.stashes[targetPlayer].stealRandom ();
+    var stolen = game.stashes[targetPlayer].stealRandomResource ();
     game.stashes[playerId].addResource (stolen);
 
     game.activeActions[playerId].end('knight');
