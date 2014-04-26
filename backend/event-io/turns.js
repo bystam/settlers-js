@@ -17,11 +17,11 @@ exports.init = function(gamesState, socketIo) {
 exports.registerPlayerForTurns = function(socket, room, playerId) {
 	var game = games[room];
 
+	socket.on('start-game', startGame (socket, playerId, game));
+
 	socket.on('turn-ended', turnEnded (socket, playerId, game));
 
 	socket.on('draw-resources', drawResources (socket, playerId, game));
-
-	socket.on('start-game', startGame (socket, playerId, game));
 }
 
 function startGame (socket, playerId, game) {
@@ -45,6 +45,9 @@ function turnEnded (socket, playerId, game) {
 			return socket.emit('turn-ended', { success: false, error: 'active action chains' });
 
 		if (game.isPrePhase ()) {
+			var stash = game.stashes[playerId];
+			addInitialResources(playerId, stash, game);
+			console.log(stash);
 			socket.emit('gain-stash', game.stashes[playerId]);
 			socket.broadcast.to(game.room).emit('gain-hidden-stash', game.stashes[playerId].hiddenify());
 		}
@@ -57,6 +60,19 @@ function turnEnded (socket, playerId, game) {
 		}
 		io.sockets.in(game.room).emit('new-turn', nextTurnData);
 	};
+}
+
+function addInitialResources(playerId, stash, game) {
+	if (game.buildingsForPlayer[playerId].length !== 1) // get this 1 from somewhere else?
+		throw "Intitial settlement amount is wrong"
+
+	var building = game.buildingsForPlayer[playerId][0];
+
+	building.forEach (function (surroundingHex) {
+		var hex = game.board.map[surroundingHex.row][surroundingHex.col];
+		if (hex.resource)
+			stash.addResource(hex.resource);
+	});
 }
 
 function drawResources (socket, playerId, game) {
