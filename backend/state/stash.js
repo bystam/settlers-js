@@ -22,6 +22,11 @@ exports.Stash = function(playerId) {
 exports.Stash.prototype = {
 	constructor: exports.Stash,
 
+	removeCity: function () { this.cities--; },
+	removeSettlement: function () { this.settlements--; },
+	regainSettlement: function () { this.settlements++; },
+	removeRoad: function () { this.roads--; },
+
 	addResource: function(resource) {
 		this.resources[resource]++;
 	},
