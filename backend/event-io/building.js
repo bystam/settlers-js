@@ -57,6 +57,7 @@ function placeRoad (coords, playerId, game){
 	var roadLocation = game.board.getRoad(coords);
 	roadLocation.occupyingPlayerId = playerId;
 	game.roadsForPlayer[playerId].push(roadLocation.key);
+	game.stashes[playerId].removeRoad();
 }
 
 function handleSettlementBuilding (buildingCoords, playerId, game) {
@@ -87,6 +88,7 @@ function placeSettlement (coords, playerId, game){
 	buildingLocation.type = 'settlement';
 	buildingLocation.occupyingPlayerId = playerId;
 	game.buildingsForPlayer[playerId].push(buildingLocation.key);
+	game.stashes[playerId].removeSettlement();
 }
 
 function handleCityBuilding (buildingCoords, playerId, game) {
@@ -109,4 +111,6 @@ function handleCityBuilding (buildingCoords, playerId, game) {
 function placeCity (coords, playerId, game) {
 	var buildingLocation = game.board.getBuilding(coords);
 	buildingLocation.type = 'city';
+	game.stashes[playerId].removeCity();
+	game.stashes[playerId].regainSettlement();
 }
