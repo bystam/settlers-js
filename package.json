@@ -7,12 +7,13 @@
     "test": "tests"
   },
   "dependencies": {
-    "nodeunit": "~0.8.2",
-    "socket.io": "*",
     "crypto": "*",
     "express": "*",
     "jade": "*",
-    "snapsvg": "*"
+    "morgan": "^1.0.1",
+    "nodeunit": "~0.8.2",
+    "snapsvg": "*",
+    "socket.io": "*"
   },
   "devDependencies": {},
   "scripts": {
