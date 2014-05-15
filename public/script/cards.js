@@ -117,8 +117,7 @@ function getCardArea(cornerX, cornerY, playerId, isLocalPlayer, areaBelow, maxRo
 }
 
 function getCardShape (dimensions, playerId, isLocalPlayer, type, clickFunction){
-	var imageUrl = getImageUrl(type);
-	var image = canvas.image(imageUrl,dimensions.x, dimensions.y, dimensions.width, dimensions.height);
+	var image = canvas.image(getImageUrl(type), dimensions.x, dimensions.y, dimensions.width, dimensions.height);
 	setSepia(image, 0.5);
 
 	var border = canvas.rect(dimensions.x, dimensions.y, dimensions.width, dimensions.height, 10, 10);
@@ -137,9 +136,7 @@ function getCardShape (dimensions, playerId, isLocalPlayer, type, clickFunction)
 			shrinkCard(card, dimensions);
 		})
 	}
-	var click = function(){ addToTrade(card)};
-	if(clickFunction)
-		click = function(){clickFunction(card)};
+	var click = clickFunction ? function(){clickFunction(card)} : function(){ addToTrade(card)};
 	card.click(click);
 	return card;
 }

@@ -1,4 +1,6 @@
 var tradePanel;
+
+//move some stuff out of here - keep drawing code, remove trade code
 function drawTradePanel (){
 	tradePanel = canvas.rect(350,5,480,100, 10, 10);
 	tradePanel.attr({

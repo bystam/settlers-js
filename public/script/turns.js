@@ -35,12 +35,7 @@ function displayNewTurn (diceToDisplay, currentPlayer){
 	
 	var color = buildingColors[currentPlayer];
 	if(!coloredUnderlay){
-		coloredUnderlay = canvas.circle(newTurnButton.x + (newTurnButton.width/2), newTurnButton.y+(newTurnButton.height/2), newTurnButton.width);
-		coloredUnderlay.attr({
-			fill:color,
-			opacity:0.3,
-		});
-		canvas.prepend(coloredUnderlay);
+		createnewTurnColoredUnderlay(color);
 	}
 	coloredUnderlay.attr({fill:color});
 	// keep this commented until a workaround for chrome bug is found
@@ -49,6 +44,15 @@ function displayNewTurn (diceToDisplay, currentPlayer){
 	// })
 	if(diceToDisplay)
 		rollDice(diceToDisplay);
+}
+
+function createnewTurnColoredUnderlay(color){
+	coloredUnderlay = canvas.circle(newTurnButton.x + (newTurnButton.width/2), newTurnButton.y+(newTurnButton.height/2), newTurnButton.width);
+	coloredUnderlay.attr({
+		fill:color,
+		opacity:0.3,
+	});
+	canvas.prepend(coloredUnderlay);
 }
 
 function rollDice(diceToDisplay){
@@ -100,10 +104,10 @@ function drawDices(){
 }
 
 function getDiceShape(x, number){
-	var wat = canvas.rect(x, 620, 50, 50, 5, 5);
-	drawFill(wat, 'white');
+	var diceShape = canvas.rect(x, 620, 50, 50, 5, 5);
+	drawFill(diceShape, 'white');
 	var dots = getDots(x, 620, 50, number);
-	return canvas.g(wat, dots);
+	return canvas.g(diceShape, dots);
 }
 
 function getDots(x,y,width, number){
