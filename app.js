@@ -6,7 +6,7 @@ var express = require('express')
 // express app configuring
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
-app.use(require('morgan'));
+app.use(require('morgan')());
 app.use(express.static(__dirname + '/public'))
 
 rooms.init(server);
